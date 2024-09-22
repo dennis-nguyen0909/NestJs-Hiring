@@ -65,6 +65,12 @@ export class UsersService {
     };
   }
 
+  async findByEmail (email: string) {
+    const user = await this.userRepository.findOne({ email });
+    return user;
+  }
+
+
   findOne(id: number) {
     console.log('id', id);
     return `This action returns a #${id} user`;
