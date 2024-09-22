@@ -9,19 +9,25 @@ export class AuthService {
     private UserService: UsersService,
     private jwtService: JwtService,
   ) {}
-  async signIn(username: string, password: string): Promise<any> {
+  async signIn(user: any): Promise<any> {
+    const payload = { sub: user._id, username: user.email };
+    const access_token = await this.jwtService.signAsync(payload);
+    return {
+      access_token,
+    };
+  }
+
+  async validateUser(username: string, password: string): Promise<any> {
     const user = await this.UserService.findByEmail(username);
     const isValidPassword = await comparePasswordHelper(
       password,
       user.password,
     );
-    if (!isValidPassword) {
-      throw new UnauthorizedException();
+
+    if (!isValidPassword || !user) {
+      return null;
     }
 
-    const payload = { sub: user._id, username: user.email };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    return user;
   }
 }
