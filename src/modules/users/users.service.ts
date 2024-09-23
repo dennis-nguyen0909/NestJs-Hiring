@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Body, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,10 +8,15 @@ import { Model } from 'mongoose';
 import { hashPasswordHelper } from 'src/helpers/util';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import { RegisterAuthDto } from '../auth/dto/register-auth.dto';
+import {v4 as uuidv4} from 'uuid';
+import * as dayjs from 'dayjs';
+import { MailerService } from '@nestjs-modules/mailer';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userRepository: Model<User>,
+    private mailService: MailerService,
   ) {}
 
   isEmailExists = async (email: string) => {
@@ -120,5 +125,41 @@ export class UsersService {
       message: 'Người dùng đã được xóa thành công',
       id: id,
     };
+  }
+
+  async handleRegister(registerDto: RegisterAuthDto) {
+    const {email ,password, full_name} = registerDto;
+    const isEmailExists = await this.isEmailExists(email);
+
+    if(isEmailExists){
+      throw new BadRequestException(`Email {${email}} already exists`);
+    }
+
+    const hashPassword = await hashPasswordHelper(password);
+    const codeId =uuidv4()
+    const newUser = await this.userRepository.create({
+      full_name,email,password:hashPassword,
+      is_active:false,
+      code_id: codeId,
+      // code_expired: dayjs().add(5, 'minute')
+      code_expired: dayjs().add(30, 's')
+    })
+    // send mail
+    console.log("newUser", newUser);
+      this.mailService.sendMail({
+        to: newUser.email, // list of receivers
+        subject: 'Kích hoạt tài khoản tại @dennis', // Subject line
+        text: 'Chào mừng', // plaintext body
+        template: 'template',
+        context: {
+          name: newUser?.full_name ?? newUser.email,
+          activationCode: codeId,
+        },
+      });
+      console.log("newUser2", newUser);
+
+    return {
+      _id: newUser._id
+    }
   }
 }
