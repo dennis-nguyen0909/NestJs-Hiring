@@ -1,8 +1,8 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Role } from './Role.schema';
-import { AuthProvider } from './AuthProvider.schema';
-import { CV } from './CV.schema';
+import { Role } from '../../role/schema/Role.schema';
+import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
+import { CV } from '../../cv/schema/CV.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {

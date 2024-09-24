@@ -1,9 +1,9 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { User } from './User.schema';
-import { Job } from './job.schema';
-import { Employer } from './employer.schema';
-import { CV } from './CV.schema';
+import { User } from '../../users/schemas/User.schema';
+import { Job } from '../../job/schema/Job.schema';
+import { Employer } from '../../employer/schema/Employer.schema';
+import { CV } from '../../cv/schema/CV.schema';
 
 @Schema()
 export class Application extends Document {

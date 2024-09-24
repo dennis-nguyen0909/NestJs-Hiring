@@ -9,6 +9,19 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/passport/jwt-auth-guard';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { JobModule } from './modules/job/job.module';
+import { CvModule } from './modules/cv/cv.module';
+import { CvUploadModule } from './modules/cv-upload/cv-upload.module';
+import { ApplicationModule } from './modules/application/application.module';
+import { AuthProviderModule } from './modules/auth-provider/auth-provider.module';
+import { EmployerModule } from './modules/employer/employer.module';
+import { FollowModule } from './modules/follow/follow.module';
+import { LevelModule } from './modules/level/level.module';
+import { NotificationModule } from './modules/notification/notification.module';
+import { RoleModule } from './modules/role/role.module';
+import { SkillModule } from './modules/skill/skill.module';
+import { WorkExperienceModule } from './modules/work-experience/work-experience.module';
+import { EducationModule } from './modules/education/education.module';
 @Module({
   imports: [
     UsersModule,
@@ -48,6 +61,19 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       }),
       inject: [ConfigService],
     }),
+    JobModule,
+    CvModule,
+    CvUploadModule,
+    ApplicationModule,
+    AuthProviderModule,
+    EmployerModule,
+    FollowModule,
+    LevelModule,
+    NotificationModule,
+    RoleModule,
+    SkillModule,
+    WorkExperienceModule,
+    EducationModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { CV } from './CV.schema';
+import { CV } from '../../cv/schema/CV.schema';
 
 @Schema()
 export class WorkExperience extends Document {
