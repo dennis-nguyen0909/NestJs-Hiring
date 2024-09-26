@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 @Schema()
 export class AuthProvider extends Document {
   @Prop({ required: true })
-  provider: string;
+  provider_name: string;
 
   @Prop({ required: true })
   provider_id: string;
