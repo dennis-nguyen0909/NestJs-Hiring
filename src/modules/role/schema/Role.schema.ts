@@ -7,7 +7,7 @@ export class Role extends Document {
   role_name: string;
 
   @Prop()
-  role_permission: string;
+  role_permission: Array<string>;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

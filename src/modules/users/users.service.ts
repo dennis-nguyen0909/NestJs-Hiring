@@ -12,11 +12,14 @@ import { RegisterAuthDto } from '../auth/dto/register-auth.dto';
 import {v4 as uuidv4} from 'uuid';
 import * as dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
+import { RoleService } from '../role/role.service';
+import e from 'express';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userRepository: Model<User>,
     private mailService: MailerService,
+    private roleService: RoleService
   ) {}
 
   isEmailExists = async (email: string) => {
@@ -28,23 +31,41 @@ export class UsersService {
   };
 
   async create(createUserDto: CreateUserDto) {
-    const { full_name, email, password } = createUserDto;
-    // check email
-    const isEmailExists = await this.isEmailExists(email);
-    if (isEmailExists) {
-      throw new BadRequestException(`Email {${email}} already exists`);
+    const { email, password, role, company_name, website, location, description } = createUserDto;
+
+    // Kiểm tra nếu email đã tồn tại
+    const existingUser = await this.userRepository.findOne({ email });
+    if (existingUser) {
+      throw new BadRequestException('Email already exists.');
     }
-    // hash password
-    const hashPassword = await hashPasswordHelper(password);
-    const user = await this.userRepository.create({
-      full_name,
-      email,
-      password: hashPassword,
+
+    // Hash password trước khi lưu vào DB
+    const hashedPassword = await hashPasswordHelper(password);
+    const findRole = await this.roleService.findByRoleName(role);
+    if(!findRole){
+      throw new BadRequestException('Role not found. Please check if the role exists.');
+
+    }
+    const user = new this.userRepository({
+      ...createUserDto,
+      password: hashedPassword,
+      role:findRole._id
     });
-    return {
-      _id: user._id,
-    };
+
+    // Phân biệt giữa User và Employer
+    if (role === 'EMPLOYER') {
+      if (!company_name || !website || !location) {
+        throw new BadRequestException('Missing employer details: company_name, website, and location are required.');
+      }
+      user.company_name = company_name;
+      user.website = website;
+      user.location = location;
+      user.description = description || '';
+    }
+
+    return user.save();
   }
+  
 
   async findAll(query: string, current: number, pageSize: number) {
     const { filter, sort } = aqp(query);
@@ -63,9 +84,10 @@ export class UsersService {
       .limit(pageSize)
       .skip(skip)
       .sort(sort as any)
-      .select('-password');
+      .select('-password').populate('role');
     return {
       result,
+      totalItems,
       totalPages,
     };
   }
@@ -76,9 +98,16 @@ export class UsersService {
   }
 
 
-  findOne(id: number) {
-    console.log('id', id);
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+        try {
+        const user = await this.userRepository.findOne({_id:id});
+        if(user){
+          return user
+        }
+        return null;
+      } catch (error) {
+            throw new NotFoundException()
+      }
   }
 
   async update(updateUserDto: UpdateUserDto) {
@@ -105,7 +134,6 @@ export class UsersService {
   
 
   async remove(id: string) {
-    console.log("id", id);
     
     // Kiểm tra xem id có phải là ObjectId hợp lệ không
     if (!mongoose.isValidObjectId(id)) {
@@ -145,7 +173,6 @@ export class UsersService {
       code_expired: dayjs().add(30, 's')
     })
     // send mail
-    console.log("newUser", newUser);
       this.mailService.sendMail({
         to: newUser.email, // list of receivers
         subject: 'Kích hoạt tài khoản tại @dennis', // Subject line
@@ -156,7 +183,6 @@ export class UsersService {
           activationCode: codeId,
         },
       });
-      console.log("newUser2", newUser);
 
     return {
       _id: newUser._id

@@ -35,4 +35,17 @@ export class AuthService {
   async register(registerDto: RegisterAuthDto): Promise<any> {
     return this.UserService.handleRegister(registerDto);
   }
+
+  async validateToken(token: string): Promise<any> {
+    try {
+      if(!token){
+        return null;
+      }
+      const payload = await this.jwtService.verifyAsync(token);
+      const user = await this.UserService.findOne(payload.sub); // Lấy thông tin người dùng từ DB bằng ID trong payload
+      return user; // Trả về thông tin người dùng
+    } catch (error) {
+      throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn');
+    }
+  }
 }

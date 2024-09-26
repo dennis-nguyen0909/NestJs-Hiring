@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { WorkExperienceService } from './work-experience.service';
 import { CreateWorkExperienceDto } from './dto/create-work-experience.dto';
 import { UpdateWorkExperienceDto } from './dto/update-work-experience.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('work-experience')
+@ApiTags('WorkExperience')
 export class WorkExperienceController {
   constructor(private readonly workExperienceService: WorkExperienceService) {}
 
@@ -23,7 +33,10 @@ export class WorkExperienceController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWorkExperienceDto: UpdateWorkExperienceDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateWorkExperienceDto: UpdateWorkExperienceDto,
+  ) {
     return this.workExperienceService.update(+id, updateWorkExperienceDto);
   }
 

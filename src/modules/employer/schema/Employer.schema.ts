@@ -14,11 +14,9 @@ export class Employer extends Document {
   @Prop()
   location: string;
 
-  @Prop([{ type: Types.ObjectId, ref: Job.name }])
+  @Prop([{ type: Types.ObjectId, ref: 'Job'}])
   jobs_ids: [Job];
 
-  @Prop({ type: Types.ObjectId, ref: User.name, required: false }) // Assuming User fields
-  user_id?: User;  // This field references a User if needed
 
   @Prop()
   description: string;

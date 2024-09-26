@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CvUploadService } from './cv-upload.service';
 import { CreateCvUploadDto } from './dto/create-cv-upload.dto';
 import { UpdateCvUploadDto } from './dto/update-cv-upload.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('cv-upload')
+@ApiTags('CvUpload')
 export class CvUploadController {
   constructor(private readonly cvUploadService: CvUploadService) {}
 

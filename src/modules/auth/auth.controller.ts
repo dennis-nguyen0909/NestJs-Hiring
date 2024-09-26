@@ -5,6 +5,8 @@ import {
   UseGuards,
   Get,
   Body,
+  UnauthorizedException,
+  Response,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local-auth.guard';
@@ -12,7 +14,9 @@ import { JwtAuthGuard } from './passport/jwt-auth-guard';
 import { Public } from 'src/decorator/customize';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ApiTags } from '@nestjs/swagger';
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -22,8 +26,15 @@ export class AuthController {
   @Post('login')
   @Public()
   @UseGuards(LocalAuthGuard)
-  signIn(@Request() req) {
-    return this.authService.signIn(req.user);
+  async signIn(@Request() req, @Response() res) {
+    const { access_token } = await this.authService.signIn(req.user);
+    res.cookie('token', access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 3600000,
+    });
+
+    return res.status(200).json({ message: 'Login successful' });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -53,4 +64,15 @@ export class AuthController {
     });
     return 'ok';
   }
+  @Get('check-token')
+  @Public()
+  async checkToken(@Request() req) {
+    const token = req.cookies.token; // Lấy token từ cookie
+    if (!token) {
+      throw new UnauthorizedException('Token không được cung cấp');
+    }
+    const user = await this.authService.validateToken(token); // Gọi hàm validateToken
+    return { valid: true, user }; // Trả về thông tin người dùng
+  }
+
 }

@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { LevelService } from './level.service';
 import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('level')
+@ApiTags('Level')
 export class LevelController {
   constructor(private readonly levelService: LevelService) {}
 

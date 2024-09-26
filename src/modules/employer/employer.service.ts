@@ -11,7 +11,6 @@ export class EmployerService {
     @InjectModel('Employer') private readonly employerModel: Model<Employer>,
   ) {}
   async create(createEmployerDto: CreateEmployerDto) {
-    console.log('createEmployerDTO', createEmployerDto);
     const { company_name, user_id } = createEmployerDto;
     const createdEmployer = await this.employerModel.create({
       company_name,

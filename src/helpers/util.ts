@@ -5,7 +5,7 @@ export const hashPasswordHelper = async (plainPassword: string) => {
   try {
     return await bcrypt.hash(plainPassword, saltRounds);
   } catch (error) {
-    console.log('error', error);
+    console.error('error', error);
   }
 };
 
@@ -16,6 +16,6 @@ export const comparePasswordHelper = async (
   try {
     return await bcrypt.compare(plainPassword, hashPassword);
   } catch (error) {
-    console.log('error', error);
+    console.error('error', error);
   }
 };

@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { Job } from '../../job/schema/Job.schema'; // Nhớ import Job schema
 import { Role } from '../../role/schema/Role.schema';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { CV } from '../../cv/schema/CV.schema';
@@ -26,8 +27,9 @@ export class User extends Document {
 
   @Prop()
   gender: string;
-  @Prop({ type: Types.ObjectId, ref: Role.name, default: 'USERS' })
-  role: Role;
+
+  @Prop({ type: Types.ObjectId, ref: Role.name, default: null })
+  role: Role; // Phân biệt người dùng qua role (ADMIN, USERS, EMPLOYER, ...)
 
   @Prop({ default: 'LOCAL' })
   account_type: string;
@@ -55,6 +57,22 @@ export class User extends Document {
 
   @Prop([{ type: Types.ObjectId, ref: 'CV' }])
   cvs: CV[];
+
+  // Các thuộc tính dành cho Employer (Nhà tuyển dụng)
+  @Prop({ required: false })
+  company_name?: string;
+
+  @Prop({ required: false })
+  website?: string;
+
+  @Prop({ required: false })
+  location?: string;
+
+  @Prop([{ type: Types.ObjectId, ref: Job.name, required: false }])
+  jobs_ids?: Job[];
+
+  @Prop({ required: false })
+  description?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,9 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorator/customize';
+import { DeleteJobDto } from './dto/delete-job.dto';
 
-@Controller('job')
+@Controller('jobs')
+@ApiTags('Job')
+@Public()
 export class JobController {
   constructor(private readonly jobService: JobService) {}
 
@@ -13,8 +27,12 @@ export class JobController {
   }
 
   @Get()
-  findAll() {
-    return this.jobService.findAll();
+  findAll(
+    @Query() query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.jobService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
@@ -24,11 +42,11 @@ export class JobController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
-    return this.jobService.update(+id, updateJobDto);
+    return this.jobService.update(id, updateJobDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jobService.remove(+id);
+  @Delete()
+  remove(@Body() data: DeleteJobDto) {
+    return this.jobService.remove(data);
   }
 }

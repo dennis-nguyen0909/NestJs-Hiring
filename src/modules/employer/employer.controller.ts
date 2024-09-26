@@ -3,9 +3,11 @@ import { EmployerService } from './employer.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { Public } from 'src/decorator/customize';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('employer')
 @Public()
+@ApiTags('Employeer')
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) {}
 

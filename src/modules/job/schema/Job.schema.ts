@@ -1,12 +1,12 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { Employer } from '../../employer/schema/Employer.schema';
+import { Document, Mongoose, Types } from 'mongoose';
 import { Level } from '../../level/schema/Level.schema';
+import { User } from 'src/modules/users/schemas/User.schema';
 
 @Schema()
 export class Job extends Document {
-  @Prop({ type: Types.ObjectId, ref: 'Employer', required: true })
-  employer: Employer;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  user_id: string;
 
   @Prop({ required: true })
   title: string;
