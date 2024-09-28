@@ -50,7 +50,6 @@ export class AuthProviderController {
 
   @Delete()
   remove(@Body() data: DeleteAuthProviderDTO) {
-    console.log("data",data)
     return this.authProviderService.remove(data);
   }
 }

@@ -45,15 +45,22 @@ export class AuthProviderService {
     const totalItems = (await this.authProviderRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
-    const data = await this.authProviderRepository
+    const result = await this.authProviderRepository
       .find(filter)
       .limit(pageSize)
       .skip(skip)
       .sort(sort as any);
     return {
-      data,
-      totalItems,
-      totalPages,
+      data: {
+        item: result,
+        meta: {
+          count: result.length,
+          current_page: current,
+          per_page: pageSize,
+          total: totalItems,
+          total_pages: totalPages,
+        },
+      },
     };
   }
 

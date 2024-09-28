@@ -13,7 +13,7 @@ export class WorkExperience extends Document {
   @Prop({ required: true })
   years: string;
 
-  @Prop({ type: Types.ObjectId, ref: CV.name })
+  @Prop({ type: Types.ObjectId, ref: 'CV' })
   cv: string;
 }
 

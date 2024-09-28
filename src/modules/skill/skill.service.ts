@@ -38,9 +38,16 @@ export class SkillService {
       .skip(skip)
       .sort(sort as any);
     return {
-      result,
-      totalItems,
-      totalPages,
+      data: {
+        item: result,
+        meta: {
+          count: result.length,
+          current_page: current,
+          per_page: pageSize,
+          total: totalItems,
+          total_pages: totalPages,
+        },
+      },
     };
   }
 

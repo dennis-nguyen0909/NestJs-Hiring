@@ -5,13 +5,13 @@ import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { Public } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 
-@Controller('employer')
+@Controller('employers')
 @Public()
 @ApiTags('Employeer')
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) {}
 
-  @Post('create')
+  @Post('')
   create(@Body() createEmployerDto: CreateEmployerDto) {
     return this.employerService.create(createEmployerDto);
   }

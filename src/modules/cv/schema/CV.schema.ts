@@ -5,18 +5,18 @@ import { WorkExperience } from '../../work-experience/schema/WorkExperience.sche
 import { Skill } from '../../skill/schema/Skill.schema';
 import { User } from '../../users/schemas/User.schema';
 
-@Schema()
+@Schema({ timestamps: true })
 export class CV extends Document {
   @Prop({ required: true })
   title: string;
 
   @Prop({ type: Types.ObjectId, ref: User.name })
-  user: string;
+  user_id: string;
 
   @Prop()
   personal_info: string;
 
-  @Prop([{ type: Types.ObjectId, ref: Education.name }])
+  @Prop([{ type: Types.ObjectId, ref: 'Education' }])
   education: Education[];
 
   @Prop([{ type: Types.ObjectId, ref: WorkExperience.name }])
@@ -27,6 +27,15 @@ export class CV extends Document {
 
   @Prop([String])
   languages: string[];
+
+  // Fields from CVUploads
+  @Prop({ type: [String], required: true })
+  cv_url: string[];
+
+  @Prop({ type: String, required: true })
+  file_name: string;
+
+  // Timestamps are automatically added with the 'timestamps' option in @Schema
 }
 
 export const CVSchema = SchemaFactory.createForClass(CV);
