@@ -22,6 +22,7 @@ import { RoleModule } from './modules/role/role.module';
 import { SkillModule } from './modules/skill/skill.module';
 import { WorkExperienceModule } from './modules/work-experience/work-experience.module';
 import { EducationModule } from './modules/education/education.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 @Module({
   imports: [
     UsersModule,
@@ -74,6 +75,7 @@ import { EducationModule } from './modules/education/education.module';
     SkillModule,
     WorkExperienceModule,
     EducationModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [
