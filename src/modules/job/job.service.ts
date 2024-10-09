@@ -22,7 +22,7 @@ export class JobService {
   async create(createJobDto: CreateJobDto) {
     const { user_id } = createJobDto;
     const isUserExist = await this.userService.findOne(user_id);
-    const user = await isUserExist.populate('role');
+
     if (isUserExist) {
       const user = await isUserExist.populate('role');
       if (user.role.role_name === 'EMPLOYER') {
@@ -66,7 +66,7 @@ export class JobService {
       .sort(sort as any);
     return {
       data: {
-        item: result,
+        items: result,
         meta: {
           count: result.length,
           current_page: current,

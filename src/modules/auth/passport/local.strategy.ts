@@ -20,7 +20,12 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
 
     if (user.is_active === false) {
-      throw new BadRequestException('User not active');
+      // throw new BadRequestException('User not active');
+      return {
+        messages: ['User is not active'],
+        error_code: 400,
+        data: [],
+      };
     }
     return user;
   }

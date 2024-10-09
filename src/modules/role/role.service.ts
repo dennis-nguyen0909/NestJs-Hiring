@@ -47,7 +47,7 @@ export class RoleService {
         .sort(sort as any);
       return {
         data: {
-          item: result,
+          items: result,
           meta: {
             count: result.length,
             current_page: current,

@@ -40,6 +40,12 @@ export class Job extends Document {
 
   @Prop({ type: Date })
   expire_date: Date;
+
+  @Prop({ type: String })
+  type_money: string;
+
+  @Prop({ type: String, default: '' })
+  image: string;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

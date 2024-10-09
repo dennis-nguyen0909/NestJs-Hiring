@@ -15,6 +15,7 @@ import { Public } from 'src/decorator/customize';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ApiTags } from '@nestjs/swagger';
+import { VerifyAuthDto } from './dto/verify-auth.dto';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -26,15 +27,8 @@ export class AuthController {
   @Post('login')
   @Public()
   @UseGuards(LocalAuthGuard)
-  async signIn(@Request() req, @Response() res) {
-    const { access_token } = await this.authService.signIn(req.user);
-    res.cookie('token', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600000,
-    });
-
-    return res.status(200).json({ message: 'Login successful' });
+  async signIn(@Request() req) {
+    return this.authService.signIn(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -74,5 +68,26 @@ export class AuthController {
     const user = await this.authService.validateToken(token); // Gọi hàm validateToken
     return { valid: true, user }; // Trả về thông tin người dùng
   }
+
+  @Post('verify')
+  @Public()
+  verify(@Body() verifyDto: VerifyAuthDto) {
+    return this.authService.verify(verifyDto);
+  }
+
+  @Post('retry-active')
+  @Public()
+  retryActive(@Body('email') email: string) {
+    return this.authService.retryActive(email);
+  }
+
+
+  @Post('refresh-token')
+  @UseGuards(JwtAuthGuard)
+  @Public()
+  async refreshToken(@Request() req) {
+    console.log("req",req.headers.authorization)
+  }
+
 
 }

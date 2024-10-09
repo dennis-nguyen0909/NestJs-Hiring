@@ -21,10 +21,16 @@ export class CreateUserDto {
     description: 'Password of user',
     example: '123123',
   })
+  @IsString()
+  username: string;
   @IsNotEmpty({ message: 'Password is required.' })
   @IsString()
   password: string;
 
+  @ApiProperty({
+    description: 'Role of users',
+    example: 'USER',
+  })
   @IsNotEmpty()
   @IsString()
   role: string;

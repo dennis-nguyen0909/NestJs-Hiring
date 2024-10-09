@@ -26,7 +26,7 @@ export class UsersController {
   }
 
   @Get('')
-  async findAll(
+  findAll(
     @Query() query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
@@ -36,7 +36,7 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+    return this.usersService.getDetailUser(id);
   }
 
   @Patch()
