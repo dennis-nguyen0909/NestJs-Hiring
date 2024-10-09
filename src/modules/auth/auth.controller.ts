@@ -11,7 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { JwtAuthGuard } from './passport/jwt-auth-guard';
-import { Public } from 'src/decorator/customize';
+import { Public, ResponseMessage } from 'src/decorator/customize';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ApiTags } from '@nestjs/swagger';

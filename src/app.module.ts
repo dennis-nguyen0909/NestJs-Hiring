@@ -5,7 +5,7 @@ import { UsersModule } from './modules/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/passport/jwt-auth-guard';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
@@ -24,6 +24,7 @@ import { WorkExperienceModule } from './modules/work-experience/work-experience.
 import { EducationModule } from './modules/education/education.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SmsModule } from './sms/sms.module';
+import { TransformInterceptor } from './core/transform.interceptor';
 @Module({
   imports: [
     UsersModule,
@@ -86,6 +87,10 @@ import { SmsModule } from './sms/sms.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: TransformInterceptor,
+    // },
   ],
 })
 export class AppModule {}

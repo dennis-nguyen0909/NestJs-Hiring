@@ -11,7 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Public } from 'src/decorator/customize';
+import { Public, ResponseMessage } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
@@ -26,6 +26,7 @@ export class UsersController {
   }
 
   @Get('')
+  @ResponseMessage('List of users')
   findAll(
     @Query() query: string,
     @Query('current') current: string,

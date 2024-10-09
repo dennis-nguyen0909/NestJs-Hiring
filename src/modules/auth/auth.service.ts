@@ -21,7 +21,6 @@ export class AuthService {
     const refresh_token = await this.jwtService.signAsync(payload, {
       expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRED'),
     });
-    console.log('user', user);
     if (user.error_code === 400) {
       return user;
     }

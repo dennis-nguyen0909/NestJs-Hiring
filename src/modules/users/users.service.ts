@@ -101,7 +101,6 @@ export class UsersService {
       .select('-password')
       .populate('role');
     return {
-      data: {
         items: result,
         meta: {
           count: result.length,
@@ -110,7 +109,6 @@ export class UsersService {
           total: totalItems,
           total_pages: totalPages,
         },
-      },
     };
   }
 
@@ -121,12 +119,10 @@ export class UsersService {
 
   async findOne(id: string) {
     try {
-      console.log('duydeptraiaaiaiai', id);
       const user = await this.userRepository
         .findOne({ _id: id })
         .select('-password') // Use a space-separated string for excluding fields
         .populate('role'); // Populate 'role' field
-      console.log('user', user);
       if (user) {
         return user;
       }
@@ -142,13 +138,9 @@ export class UsersService {
         .findOne({ _id: id })
         .select(['-password', '-code_id', '-code_expired']) // Use a space-separated string for excluding fields
         .populate('role'); // Populate 'role' field
-      console.log('user', user);
       if (user) {
         return {
-          data: {
-            message: [''],
             items: user,
-          },
         };
       }
       return null;
