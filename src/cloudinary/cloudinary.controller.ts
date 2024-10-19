@@ -4,6 +4,8 @@ import {
   UploadedFiles,
   UseInterceptors,
   UploadedFile,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
@@ -19,7 +21,9 @@ export class CloudinaryController {
   // Upload một file
   @Post('upload-file') // Đặt route là /cloudinary/upload-file
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File): Promise<string> {
+  uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<{ url: string; originalName: string; result: any }> {
     return this.cloudinaryService.uploadFile(file);
   }
 
@@ -28,7 +32,11 @@ export class CloudinaryController {
   @UseInterceptors(FilesInterceptor('files')) // Đặt tên field upload là 'files'
   uploadFiles(
     @UploadedFiles() files: Express.Multer.File[],
-  ): Promise<string[]> {
+  ): Promise<{ url: string; originalName: string }[]> {
     return this.cloudinaryService.uploadFiles(files);
+  }
+  @Delete('delete-file/:publicId')
+  deleteFile(@Param('publicId') publicId: string) {
+    return this.cloudinaryService.deleteFile(publicId);
   }
 }

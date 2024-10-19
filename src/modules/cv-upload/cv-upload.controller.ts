@@ -1,36 +1,82 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CvUploadService } from './cv-upload.service';
-import { CreateCvUploadDto } from './dto/create-cv-upload.dto';
-import { UpdateCvUploadDto } from './dto/update-cv-upload.dto';
-import { ApiTags } from '@nestjs/swagger';
-
-@Controller('cv-upload')
-@ApiTags('CvUpload')
+import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { Public, ResponseMessage } from 'src/decorator/customize';
+@Controller('upload-cvs')
+@ApiTags('UploadCv')
+@Public()
 export class CvUploadController {
   constructor(private readonly cvUploadService: CvUploadService) {}
 
   @Post()
-  create(@Body() createCvUploadDto: CreateCvUploadDto) {
-    return this.cvUploadService.create(createCvUploadDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.cvUploadService.findAll();
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        name: {
+          type: 'string',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  @ResponseMessage('Success')
+  create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('user_id') userId: string,
+  ) {
+    return this.cvUploadService.create(file, userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cvUploadService.findOne(+id);
+  @ResponseMessage('Success')
+  async findOne(@Param('id') id: string) {
+    return this.cvUploadService.findOne(id);
+  }
+  @Get('user/:id')
+  @ResponseMessage('Success')
+  async findByUserId(@Param('id') id: string) {
+    return this.cvUploadService.findByUserId(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCvUploadDto: UpdateCvUploadDto) {
-    return this.cvUploadService.update(+id, updateCvUploadDto);
+  @Get('')
+  @ResponseMessage('Success')
+  async findAll(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.cvUploadService.findAll(query, +current, +pageSize);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cvUploadService.remove(+id);
+  @Delete('user/:id')
+  @ResponseMessage('Success')
+  async removeByUserId(
+    @Param('id') cvId: string,
+    @Body('userId') userId: string,
+  ) {
+    return this.cvUploadService.removeByUserId(cvId, userId);
+  }
+
+  @Delete('')
+  @ResponseMessage('Success')
+  async removeMany(@Body('ids') ids: Array<string>) {
+    return this.cvUploadService.removeMany(ids);
   }
 }

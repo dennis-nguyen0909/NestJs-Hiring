@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/User.schema';
-import { Model } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import { hashPasswordHelper } from 'src/helpers/util';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
@@ -129,6 +129,27 @@ export class UsersService {
       return null;
     } catch (error) {
       throw new NotFoundException();
+    }
+  }
+  async findByObjectId(id:string){
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Invalid ID format');
+    }
+  
+    try {
+      const userId = new Types.ObjectId(id); // Chuyển đổi id sang ObjectId
+      const user = await this.userRepository
+        .findOne({ _id: userId }) // Sử dụng userId
+        .select('-password')
+        .populate('role');
+  
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      throw new NotFoundException('User not found');
     }
   }
   async getDetailUser(id: string) {

@@ -8,6 +8,6 @@ import { ConfigModule } from '@nestjs/config';
   imports: [ConfigModule.forRoot({ isGlobal: true })],
   controllers: [CloudinaryController],
   providers: [CloudinaryService, CloudinaryProvider],
-  exports: [CloudinaryProvider],
+  exports: [CloudinaryProvider, CloudinaryService],
 })
 export class CloudinaryModule {}
