@@ -216,11 +216,7 @@ export class UsersService {
     const isEmailExists = await this.isEmailExists(email);
 
     if (isEmailExists) {
-      // throw new BadRequestException(`Email {${email}} already exists`);
-      return {
-        message: `Email {${email}} already exists`,
-        error_code: 400,
-      };
+      throw new BadRequestException(`Email {${email}} already exists`);    
     }
 
     const hashPassword = await hashPasswordHelper(password);
@@ -254,7 +250,6 @@ export class UsersService {
     }
 
     const newUser = await this.userRepository.create(userData);
-    console.log("newUser",newUser)
     // Send activation email
     try {
       this.mailService.sendMail({
@@ -274,29 +269,17 @@ export class UsersService {
 
 
     return {
-      message: ['Success'],
-      error_code: 0,
-      data: {
         user_id: newUser._id,
-      },
     };
   }
   async retryActive(email: string) {
     const user = await this.userRepository.findOne({ email });
 
     if(!user){
-      return {
-        message:['User not found'],
-        data:[],
-        error_code:400
-      }
+      throw new BadRequestException('User not found');
     }
     if(user.is_active){
-      return {
-        message:['User is active'],
-        data:[],
-        error_code:400
-      }
+      throw new BadRequestException('User is active');
     }
     const codeId = uuidv4();
 
@@ -318,11 +301,7 @@ export class UsersService {
     });
 
     return {
-      message: ['Success'],
-      error_code: 0,
-      data: {
         user_id: user._id,
-      },
     };
   }
 }

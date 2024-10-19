@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { comparePasswordHelper } from 'src/helpers/util';
 import { JwtService } from '@nestjs/jwt';
@@ -69,49 +73,29 @@ export class AuthService {
   async verify(verifyDto: VerifyAuthDto): Promise<any> {
     try {
       const { id, code_id } = verifyDto;
-      const user = await this.userService.findOne(id);
+      const findUser = await this.userService.findOne(id);
       const currentDay = dayjs(); // Lấy thời gian hiện tại bằng dayjs
-      if (!user) {
-        return {
-          message: ['User not found'],
-          error_code: 400,
-          data: [],
-        };
+      if (!findUser) {
+        throw new BadRequestException('User not found');
       }
 
-      if (user.code_id !== code_id) {
-        return {
-          message: ['Code not correct'],
-          error_code: 400,
-          data: [],
-        };
+      if (findUser.code_id !== code_id) {
+        throw new BadRequestException('Code not correct');
       }
 
       const updateUser = await this.userService.updateAfterVerify(id, true);
       if (!updateUser) {
-        return {
-          message: ['Update user failed'],
-          error_code: 400,
-          data: [],
-        };
+        throw new BadRequestException('Update user failed');
       }
       // Kiểm tra xem mã đã hết hạn hay chưa
-      if (dayjs(user.code_expired).isBefore(currentDay)) {
-        return {
-          message: ['Code expired'],
-          error_code: 400,
-          data: [],
-        };
+      if (dayjs(findUser.code_expired).isBefore(currentDay)) {
+        throw new BadRequestException('Code expired');
       }
 
-      const { access_token, refresh_token } = await this.signIn(user);
+      const { user } = await this.signIn(findUser);
       return {
-        message: ['Success'],
-        error_code: 0,
-        data: {
-          access_token,
-          refresh_token,
-        },
+        access_token: user.access_token,
+        refresh_token: user.refresh_token,
       };
     } catch (error) {
       throw new UnauthorizedException(error.message || 'Lỗi từ server');
