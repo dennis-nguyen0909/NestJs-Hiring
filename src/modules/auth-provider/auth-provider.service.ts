@@ -30,10 +30,9 @@ export class AuthProviderService {
       provider_id,
       provider_name,
     });
-    return {
-      message: 'AuthProvider created successfully',
-      data: newAuthProvider,
-    };
+    if (!newAuthProvider)
+      throw new NotFoundException('AuthProvider create failed');
+    return newAuthProvider;
   }
 
   async findAll(query: string, current: number, pageSize: number) {
@@ -51,25 +50,23 @@ export class AuthProviderService {
       .skip(skip)
       .sort(sort as any);
     return {
-      data: {
-        items: result,
-        meta: {
-          count: result.length,
-          current_page: current,
-          per_page: pageSize,
-          total: totalItems,
-          total_pages: totalPages,
-        },
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
       },
     };
   }
 
   async findOne(id: string) {
     const result = await this.authProviderRepository.findOne({ _id: id });
-    return {
-      message: 'This action returns authProvider',
-      data: result,
-    };
+    if (!result) {
+      throw new BadRequestException('AuthProvider not found');
+    }
+    return result;
   }
 
   async update(id: string, updateAuthProviderDto: UpdateAuthProviderDto) {
@@ -80,15 +77,11 @@ export class AuthProviderService {
     if (result.modifiedCount === 0) {
       throw new BadRequestException('AuthProvider not found');
     }
-    return {
-      message: 'AuthProvider updated successfully',
-      data: updateAuthProviderDto,
-    };
+    return updateAuthProviderDto;
   }
 
   async remove(data: DeleteAuthProviderDTO) {
     const { ids } = data;
-    console.log("duydeptrai",ids)
     try {
       if (!Array.isArray(ids)) {
         throw new BadRequestException('Ids not is array');
@@ -98,18 +91,12 @@ export class AuthProviderService {
       }
       if (ids.length === 1) {
         await this.authProviderRepository.deleteOne({ _id: ids[0] });
-        return {
-          message: 'AuthProvider deleted successfully',
-          data: [],
-        };
+        return [];
       } else {
         await this.authProviderRepository.deleteMany({
           _id: { $in: ids },
         });
-        return {
-          message: 'AuthProvider deleted successfully',
-          data: [],
-        };
+        return [];
       }
     } catch (error) {
       throw new NotFoundException(error);
