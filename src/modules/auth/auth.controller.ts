@@ -6,7 +6,6 @@ import {
   Get,
   Body,
   UnauthorizedException,
-  Response,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local-auth.guard';
@@ -26,6 +25,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
+  @ResponseMessage('Success')
   @UseGuards(LocalAuthGuard)
   async signIn(@Request() req) {
     return this.authService.signIn(req.user);
@@ -33,18 +33,21 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
+  @ResponseMessage('Success')
   getProfile(@Request() req) {
     return req.user;
   }
 
   @Public()
   @Post('register')
+  @ResponseMessage('Success')
   register(@Body() registerDto: RegisterAuthDto) {
     return this.authService.register(registerDto);
   }
 
   @Get('email')
   @Public()
+  @ResponseMessage('Success')
   testMail() {
     this.mailService.sendMail({
       to: 'dennis.nguyen0909@gmail.com', // list of receivers
@@ -60,6 +63,7 @@ export class AuthController {
   }
   @Get('check-token')
   @Public()
+  @ResponseMessage('Success')
   async checkToken(@Request() req) {
     const token = req.cookies.token; // Lấy token từ cookie
     if (!token) {
@@ -71,23 +75,23 @@ export class AuthController {
 
   @Post('verify')
   @Public()
+  @ResponseMessage('Success')
   verify(@Body() verifyDto: VerifyAuthDto) {
     return this.authService.verify(verifyDto);
   }
 
   @Post('retry-active')
   @Public()
+  @ResponseMessage('Success')
   retryActive(@Body('email') email: string) {
     return this.authService.retryActive(email);
   }
 
-
   @Post('refresh-token')
   @UseGuards(JwtAuthGuard)
   @Public()
+  @ResponseMessage('Success')
   async refreshToken(@Request() req) {
-    console.log("req",req.headers.authorization)
+    console.log('req', req.headers.authorization);
   }
-
-
 }

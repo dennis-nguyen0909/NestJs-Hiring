@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  SetMetadata,
 } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
@@ -10,6 +11,7 @@ import { Application } from './schema/Application.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
 import { DeleteApplicationDto } from './dto/delete-application.dto';
+import { RESPONSE_MESSAGE, ResponseMessage } from 'src/decorator/customize';
 
 @Injectable()
 export class ApplicationService {
@@ -24,10 +26,7 @@ export class ApplicationService {
         ...createApplicationDto,
       });
       if (newApplied) {
-        return {
-          message: ['Applied successfully'],
-          data: newApplied,
-        };
+        return newApplied;
       } else {
         throw new NotFoundException();
       }
@@ -51,15 +50,13 @@ export class ApplicationService {
       .skip(skip)
       .sort(sort as any);
     return {
-      data: {
-        items: result,
-        meta: {
-          count: result.length,
-          current_page: current,
-          per_page: pageSize,
-          total: totalItems,
-          total_pages: totalPages,
-        },
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
       },
     };
   }
@@ -87,10 +84,7 @@ export class ApplicationService {
         },
       );
       if (applied) {
-        return {
-          message: 'Applied updated successfully',
-          data: applied,
-        };
+        return applied;
       }
     } catch (error) {
       throw new NotFoundException(error);
@@ -99,7 +93,6 @@ export class ApplicationService {
 
   async remove(data: DeleteApplicationDto) {
     const { ids } = data;
-    console.log("data",data)
     if (!Array.isArray(ids)) {
       throw new BadRequestException('Ids not is array');
     }
@@ -112,10 +105,7 @@ export class ApplicationService {
           _id: ids[0],
         });
         if (deleted.deletedCount > 0) {
-          return {
-            message: 'Applied deleted successfully',
-            data: [],
-          };
+          return [];
         } else {
           throw new NotFoundException();
         }
@@ -128,10 +118,7 @@ export class ApplicationService {
           _id: { $in: ids },
         });
         if (deleted.deletedCount > 0) {
-          return {
-            message: 'Applied deleted successfully',
-            data: [],
-          };
+          return [];
         } else {
           throw new NotFoundException();
         }

@@ -24,7 +24,7 @@ import { WorkExperienceModule } from './modules/work-experience/work-experience.
 import { EducationModule } from './modules/education/education.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SmsModule } from './sms/sms.module';
-import { TransformInterceptor } from './core/transform.interceptor';
+import { MajorModule } from './modules/major/major.module';
 @Module({
   imports: [
     UsersModule,
@@ -79,6 +79,7 @@ import { TransformInterceptor } from './core/transform.interceptor';
     EducationModule,
     CloudinaryModule,
     SmsModule,
+    MajorModule,
   ],
   controllers: [AppController],
   providers: [

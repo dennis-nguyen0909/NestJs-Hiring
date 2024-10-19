@@ -32,8 +32,8 @@ export class CV extends Document {
   @Prop({ type: [String], required: true })
   cv_url: string[];
 
-  @Prop({ type: String, required: true })
-  file_name: string;
+  // @Prop({ type: String, required: true })
+  // file_name: string;
 
   // Timestamps are automatically added with the 'timestamps' option in @Schema
 }

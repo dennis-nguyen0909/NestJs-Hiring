@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class Application extends Document {
   @ApiProperty({
     description: 'User id',
-    example: '13123132',
+    example: 'user1',
   })
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   user_id: string;

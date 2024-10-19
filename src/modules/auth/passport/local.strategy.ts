@@ -19,17 +19,16 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       // throw new BadRequestException('Username or password is incorrect');
       return {
         message: ['Username or password is incorrect'],
-        error_code: 400,
-      }
+        error_code: 401,
+      };
     }
 
     if (user.is_active === false) {
-      throw new BadRequestException('User not active');
-      // return {
-      //   messages: ['User is not active'],
-      //   error_code: 400,
-      //   data: [],
-      // };
+      // throw new BadRequestException('User not active');
+      return {
+        message: ['User is not active'],
+        error_code: 400,
+      };
     }
     return user;
   }

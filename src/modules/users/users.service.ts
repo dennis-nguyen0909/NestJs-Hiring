@@ -254,18 +254,24 @@ export class UsersService {
     }
 
     const newUser = await this.userRepository.create(userData);
-
+    console.log("newUser",newUser)
     // Send activation email
-    this.mailService.sendMail({
-      to: newUser.email,
-      subject: 'Kích hoạt tài khoản tại @dennis', // Subject line
-      text: 'Chào mừng', // plaintext body
-      template: 'template',
-      context: {
-        name: newUser?.full_name ?? newUser.email,
-        activationCode: codeId,
-      },
-    });
+    try {
+      this.mailService.sendMail({
+        to: newUser.email,
+        subject: 'Kích hoạt tài khoản tại @dennis', // Subject line
+        text: 'Chào mừng', // plaintext body
+        template: 'template',
+        context: {
+          name: newUser?.full_name ?? newUser.email,
+          activationCode: codeId,
+        },
+      });
+    } catch (error) {
+      console.log("error",error)
+      
+    }
+
 
     return {
       message: ['Success'],
