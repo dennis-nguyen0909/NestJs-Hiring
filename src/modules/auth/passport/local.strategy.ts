@@ -16,19 +16,11 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(username: string, password: string): Promise<any> {
     const user = await this.authService.validateUser(username, password);
     if (!user) {
-      // throw new BadRequestException('Username or password is incorrect');
-      return {
-        message: ['Username or password is incorrect'],
-        error_code: 401,
-      };
+      throw new BadRequestException('Username or password is incorrect');
     }
 
     if (user.is_active === false) {
-      // throw new BadRequestException('User not active');
-      return {
-        message: ['User is not active'],
-        error_code: 400,
-      };
+      throw new BadRequestException('User not active');
     }
     return user;
   }

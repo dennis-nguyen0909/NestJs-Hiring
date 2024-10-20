@@ -19,6 +19,7 @@ export class AuthService {
   ) {}
   async signIn(user: any): Promise<any> {
     const payload = { sub: user._id, username: user.email, role: user.role };
+    console.log("user",user)
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
     });

@@ -6,6 +6,7 @@ import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
 @Schema()
 @ApiTags('Users')
+@Schema({ timestamps: true })
 export class Education extends Document {
   @Prop({ type: Types.ObjectId, ref: User.name })
   user_id: Types.ObjectId;
