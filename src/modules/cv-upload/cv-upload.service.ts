@@ -135,5 +135,26 @@ export class CvUploadService {
     }
   }
 
-  async removeMany(ids: Array<string>) {}
+  async removeMany(ids: Array<string>) {
+    try {
+      if (ids.length === 1) {
+        const res = await this.uploadCvModel.deleteOne({ _id: ids[0] });
+
+        if (res.deletedCount > 0) {
+          return [];
+        } else {
+          throw new BadRequestException('Cv not found');
+        }
+      } else {
+        const res = await this.uploadCvModel.deleteMany({ _id: { $in: ids } });
+        if (res.deletedCount > 0) {
+          return [];
+        } else {
+          throw new BadRequestException('Cv not found');
+        }
+      }
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 }
