@@ -1,26 +1,116 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Level } from './schema/Level.schema';
+import aqp from 'api-query-params';
 
 @Injectable()
 export class LevelService {
-  create(createLevelDto: CreateLevelDto) {
-    return 'This action adds a new level';
+  constructor(
+    @InjectModel('Level') private readonly levelModel: Model<Level>,
+  ) {}
+  async create(createLevelDto: CreateLevelDto) {
+    const { name, description } = createLevelDto;
+    let { key } = createLevelDto;
+    key = `_${name.trim().toLocaleLowerCase().trim()}`;
+    const level = await this.levelModel.create({
+      name,
+      description,
+      key,
+    });
+    if (!level) {
+      throw new BadRequestException('Failed');
+    }
+    return level;
   }
 
-  findAll() {
-    return `This action returns all level`;
+  async findAll(query: string, current: number, pageSize: number) {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    const totalItems = (await this.levelModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+    const result = await this.levelModel
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any);
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} level`;
+  async findOne(id: string) {
+    const job = await this.levelModel.findOne({ _id: id });
+    if (!job) {
+      throw new NotFoundException();
+    }
+    return job;
   }
 
-  update(id: number, updateLevelDto: UpdateLevelDto) {
-    return `This action updates a #${id} level`;
+  async update(id: string, updateLevelDto: UpdateLevelDto) {
+    const job = await this.levelModel.findByIdAndUpdate(id, updateLevelDto, {
+      new: true,
+      runValidators: true,
+    });
+    if (!job) {
+      throw new NotFoundException();
+    }
+    return job;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} level`;
+  async remove(ids: Array<string>) {
+    try {
+      if (ids.length < 0) {
+        throw new BadRequestException('Ids not found');
+      }
+      if (!Array.isArray(ids)) {
+        throw new BadRequestException('Ids phai la mang');
+      }
+      if (ids.length === 1) {
+        const job = await this.levelModel.findById(ids[0]);
+        if (!job) {
+          throw new NotFoundException();
+        }
+        const result = await this.levelModel.deleteOne({ _id: ids[0] });
+        if (result.deletedCount > 0) {
+          return [];
+        } else {
+          throw new BadRequestException('Delete failed!');
+        }
+      } else {
+        const jobs = await this.levelModel.find({ _id: { $in: ids } });
+        if (!jobs) {
+          throw new NotFoundException();
+        }
+        const result = await this.levelModel.deleteMany({
+          _id: { $in: ids },
+        });
+        if (result.deletedCount > 0) {
+          return [];
+        } else {
+          throw new BadRequestException('Delete failed!');
+        }
+      }
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
   }
 }

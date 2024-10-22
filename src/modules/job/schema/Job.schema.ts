@@ -1,9 +1,8 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Mongoose, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { Level } from '../../level/schema/Level.schema';
-import { User } from 'src/modules/users/schemas/User.schema';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Job extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   user_id: string;
@@ -32,7 +31,7 @@ export class Job extends Document {
   @Prop()
   require_experience: string;
 
-  @Prop({ type: Types.ObjectId, ref: Level.name })
+  @Prop({ type: Types.ObjectId, ref: 'Level', required: true })
   level: Level;
 
   @Prop({ type: Date })

@@ -28,25 +28,15 @@ export class JobService {
       if (user.role.role_name === 'EMPLOYER') {
         const job = await this.jobRepository.create(createJobDto);
         if (job) {
-          return {
-            message: 'Job created successfully',
-            error: 200,
-            data: job,
-          };
+          return job;
         } else {
-          return {
-            message: 'Job not created',
-            error: 201,
-          };
+          throw new BadRequestException('Create job failed');
         }
       } else {
         throw new UnauthorizedException('User is not an employer');
       }
     } else {
-      return {
-        message: 'User not found',
-        error: 201,
-      };
+      throw new BadRequestException('User not found');
     }
   }
 
@@ -65,21 +55,26 @@ export class JobService {
       .skip(skip)
       .sort(sort as any);
     return {
-      data: {
-        items: result,
-        meta: {
-          count: result.length,
-          current_page: current,
-          per_page: pageSize,
-          total: totalItems,
-          total_pages: totalPages,
-        },
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
       },
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} job`;
+  async findOne(id: string) {
+    const job = await this.jobRepository
+      .findOne({ _id: id })
+      .populate('user_id')
+      .populate('level');
+    if (!job) {
+      throw new NotFoundException();
+    }
+    return job;
   }
 
   async update(id: string, updateJobDto: UpdateJobDto) {
@@ -89,16 +84,9 @@ export class JobService {
         runValidators: true, // Kiểm tra các ràng buộc khi cập nhật
       });
       if (job) {
-        return {
-          message: 'Job updated successfully',
-          error: 200,
-          data: job,
-        };
+        return job;
       } else {
-        return {
-          message: 'Job not updated',
-          error: 201,
-        };
+        throw new BadRequestException('Update job failed');
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
@@ -126,15 +114,9 @@ export class JobService {
 
         const result = await this.jobRepository.deleteOne({ _id: ids[0] });
         if (result.deletedCount > 0) {
-          return {
-            message: 'Delete success',
-            error: 200,
-          };
+          return [];
         } else {
-          return {
-            message: 'Delete failed',
-            error: 201,
-          };
+          throw new BadRequestException('Delete failed!');
         }
       } else {
         const jobs = await this.jobRepository.find({ _id: { $in: ids } });
@@ -150,15 +132,9 @@ export class JobService {
           _id: { $in: ids },
         });
         if (result.deletedCount > 0) {
-          return {
-            message: 'Delete success',
-            error: 200,
-          };
+          return [];
         } else {
-          return {
-            message: 'Delete failed',
-            error: 201,
-          };
+          throw new BadRequestException('Delete failed!');
         }
       }
     } catch (error) {

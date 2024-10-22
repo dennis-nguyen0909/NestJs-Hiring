@@ -14,7 +14,6 @@ import { CvModule } from './modules/cv/cv.module';
 import { CvUploadModule } from './modules/cv-upload/cv-upload.module';
 import { ApplicationModule } from './modules/application/application.module';
 import { AuthProviderModule } from './modules/auth-provider/auth-provider.module';
-import { EmployerModule } from './modules/employer/employer.module';
 import { FollowModule } from './modules/follow/follow.module';
 import { LevelModule } from './modules/level/level.module';
 import { NotificationModule } from './modules/notification/notification.module';
@@ -69,7 +68,6 @@ import { MajorModule } from './modules/major/major.module';
     CvUploadModule,
     ApplicationModule,
     AuthProviderModule,
-    EmployerModule,
     FollowModule,
     LevelModule,
     NotificationModule,
