@@ -1,9 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateFollowDto } from './dto/create-follow.dto';
 import { UpdateFollowDto } from './dto/update-follow.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Follow } from './schema/Follow.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -12,67 +16,81 @@ export class FollowService {
     @InjectModel(Follow.name) private readonly followModel: Model<Follow>,
     private readonly userService: UsersService,
   ) {}
-  // Tạo một bản ghi theo dõi mới
-  async create(createFollowDto: CreateFollowDto): Promise<Follow> {
-    const { following_id, follower_id } = createFollowDto;
+  async followUser(createFollowDto: CreateFollowDto) {
+    const { follower_id, following_id } = createFollowDto;
+    const follower = await this.userService.findByObjectId(follower_id + '');
+    const following = await this.userService.findByObjectId(following_id + '');
 
-    // Kiểm tra xem người theo dõi và người được theo dõi có tồn tại không
-    const following = await this.userService.findOne(following_id + '');
-    const follower = await this.userService.findOne(follower_id + '');
-
-    if (!following || !follower) {
-      throw new BadRequestException('User not found');
+    if (follower_id === following_id) {
+      throw new BadRequestException('You cannot follow yourself');
+    }
+    if (
+      follower.role.role_name === 'ADMIN' ||
+      following.role.role_name === 'ADMIN'
+    ) {
+      throw new BadRequestException('You cannot follow admin');
+    }
+    if (
+      follower.role.role_name === 'EMPLOYER' &&
+      following.role.role_name === 'EMPLOYER'
+    ) {
+      throw new BadRequestException('You cannot follow employer');
+    }
+    if (
+      follower.role.role_name === 'USER' &&
+      following.role.role_name === 'USER'
+    ) {
+      throw new BadRequestException('You cannot follow user');
+    }
+    if (!follower || !following) {
+      throw new NotFoundException('One or both users not found');
     }
 
-    // Kiểm tra xem đã có bản ghi theo dõi chưa
     const existingFollow = await this.followModel.findOne({
-      following_id,
-      follower_id,
+      follower_id: follower_id,
+      following_id: following_id,
     });
 
     if (existingFollow) {
-      // Nếu đã theo dõi, xóa bản ghi để hủy theo dõi
-      await this.followModel.findByIdAndDelete(existingFollow._id);
-      console.log("hủy theo dõi")
-      return existingFollow; // Trả về bản ghi đã bị xóa
-    } else {
-      // Nếu chưa theo dõi, tạo một bản ghi mới
-      const newFollow = await this.followModel.create(createFollowDto);
-      console.log("tạo theo dõi")
-      if (!newFollow) {
-        throw new BadRequestException('Create follow failed');
+      const res = await this.followModel.deleteOne({ _id: existingFollow._id });
+      if (res.deletedCount > 0) {
+        return 'Unfollowed successfully';
       }
-      return newFollow;
+    } else {
+      const follow = new this.followModel({
+        follower_id: follower_id,
+        following_id: following_id,
+      });
+      await follow.save();
+      return 'Followed successfully';
     }
   }
-
-  // Lấy tất cả các bản ghi theo dõi
-  async findAll(): Promise<Follow[]> {
-    return this.followModel.find().populate('following_id follower_id').exec(); // Lấy tất cả bản ghi và populate thông tin người theo dõi và công ty
+  async getFollowByUserId(id: string) {
+    return await this.followModel.find({ follower_id: id });
   }
+  // Phương thức kiểm tra xem user có đang follow nhà tuyển dụng hay không
+  async checkIfFollowing(followerId: string, employerId: string) {
+    // Tìm thông tin người theo dõi
+    const follower = await this.userService.findByObjectId(followerId + '');
+    const employer = await this.userService.findByObjectId(employerId + '');
 
-  // Tìm một bản ghi theo dõi theo ID
-  async findOne(id: string): Promise<Follow> {
-    return this.followModel
-      .findById(id)
-      .populate('following_id follower_id')
-      .exec(); // Tìm bản ghi theo ID và populate
-  }
-
-  // Cập nhật một bản ghi theo dõi
-  async update(id: string, updateFollowDto: UpdateFollowDto): Promise<Follow> {
-    return this.followModel
-      .findByIdAndUpdate(id, updateFollowDto, { new: true })
-      .populate('following_id follower_id')
-      .exec(); // Cập nhật bản ghi và trả về bản ghi mới
-  }
-
-  // Xóa một bản ghi theo dõi
-  async remove(id: string): Promise<Follow> {
-    const res = await this.followModel.findByIdAndDelete(id);
-    if (!res) {
-      throw new Error('Follow not found');
+    // Kiểm tra xem người dùng và nhà tuyển dụng có tồn tại không
+    if (!follower || !employer) {
+      throw new NotFoundException('User or Employer not found');
     }
-    return res;
+
+    // Kiểm tra xem vai trò của employer có phải là EMPLOYER không
+    if (employer.role.role_name !== 'EMPLOYER') {
+      throw new BadRequestException('The target user is not an Employer');
+    }
+
+    // Kiểm tra xem follower có đang follow employer không
+    const followRecord = await this.followModel.findOne({
+      follower_id: followerId,
+      following_id: employerId,
+    });
+
+    // Trả về kết quả true nếu đã follow, false nếu chưa follow
+    return followRecord ? { isFollowing: true } : { isFollowing: false };
   }
 }

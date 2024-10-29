@@ -19,7 +19,7 @@ export class AuthService {
   ) {}
   async signIn(user: any): Promise<any> {
     const payload = { sub: user._id, username: user.email, role: user.role };
-    console.log("user",user)
+    console.log('user', user);
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
     });
@@ -29,6 +29,7 @@ export class AuthService {
     if (user.error_code === 400) {
       return user;
     }
+    console.log("result",access_token,refresh_token,user)
     return {
       user: {
         email: user.email,
@@ -105,5 +106,23 @@ export class AuthService {
 
   async retryActive(email: string): Promise<any> {
     return this.userService.retryActive(email);
+  }
+
+  async logout(user: any) {
+    return true;
+  }
+  async refreshToken(refreshToken:string) {
+    // const user = await this.userService.findOne(userId);
+    // if (!user) {
+    //   throw new BadRequestException('User not found');
+    // }
+
+    // const payload = { sub: user._id, username: user.email, role: user.role };
+    // const newAccessToken = await this.jwtService.signAsync(payload, {
+    //   expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
+    // });
+    return {
+     
+    };
   }
 }

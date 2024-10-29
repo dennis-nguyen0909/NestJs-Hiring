@@ -6,6 +6,7 @@ import {
   Get,
   Body,
   UnauthorizedException,
+  Response,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local-auth.guard';
@@ -27,7 +28,7 @@ export class AuthController {
   @Public()
   @ResponseMessage('Success')
   @UseGuards(LocalAuthGuard)
-  async signIn(@Request() req) {
+  signIn(@Request() req) {
     return this.authService.signIn(req.user);
   }
 
@@ -89,9 +90,29 @@ export class AuthController {
 
   @Post('refresh-token')
   @UseGuards(JwtAuthGuard)
-  @Public()
   @ResponseMessage('Success')
   async refreshToken(@Request() req) {
-    console.log('req', req.headers.authorization);
+    const authHeader = req.headers['authorization'];
+    const user = req.user;
+    if (!authHeader) {
+      throw new UnauthorizedException('No authorization header provided');
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('Invalid authorization header');
+    }
+    console.log('authHeader', authHeader);
+
+    // Gọi service để làm mới token
+    return this.authService.refreshToken(token);
+  }
+
+  @Post('logout')
+  // @Public()
+  @UseGuards(JwtAuthGuard)
+  @ResponseMessage('Success')
+  async logout(@Request() req) {
+    return this.authService.logout(req.user);
   }
 }

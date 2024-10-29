@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/User.schema';
-import { Model, ObjectId, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { hashPasswordHelper } from 'src/helpers/util';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
@@ -17,7 +17,6 @@ import { v4 as uuidv4 } from 'uuid';
 import * as dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { RoleService } from '../role/role.service';
-import e from 'express';
 @Injectable()
 export class UsersService {
   constructor(
@@ -154,11 +153,10 @@ export class UsersService {
   }
   async getDetailUser(id: string) {
     try {
-      console.log('duydeptraiaaiaiai', id);
       const user = await this.userRepository
         .findOne({ _id: id })
-        .select(['-password', '-code_id', '-code_expired']) // Use a space-separated string for excluding fields
-        .populate('role'); // Populate 'role' field
+        .select(['-password', '-code_id', '-code_expired'])
+        .populate('role');
       if (user) {
         return {
             items: user,
@@ -184,10 +182,7 @@ export class UsersService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = updatedUser.toObject();
 
-    return {
-      message: 'User updated successfully',
-      data: userWithoutPassword,
-    };
+    return userWithoutPassword;
   }
 
   async updateAfterVerify(id: string, is_active: boolean) {
@@ -217,10 +212,7 @@ export class UsersService {
     }
 
     // Nếu xóa thành công, trả về message
-    return {
-      message: 'Người dùng đã được xóa thành công',
-      id: id,
-    };
+    return id;
   }
 
   async handleRegister(registerDto: RegisterAuthDto) {

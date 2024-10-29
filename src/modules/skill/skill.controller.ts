@@ -12,7 +12,7 @@ import { SkillService } from './skill.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorator/customize';
+import { Public, ResponseMessage } from 'src/decorator/customize';
 import { DeleteSkillDto } from './dto/delete-skill.dto';
 
 @Controller('skills')
@@ -22,11 +22,13 @@ export class SkillController {
   constructor(private readonly skillService: SkillService) {}
 
   @Post()
+  @ResponseMessage('Success')
   create(@Body() createSkillDto: CreateSkillDto) {
     return this.skillService.create(createSkillDto);
   }
 
   @Get()
+  @ResponseMessage('Success')
   findAll(
     @Query() query: string,
     @Query('current') current: string,
@@ -36,18 +38,22 @@ export class SkillController {
   }
 
   @Get(':id')
+  @ResponseMessage('Success')
   findOne(@Param('id') id: string) {
-    return this.skillService.findOne(+id);
+    return this.skillService.findOne(id);
   }
 
   @Patch(':id')
+  @ResponseMessage('Success')
+
   update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto) {
-    return this.skillService.update(+id, updateSkillDto);
+    return this.skillService.update(id, updateSkillDto);
   }
 
   @Delete()
+  @ResponseMessage('Success')
   remove(@Body() data: DeleteSkillDto) {
-
+    console.log('data', data);
     return this.skillService.remove(data);
   }
 }

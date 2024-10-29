@@ -38,25 +38,31 @@ export class SkillService {
       .skip(skip)
       .sort(sort as any);
     return {
-      data: {
-        items: result,
-        meta: {
-          count: result.length,
-          current_page: current,
-          per_page: pageSize,
-          total: totalItems,
-          total_pages: totalPages,
-        },
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
       },
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} skill`;
+  findOne(id: string) {
+    const skill = this.skillRepository.findOne({ _id: id });
+    if (!skill) {
+      throw new NotFoundException();
+    }
+    return skill;
   }
 
-  update(id: number, updateSkillDto: UpdateSkillDto) {
-    return `This action updates a #${id} skill`;
+  update(id: string, updateSkillDto: UpdateSkillDto) {
+    const skill = this.skillRepository.updateOne({ _id: id }, updateSkillDto);
+    if (!skill) {
+      throw new NotFoundException();
+    }
+    return skill;
   }
 
   async remove(data: DeleteSkillDto) {
@@ -74,15 +80,9 @@ export class SkillService {
         }
         const result = await this.skillRepository.deleteOne({ _id: ids[0] });
         if (result.deletedCount > 0) {
-          return {
-            message: 'Delete success',
-            error: 200,
-          };
+          return [];
         } else {
-          return {
-            message: 'Delete failed',
-            error: 201,
-          };
+          throw new BadRequestException('Delete failed');
         }
       } else {
         const checkNotExists = await this.skillRepository.findOne({
@@ -96,15 +96,9 @@ export class SkillService {
         });
 
         if (result.deletedCount > 0) {
-          return {
-            message: 'Delete success',
-            error: 200,
-          };
+          return [];
         } else {
-          return {
-            message: 'Delete failed',
-            error: 201,
-          };
+          throw new BadRequestException('Delete failed');
         }
       }
     } catch (error) {
