@@ -12,9 +12,9 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 
-@Controller('cloudinary')
+@Controller('media')
 @Public()
-@ApiTags('Cloudinary')
+@ApiTags('Media')
 export class CloudinaryController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
 

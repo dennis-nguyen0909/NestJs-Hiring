@@ -19,9 +19,8 @@ export class AuthService {
   ) {}
   async signIn(user: any): Promise<any> {
     const payload = { sub: user._id, username: user.email, role: user.role };
-    console.log('user', user);
     const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
+      expiresIn: '10s',
     });
     const refresh_token = await this.jwtService.signAsync(payload, {
       expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRED'),
@@ -29,7 +28,6 @@ export class AuthService {
     if (user.error_code === 400) {
       return user;
     }
-    console.log("result",access_token,refresh_token,user)
     return {
       user: {
         email: user.email,
@@ -111,18 +109,44 @@ export class AuthService {
   async logout(user: any) {
     return true;
   }
-  async refreshToken(refreshToken:string) {
-    // const user = await this.userService.findOne(userId);
-    // if (!user) {
-    //   throw new BadRequestException('User not found');
-    // }
+  async refreshToken(refreshToken: string) {
+    let payload: any;
+    console.log("duydeptrai",refreshToken)
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken);
+    } catch (error) {
+      throw new BadRequestException('Invalid refresh token');
+    }
 
-    // const payload = { sub: user._id, username: user.email, role: user.role };
-    // const newAccessToken = await this.jwtService.signAsync(payload, {
-    //   expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
-    // });
+    const user = await this.userService.findOne(payload.sub);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    // Create new access token
+    const newAccessToken = await this.jwtService.signAsync(
+      { sub: user._id, username: user.email, role: user.role },
+      {
+        expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
+      },
+    );
+
+    // Optionally, you can create a new refresh token if needed
+    const newRefreshToken = await this.jwtService.signAsync(
+      { sub: user._id, username: user.email, role: user.role },
+      {
+        expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRED'),
+      },
+    );
+
     return {
-     
+      user: {
+        email: user.email,
+        user_id: user._id,
+        name: user.full_name,
+        access_token: newAccessToken,
+        refresh_token: newRefreshToken, // Include new refresh token if applicable
+      },
     };
   }
 }

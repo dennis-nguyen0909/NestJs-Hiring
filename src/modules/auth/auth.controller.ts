@@ -6,7 +6,7 @@ import {
   Get,
   Body,
   UnauthorizedException,
-  Response,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local-auth.guard';
@@ -16,6 +16,8 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ApiTags } from '@nestjs/swagger';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
+import { Request as RequestExpress, Response } from 'express';
+import { RefreshTokenGuard } from './passport/jwt-refreshToken-auth.guard';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -28,8 +30,15 @@ export class AuthController {
   @Public()
   @ResponseMessage('Success')
   @UseGuards(LocalAuthGuard)
-  signIn(@Request() req) {
-    return this.authService.signIn(req.user);
+  async signIn(@Request() req, @Res({ passthrough: true }) response: Response) {
+    const { user } = await this.authService.signIn(req.user);
+    response.cookie('refresh_token', user.refresh_token, {
+      httpOnly: true, // Chỉ server mới có thể truy cập cookie này, bảo vệ khỏi XSS
+      maxAge: 24 * 60 * 60 * 1000, // Thời hạn 1 ngày (24 giờ)
+      secure: true, // Chỉ gửi cookie qua HTTPS (bật trong môi trường production)
+      sameSite: 'strict',
+    });
+    return { user };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -89,23 +98,15 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RefreshTokenGuard)
   @ResponseMessage('Success')
-  async refreshToken(@Request() req) {
-    const authHeader = req.headers['authorization'];
-    const user = req.user;
-    if (!authHeader) {
-      throw new UnauthorizedException('No authorization header provided');
-    }
-
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      throw new UnauthorizedException('Invalid authorization header');
-    }
-    console.log('authHeader', authHeader);
-
+  // @Public()
+  async refreshToken(@Request() req: RequestExpress, @Request() reqUser) {
+    const refresh_token = req.cookies.refresh_token;
+    console.log('duydeptrai', reqUser.user);
+    // console.log('refresh_token', user);
     // Gọi service để làm mới token
-    return this.authService.refreshToken(token);
+    return this.authService.refreshToken(refresh_token);
   }
 
   @Post('logout')

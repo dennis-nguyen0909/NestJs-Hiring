@@ -1,80 +1,94 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsBoolean, IsArray } from 'class-validator';
+import { Types } from 'mongoose';
+import { Role } from '../../role/schema/Role.schema';
+import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
+import { Job } from '../../job/schema/Job.schema';
 
 export class CreateUserDto {
-  @ApiProperty({
-    description: "User's full name",
-    example: 'Minh Duy',
-  })
-  @IsNotEmpty({ message: 'Full name is required.' })
-  @IsString()
-  full_name: string;
-
-  @ApiProperty({
-    description: "User's email",
-    example: 'dennis.nguyen0909@gmail.com',
-  })
-  @IsNotEmpty({ message: 'Email is required.' })
   @IsEmail()
   email: string;
 
-  @ApiProperty({
-    description: 'Username of user',
-    example: 'minhduy',
-  })
-  @IsNotEmpty({ message: 'Username is required.' })
   @IsString()
-  username: string;
+  full_name: string;
 
-  @ApiProperty({
-    description: 'Password of user',
-    example: '123123',
-  })
-  @IsNotEmpty({ message: 'Password is required.' })
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  avatar?: string;
+
+  @IsOptional()
+  @IsString()
+  background?: string;
+
   @IsString()
   password: string;
 
-  @ApiProperty({
-    description: 'Role of the user',
-    example: 'USER',
-  })
-  @IsNotEmpty({ message: 'Role is required.' })
-  @IsString()
-  role: string;
-
-  @ApiProperty({
-    description: 'Name of the company the user is associated with (optional)',
-    example: 'ABC Corp',
-    required: false,
-  })
-  @IsString()
   @IsOptional()
+  @IsString()
+  address?: string;
+
+  @IsOptional()
+  @IsString()
+  gender?: string;
+
+  @IsOptional()
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  account_type?: string;
+
+  @IsOptional()
+  token_expiry?: Date;
+
+  @IsOptional()
+  @IsBoolean()
+  is_active?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  is_search_jobs_status?: boolean;
+
+  @IsOptional()
+  @IsString()
+  code_id?: string;
+
+  @IsOptional()
+  code_expired?: Date;
+
+  @IsOptional()
+  @IsArray()
+  auth_providers?: AuthProvider[];
+
+  @IsOptional()
+  @IsArray()
+  save_job_ids?: string[];
+
+  @IsOptional()
+  @IsArray()
+  cvs?: Types.ObjectId[];
+
+  // Các thuộc tính dành cho Employer
+  @IsOptional()
+  @IsString()
   company_name?: string;
 
-  @ApiProperty({
-    description: 'Website of the user (optional)',
-    example: 'https://example.com',
-    required: false,
-  })
-  @IsString()
   @IsOptional()
+  @IsString()
   website?: string;
 
-  @ApiProperty({
-    description: 'Location of the user (optional)',
-    example: 'Ho Chi Minh City, Vietnam',
-    required: false,
-  })
-  @IsString()
   @IsOptional()
+  @IsString()
   location?: string;
 
-  @ApiProperty({
-    description: 'Description about the user (optional)',
-    example: 'Software engineer with 5 years of experience.',
-    required: false,
-  })
-  @IsString()
   @IsOptional()
+  @IsArray()
+  jobs_ids?: Job[];
+
+  @IsOptional()
+  @IsString()
   description?: string;
 }

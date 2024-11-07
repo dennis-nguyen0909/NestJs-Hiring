@@ -1,34 +1,32 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-import {
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsPhoneNumber,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsOptional, IsEmail } from 'class-validator';
 
-export class UpdateUserDto extends PartialType(
-  OmitType(CreateUserDto, ['password']),
-) {
-  @ApiProperty()
-  @IsMongoId({ message: 'Id is not valid' })
-  @IsNotEmpty({ message: 'Id is required' })
-  _id: string;
-  @ApiProperty()
+export class UpdateUserDto extends PartialType(CreateUserDto) {
+  @IsNotEmpty({ message: 'Id is required.' })
+  @IsString()
+  id: string; // Dùng 'id' thay vì '_id'
+
+  // Các trường mà bạn muốn kiểm tra thêm validation có thể thêm ở đây (nếu cần)
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  full_name?: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
   @IsOptional()
   @IsString()
   avatar?: string;
-  @ApiProperty()
-  @IsOptional()
-  phone?: string;
-  @ApiProperty()
+
   @IsOptional()
   @IsString()
-  address?: string;
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  gender?: string;
+  background?: string;
+
+  // Các trường khác có thể được thêm vào đây nếu muốn
 }

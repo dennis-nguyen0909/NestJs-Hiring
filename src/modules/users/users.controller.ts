@@ -37,16 +37,20 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ResponseMessage('Success')
   findOne(@Param('id') id: string) {
     return this.usersService.getDetailUser(id);
   }
 
   @Patch()
+  @ResponseMessage('Success')
   update(@Body() updateUserDto: UpdateUserDto) {
+    console.log("duydeptrai",updateUserDto)
     return this.usersService.update(updateUserDto);
   }
 
   @Delete(':id')
+  @ResponseMessage('Success')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

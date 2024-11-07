@@ -168,8 +168,9 @@ export class UsersService {
     }
   }
   async update(updateUserDto: UpdateUserDto) {
+    console.log("check body",updateUserDto);
     const updatedUser = await this.userRepository.findOneAndUpdate(
-      { _id: updateUserDto._id },
+      { _id: updateUserDto.id },
       { $set: updateUserDto },
       { new: true },
     );

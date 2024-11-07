@@ -19,6 +19,9 @@ export class User extends Document {
   @Prop()
   avatar: string;
 
+  @Prop()
+  background: string;
+
   @Prop({ required: true })
   password: string;
 
@@ -40,7 +43,7 @@ export class User extends Document {
   @Prop({ default: false })
   is_active: boolean;
 
-  @Prop()
+  @Prop({ default: false })
   is_search_jobs_status: boolean;
 
   @Prop()

@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { TransformInterceptor } from './core/transform.interceptor';
-
+import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
@@ -26,6 +26,8 @@ async function bootstrap() {
   // Sử dụng TransformInterceptor trên toàn bộ ứng dụng
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
 
+  // CookiParser
+  app.use(cookieParser());
   const config = new DocumentBuilder()
     .setTitle('Hiring API')
     .setDescription('This api use for hiring application')
@@ -35,5 +37,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   await app.listen(port);
+  console.log("Server running on port: " + port);
 }
 bootstrap();
