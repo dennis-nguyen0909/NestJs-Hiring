@@ -15,9 +15,7 @@ export class CvUploadService {
     private readonly userService: UsersService,
   ) {}
   async create(file: Express.Multer.File, userId: string) {
-    console.log('userId', userId);
     const findUser = await this.userService.findOne(userId);
-    console.log('findUser', findUser);
     if (!findUser) {
       throw new BadRequestException('User not found');
     }
@@ -25,7 +23,6 @@ export class CvUploadService {
       throw new BadRequestException('File not found');
     }
     const uploadOnCloud = await this.cloudinaryService.uploadFile(file);
-    console.log('uploadOnCloud', uploadOnCloud);
     if (!uploadOnCloud) {
       throw new BadRequestException('Upload on cloud failed');
     }

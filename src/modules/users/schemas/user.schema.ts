@@ -4,6 +4,7 @@ import { Job } from '../../job/schema/Job.schema'; // Nhớ import Job schema
 import { Role } from '../../role/schema/Role.schema';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { CV } from '../../cv/schema/CV.schema';
+import { Education } from 'src/modules/education/schema/Education.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -60,6 +61,9 @@ export class User extends Document {
 
   @Prop([{ type: Types.ObjectId, ref: 'CV' }])
   cvs: CV[];
+
+  @Prop([{ type: Types.ObjectId, ref: Education.name }])
+  education_ids: Types.ObjectId[];
 
   // Các thuộc tính dành cho Employer (Nhà tuyển dụng)
   @Prop({ required: false })

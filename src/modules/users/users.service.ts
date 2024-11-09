@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { RoleService } from '../role/role.service';
+import { Education } from '../education/schema/Education.schema';
 @Injectable()
 export class UsersService {
   constructor(
@@ -153,37 +154,45 @@ export class UsersService {
   }
   async getDetailUser(id: string) {
     try {
-      const user = await this.userRepository
-        .findOne({ _id: id })
-        .select(['-password', '-code_id', '-code_expired'])
-        .populate('role');
+    const user = await this.userRepository
+      .findOne({ _id: id })
+      .select(['-password', '-code_id', '-code_expired'])
+      .populate('role')
+      .populate({ path: 'education_ids', model: Education.name});
       if (user) {
         return {
-            items: user,
+          items: user,
         };
       }
       return null;
     } catch (error) {
+      console.error("Populate error:", error);  // In ra lỗi populate để debug
       throw new NotFoundException();
     }
   }
+
   async update(updateUserDto: UpdateUserDto) {
-    console.log("check body",updateUserDto);
-    const updatedUser = await this.userRepository.findOneAndUpdate(
-      { _id: updateUserDto.id },
-      { $set: updateUserDto },
-      { new: true },
-    );
+    try {
+      // Kiểm tra ID người dùng
+      const updatedUser = await this.userRepository.findOneAndUpdate(
+        { _id: updateUserDto.id },  // Tìm người dùng theo ID
+        { $set: updateUserDto },  // Cập nhật người dùng với dữ liệu mới
+        { new: true },  // Trả về bản ghi mới đã được cập nhật
+      );
 
-    if (!updatedUser) {
-      throw new NotFoundException('User not found');
+      if (!updatedUser) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Loại bỏ password trước khi trả về
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...userWithoutPassword } = updatedUser.toObject();
+
+      return userWithoutPassword; // Trả về thông tin người dùng đã được cập nhật
+    } catch (error) {
+      // Xử lý lỗi
+      throw new BadRequestException(error.message);
     }
-
-    // Loại bỏ trường password trước khi trả về
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = updatedUser.toObject();
-
-    return userWithoutPassword;
   }
 
   async updateAfterVerify(id: string, is_active: boolean) {
@@ -191,7 +200,6 @@ export class UsersService {
       const user = await this.userRepository.findByIdAndUpdate(id, {
         is_active,
       });
-      console.log('user', user);
       return user;
     } catch (error) {
       throw new BadRequestException(error);
@@ -277,7 +285,7 @@ export class UsersService {
         },
       });
     } catch (error) {
-      console.log("error",error)
+      console.error("error",error)
       
     }
 

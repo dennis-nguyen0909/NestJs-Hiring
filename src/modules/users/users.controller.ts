@@ -45,7 +45,6 @@ export class UsersController {
   @Patch()
   @ResponseMessage('Success')
   update(@Body() updateUserDto: UpdateUserDto) {
-    console.log("duydeptrai",updateUserDto)
     return this.usersService.update(updateUserDto);
   }
 

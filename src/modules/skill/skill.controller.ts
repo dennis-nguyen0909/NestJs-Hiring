@@ -53,7 +53,6 @@ export class SkillController {
   @Delete()
   @ResponseMessage('Success')
   remove(@Body() data: DeleteSkillDto) {
-    console.log('data', data);
     return this.skillService.remove(data);
   }
 }

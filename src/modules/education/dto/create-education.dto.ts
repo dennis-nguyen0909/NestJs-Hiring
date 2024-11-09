@@ -1,12 +1,20 @@
-import { IsString, IsNotEmpty, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateEducationDto {
+  @IsString()
+  @IsNotEmpty()
+  user_id: string;
+
   @IsString()
   @IsNotEmpty()
   school: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   degree: string;
 
   @IsString()
@@ -17,5 +25,6 @@ export class CreateEducationDto {
   start_date: Date;
 
   @IsNotEmpty()
+  @IsOptional()
   end_date: Date;
 }

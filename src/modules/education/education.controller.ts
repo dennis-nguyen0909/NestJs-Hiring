@@ -17,19 +17,19 @@ import { ApiTags } from '@nestjs/swagger';
 import { Education } from './schema/Education.schema';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth-guard';
+import { CreateEducationDto } from './dto/create-education.dto';
+import { LocalAuthGuard } from '../auth/passport/local-auth.guard';
 @Controller('educations')
 @ApiTags('Education')
-// @Public()
 export class EducationController {
   constructor(private readonly educationService: EducationService) {}
   @Post('')
   @ResponseMessage('Add education successfully')
   @UseGuards(JwtAuthGuard)
   async addEducation(
-    @Body() updateEducationDto: UpdateEducationDto,
-    @Request() req,
+    @Body() createEducationDto: CreateEducationDto,
   ): Promise<Education> {
-    return this.educationService.addEducation(req.user._id, updateEducationDto);
+    return this.educationService.addEducation(createEducationDto);
   }
 
   // Lấy danh sách giáo dục của một người dùng
@@ -69,6 +69,8 @@ export class EducationController {
   @ResponseMessage('Success')
   @UseGuards(JwtAuthGuard)
   async deleteByUserId(@Param('id') id: string, @Request() req) {
+    console.log("duydeptrai",req.user)
+    console.log("duydeptrai",id)
     return this.educationService.deleteByUserId(id, req.user._id);
   }
 

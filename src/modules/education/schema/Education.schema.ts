@@ -4,11 +4,10 @@ import { CV } from '../../cv/schema/CV.schema';
 import { User } from 'src/modules/users/schemas/User.schema';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
-@Schema()
-@ApiTags('Users')
+@ApiTags('Education')
 @Schema({ timestamps: true })
 export class Education extends Document {
-  @Prop({ type: Types.ObjectId, ref: User.name })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   user_id: Types.ObjectId;
   @ApiProperty({
     description: 'User id',
@@ -25,7 +24,7 @@ export class Education extends Document {
     description: 'Degree',
     example: 'Degree University',
   })
-  @Prop({ required: true })
+  @Prop()
   degree: string;
 
   @ApiProperty({
@@ -45,7 +44,7 @@ export class Education extends Document {
     description: 'End date',
     example: '2025-01-01',
   })
-  @Prop({ required: true })
+  @Prop()
   end_date: Date;
 }
 

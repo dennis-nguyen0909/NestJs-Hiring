@@ -12,6 +12,6 @@ import { RoleModule } from '../role/role.module';
   ],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService, UsersModule],
+  exports: [UsersService, UsersModule, MongooseModule],
 })
 export class UsersModule {}

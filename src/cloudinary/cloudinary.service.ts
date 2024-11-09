@@ -20,7 +20,6 @@ export class CloudinaryService {
         const uploadStream = cloudinary.uploader.upload_stream(
           (error, result) => {
             if (error) return reject(error);
-            console.log('result', result);
             // Resolve with URL and original file name
             resolve({
               url: result.url,

@@ -21,10 +21,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getClass(),
     ]);
     if (isPublic) {
-      // 💡 See this condition
       return true;
     }
-
     return super.canActivate(context);
   }
 
@@ -35,6 +33,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     context: ExecutionContext,
     status?: any,
   ): TUser {
+    console.log("checkuser",user)
+    console.log("checkuser",err)
     if (err || !user) {
       throw err || new UnauthorizedException('Invalid token or not token');
     }

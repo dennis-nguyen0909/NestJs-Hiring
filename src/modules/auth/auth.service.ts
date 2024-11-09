@@ -20,7 +20,7 @@ export class AuthService {
   async signIn(user: any): Promise<any> {
     const payload = { sub: user._id, username: user.email, role: user.role };
     const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '10s',
+      expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
     });
     const refresh_token = await this.jwtService.signAsync(payload, {
       expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRED'),
@@ -41,11 +41,13 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(username);
+    if(!user){
+      throw new BadRequestException('User not found');
+    }
     const isValidPassword = await comparePasswordHelper(
       password,
       user.password,
     );
-
     if (!isValidPassword || !user) {
       return null;
     }
@@ -111,7 +113,6 @@ export class AuthService {
   }
   async refreshToken(refreshToken: string) {
     let payload: any;
-    console.log("duydeptrai",refreshToken)
     try {
       payload = await this.jwtService.verifyAsync(refreshToken);
     } catch (error) {

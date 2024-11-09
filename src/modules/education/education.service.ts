@@ -6,27 +6,46 @@ import { Education } from './schema/Education.schema';
 import { Model, Types } from 'mongoose';
 import aqp from 'api-query-params';
 import { create } from 'domain';
+import { User } from '../users/schemas/User.schema';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class EducationService {
   constructor(
     @InjectModel(Education.name)
     private readonly educationModel: Model<Education>,
+    private readonly userService: UsersService,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
-
-  async addEducation(
-    userId: string,
-    updateEducationDto: UpdateEducationDto,
-  ): Promise<Education> {
+  async addEducation(createEducationDto: CreateEducationDto): Promise<any> {
     try {
-      const newEducation = new this.educationModel({
-        ...updateEducationDto,
-        user_id: userId, // Gán user_id cho bản ghi Education
+      // Kiểm tra xem người dùng đã có trường học này chưa
+      const existingEducation = await this.educationModel.findOne({
+        user_id: createEducationDto.user_id,
+        school: createEducationDto.school,
       });
 
-      return await newEducation.save();
+      if (existingEducation) {
+        throw new BadRequestException('Bạn đã thêm trường học này rồi!');
+      }
+
+      // Tạo mới bản ghi Education
+      const education = await this.educationModel.create(createEducationDto);
+
+      const user = await this.userModel.findOneAndUpdate(
+        { _id: createEducationDto.user_id },
+        { $push: { education_ids: education._id } }, // Thêm ObjectId vào mảng
+        { new: true },
+      );
+
+      if (!user) {
+        throw new BadRequestException('Không tìm thấy người dùng');
+      }
+
+      return education;
     } catch (error) {
-      throw new BadRequestException(error);
+      // Xử lý lỗi nếu có
+      throw new BadRequestException(error.message);
     }
   }
 

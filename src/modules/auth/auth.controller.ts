@@ -17,7 +17,6 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { ApiTags } from '@nestjs/swagger';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
 import { Request as RequestExpress, Response } from 'express';
-import { RefreshTokenGuard } from './passport/jwt-refreshToken-auth.guard';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -98,12 +97,11 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  @UseGuards(RefreshTokenGuard)
+  // @UseGuards(RefreshTokenGuard)
   @ResponseMessage('Success')
   // @Public()
   async refreshToken(@Request() req: RequestExpress, @Request() reqUser) {
     const refresh_token = req.cookies.refresh_token;
-    console.log('duydeptrai', reqUser.user);
     // console.log('refresh_token', user);
     // Gọi service để làm mới token
     return this.authService.refreshToken(refresh_token);

@@ -20,7 +20,6 @@ export class SmsController {
 
   @Post()
   sendOTP(@Body() data: any) {
-    console.log('phone', data);
     const { phoneNumber } = data;
     return this.smsService.sendSms(phoneNumber, '12312');
   }

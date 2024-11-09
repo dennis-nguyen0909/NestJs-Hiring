@@ -18,7 +18,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new BadRequestException('Username or password is incorrect');
     }
-
+    console.log(user);
     if (user.is_active === false) {
       throw new BadRequestException('User not active');
     }
