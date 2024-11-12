@@ -69,8 +69,6 @@ export class EducationController {
   @ResponseMessage('Success')
   @UseGuards(JwtAuthGuard)
   async deleteByUserId(@Param('id') id: string, @Request() req) {
-    console.log("duydeptrai",req.user)
-    console.log("duydeptrai",id)
     return this.educationService.deleteByUserId(id, req.user._id);
   }
 

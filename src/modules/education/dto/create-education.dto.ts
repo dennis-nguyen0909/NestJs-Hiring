@@ -27,4 +27,7 @@ export class CreateEducationDto {
   @IsNotEmpty()
   @IsOptional()
   end_date: Date;
+
+  @IsOptional()
+  currently_studying: boolean;
 }
