@@ -9,16 +9,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Skill } from './schema/Skill.schema';
 import aqp from 'api-query-params';
-import { isArray } from 'class-validator';
-import { error } from 'console';
 import { DeleteSkillDto } from './dto/delete-skill.dto';
 
 @Injectable()
 export class SkillService {
   constructor(@InjectModel('Skill') private skillRepository: Model<Skill>) {}
   async create(createSkillDto: CreateSkillDto) {
-    const skill = await this.skillRepository.create(createSkillDto);
-    return skill;
+    try {
+      const skill = await this.skillRepository.create(createSkillDto);
+      return skill;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async findAll(query: string, current: number, pageSize: number) {
@@ -103,6 +105,17 @@ export class SkillService {
       }
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+  async getSkillsByUserId(userId: string) {
+    try {
+      const res = await this.skillRepository.find({ user_id: userId }).exec();
+      if (!res) {
+        throw new NotFoundException('Not found!');
+      }
+      return res;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
   }
 }

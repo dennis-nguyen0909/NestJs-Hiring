@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Request,
 } from '@nestjs/common';
 import { SkillService } from './skill.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
@@ -17,7 +18,6 @@ import { DeleteSkillDto } from './dto/delete-skill.dto';
 
 @Controller('skills')
 @ApiTags('Skill')
-@Public()
 export class SkillController {
   constructor(private readonly skillService: SkillService) {}
 
@@ -37,6 +37,12 @@ export class SkillController {
     return this.skillService.findAll(query, +current, +pageSize);
   }
 
+  @Get('user')
+  @ResponseMessage('Success')
+  getSkillsByUserId(@Request() req) {
+    return this.skillService.getSkillsByUserId(req.user._id);
+  }
+
   @Get(':id')
   @ResponseMessage('Success')
   findOne(@Param('id') id: string) {
@@ -45,7 +51,6 @@ export class SkillController {
 
   @Patch(':id')
   @ResponseMessage('Success')
-
   update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto) {
     return this.skillService.update(id, updateSkillDto);
   }

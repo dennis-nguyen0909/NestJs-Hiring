@@ -9,7 +9,6 @@ import {
   Request,
   UseGuards,
   Delete,
-  Req,
 } from '@nestjs/common';
 import { EducationService } from './education.service';
 import { UpdateEducationDto } from './dto/update-education.dto';
@@ -18,7 +17,6 @@ import { Education } from './schema/Education.schema';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth-guard';
 import { CreateEducationDto } from './dto/create-education.dto';
-import { LocalAuthGuard } from '../auth/passport/local-auth.guard';
 @Controller('educations')
 @ApiTags('Education')
 export class EducationController {
