@@ -24,6 +24,9 @@ import { EducationModule } from './modules/education/education.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SmsModule } from './sms/sms.module';
 import { MajorModule } from './modules/major/major.module';
+import { CitiesModule } from './modules/cities/cities.module';
+import { WardsModule } from './modules/wards/wards.module';
+import { DistrictsModule } from './modules/districts/districts.module';
 @Module({
   imports: [
     UsersModule,
@@ -78,6 +81,9 @@ import { MajorModule } from './modules/major/major.module';
     CloudinaryModule,
     SmsModule,
     MajorModule,
+    CitiesModule,
+    WardsModule,
+    DistrictsModule,
   ],
   controllers: [AppController],
   providers: [

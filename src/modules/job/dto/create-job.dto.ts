@@ -62,4 +62,6 @@ export class CreateJobDto {
   @IsDate()
   @Type(() => Date)
   expire_date: Date; // Ngày hết hạn tuyển dụng
+
+  cities_id: string;
 }

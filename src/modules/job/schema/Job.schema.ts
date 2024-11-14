@@ -19,6 +19,9 @@ export class Job extends Document {
   @Prop()
   location: string;
 
+  @Prop({ type: Types.ObjectId, ref: 'Cities' })
+  cities_id: Types.ObjectId;
+
   @Prop({ type: Map, of: Number })
   salary_range: { min: number; max: number };
 

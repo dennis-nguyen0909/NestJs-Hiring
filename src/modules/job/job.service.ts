@@ -42,6 +42,7 @@ export class JobService {
 
   async findAll(query: string, current: number, pageSize: number) {
     const { filter, sort } = aqp(query);
+    console.log("filter",filter)
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;
@@ -53,7 +54,8 @@ export class JobService {
       .find(filter)
       .limit(pageSize)
       .skip(skip)
-      .sort(sort as any);
+      .sort(sort as any)
+      .populate('cities_id');
     return {
       items: result,
       meta: {
