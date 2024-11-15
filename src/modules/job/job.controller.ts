@@ -27,6 +27,12 @@ export class JobController {
     return this.jobService.create(createJobDto);
   }
 
+  @Get('employer')
+  @ResponseMessage('Success')
+  getJobByEmployer(@Query('user_id') user_id: string) {
+    return this.jobService.getJobByEmployer(user_id);
+  }
+
   @Get()
   @ResponseMessage('Success')
   findAll(
@@ -54,4 +60,6 @@ export class JobController {
   remove(@Body() data: DeleteJobDto) {
     return this.jobService.remove(data);
   }
+
+
 }

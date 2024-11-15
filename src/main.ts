@@ -29,14 +29,24 @@ async function bootstrap() {
   // CookiParser
   app.use(cookieParser());
   const config = new DocumentBuilder()
-    .setTitle('Hiring API')
-    .setDescription('This api use for hiring application')
-    .setVersion('1.0')
-    .addTag('hiring')
+    .setTitle(configService.get('SWAGGER_TITLE'))
+    .setDescription(configService.get('SWAGGER_DESCRIPTION'))
+    .setVersion(configService.get('SWAGGER_VERSION'))
+    .addTag(configService.get('SWAGGER_TAG'))
+    .addBearerAuth(
+      {
+        type: 'http', // kiểu xác thực HTTP
+        scheme: 'bearer', // sử dụng scheme bearer
+        bearerFormat: 'JWT', // format của token (JWT)
+        in: 'header', // token sẽ được gửi trong header
+      },
+      'JWT', // tên của định dạng Bearer (có thể thay đổi)
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup(configService.get('SWAGGER_PATH'), app, document);
   await app.listen(port);
   console.log("Server running on port: " + port);
+  console.log(`Swagger running on port: ${port}/${configService.get('SWAGGER_PATH')}`);
 }
 bootstrap();

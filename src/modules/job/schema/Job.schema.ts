@@ -14,7 +14,7 @@ export class Job extends Document {
   description: string;
 
   @Prop()
-  requirement: string;
+  requirement: string[];
 
   @Prop()
   location: string;
@@ -32,7 +32,7 @@ export class Job extends Document {
   time_work: Date;
 
   @Prop()
-  require_experience: string;
+  require_experience: string[];
 
   @Prop({ type: Types.ObjectId, ref: 'Level', required: true })
   level: Level;

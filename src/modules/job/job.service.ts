@@ -143,4 +143,12 @@ export class JobService {
       throw new NotFoundException(error);
     }
   }
+
+  async getJobByEmployer (user_id:string){
+    const job = await this.jobRepository.find({user_id:user_id});
+    if(!job){
+      throw new NotFoundException();
+    }
+    return job
+  }
 }

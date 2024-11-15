@@ -1,26 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDistrictDto } from './dto/create-district.dto';
 import { UpdateDistrictDto } from './dto/update-district.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { District } from './schema/District.schema';
 
 @Injectable()
 export class DistrictsService {
-  create(createDistrictDto: CreateDistrictDto) {
-    return 'This action adds a new district';
+  constructor(
+    @InjectModel('District') private districtsModel: Model<District>,
+  ) {}
+  async getWardsByDictrictId(districtId: string) {
+    const res = await this.districtsModel
+      .findOne({ _id: districtId })
+      .populate('wards');
+    return res;
   }
-
-  findAll() {
-    return `This action returns all districts`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} district`;
-  }
-
-  update(id: number, updateDistrictDto: UpdateDistrictDto) {
-    return `This action updates a #${id} district`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} district`;
+  async getAll() {
+    return await this.districtsModel.find({});
   }
 }

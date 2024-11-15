@@ -30,7 +30,6 @@ export class CreateJobDto {
   @IsString()
   description: string; // Mô tả công việc
 
-  @IsString()
   requirement: string; // Yêu cầu công việc
 
   @IsString()
@@ -42,14 +41,12 @@ export class CreateJobDto {
   salary_range: SalaryRangeDto; // Khoảng lương
 
   @IsArray()
-  @IsString({ each: true })
   benefit: string[]; // Các lợi ích
 
   @IsDate()
   @Type(() => Date)
   time_work: Date; // Thời gian làm việc
 
-  @IsString()
   require_experience: string; // Yêu cầu kinh nghiệm
 
   @IsString()

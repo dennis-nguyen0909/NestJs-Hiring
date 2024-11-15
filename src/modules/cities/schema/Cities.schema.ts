@@ -1,6 +1,9 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { Document } from "mongoose";
-import { District, DistrictSchema } from "src/modules/districts/schema/District.schema";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document } from 'mongoose';
+import {
+  District,
+  DistrictSchema,
+} from 'src/modules/districts/schema/District.schema';
 
 @Schema()
 export class Cities extends Document {
@@ -19,8 +22,11 @@ export class Cities extends Document {
   @Prop({ required: true })
   phone_code: number;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: District.name }], default: [] })
-  districts_id: District[];
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: District.name }],
+    default: [],
+  })
+  districts: District[];
 }
 
 export const CitiesSchema = SchemaFactory.createForClass(Cities);

@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { CitiesService } from './cities.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
-import { Public } from 'src/decorator/customize';
+import { Public, ResponseMessage } from 'src/decorator/customize';
 @Controller('cities')
 @Public()
 export class CitiesController {
@@ -13,9 +22,15 @@ export class CitiesController {
     return this.citiesService.create(createCityDto);
   }
 
+  @Get('/:city_id/districts')
+  async findDistrictsByCityId(@Param('city_id') cityId: string) {
+    return this.citiesService.findDistrictsByCityId(cityId);
+  }
+
   @Get()
+  @ResponseMessage('success')
   async findAll(@Query('depth') depth: number = 3) {
-    return this.citiesService.findAll(depth); // Truyền depth vào service
+    return this.citiesService.findAll(+depth);
   }
 
   @Get('find-by-code/:code')
@@ -25,16 +40,16 @@ export class CitiesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.citiesService.findOne(+id);
+    return this.citiesService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCityDto: UpdateCityDto) {
-    return this.citiesService.update(+id, updateCityDto);
+    return this.citiesService.update(id, updateCityDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.citiesService.remove(+id);
+    return this.citiesService.remove(id);
   }
 }

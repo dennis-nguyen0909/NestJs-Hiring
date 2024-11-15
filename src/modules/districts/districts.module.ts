@@ -5,10 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { District, DistrictSchema } from './schema/District.schema';
 
 @Module({
-  imports:[
-    MongooseModule.forFeature([{ name: District.name, schema: DistrictSchema }]),
+  imports: [
+    MongooseModule.forFeature([
+      { name: District.name, schema: DistrictSchema },
+    ]),
   ],
   controllers: [DistrictsController],
   providers: [DistrictsService],
+  exports: [DistrictsModule],
 })
 export class DistrictsModule {}

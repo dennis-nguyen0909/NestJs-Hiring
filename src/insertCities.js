@@ -81129,8 +81129,8 @@ async function insertData() {
           wardIds.push(wardResult.insertedId);
         }
 
-        // Gán danh sách wards_id cho district
-        district.wards_ids = wardIds;
+        // Gán danh sách wards cho district
+        district.wards = wardIds;
 
         // Chèn district và lấy id của nó
         const districtResult = await districtsCollection.insertOne(district);
@@ -81147,7 +81147,7 @@ async function insertData() {
         division_type: city.division_type,
         codename: city.codename,
         phone_code: city.phone_code,
-        districts_id: city.districts_id,
+        districts: city.districts_id,
       });
     }
 

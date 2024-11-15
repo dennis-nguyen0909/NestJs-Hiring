@@ -19,9 +19,8 @@ export class District {
   @Prop({ required: true })
   province_code: number;
 
-  // Danh sách các Ward trong District
-  @Prop({ type: [WardSchema], default: [] })
-  wards_id: Ward[];
+  @Prop({ type: [Types.ObjectId], ref: 'Ward' })
+  wards: Types.ObjectId[]; // Lưu ObjectId thay vì nhúng trực tiếp
 }
 
 export const DistrictSchema = SchemaFactory.createForClass(District);
