@@ -81,7 +81,7 @@ export class AuthService {
         throw new BadRequestException('User not found');
       }
 
-      if (findUser.code_id !== code_id) {
+      if (findUser?.code_id !== code_id) {
         throw new BadRequestException('Code not correct');
       }
 

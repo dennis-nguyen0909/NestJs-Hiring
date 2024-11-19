@@ -86,23 +86,8 @@ export class CitiesService {
     return city;
   }
 
-  async findOne(id: string): Promise<any> {
-    try {
-      const city = await this.citiesModel
-        .findById(id)
-        .populate({
-          path: 'districts',
-          select: 'name codename code',
-        })
-        .lean()
-        .exec();
-      if (!city) {
-        throw new NotFoundException(`City with ID ${id} not found`);
-      }
-      return city;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
+  async findOne(query: any): Promise<any | null> {
+    return await this.citiesModel.findOne(query).exec();
   }
 
   async update(id: string, updateCityDto: UpdateCityDto): Promise<any> {

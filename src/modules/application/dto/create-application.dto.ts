@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { Types } from 'mongoose';
 
 export class CreateApplicationDto {
   @ApiProperty({
@@ -71,4 +72,7 @@ export class CreateApplicationDto {
   @IsString()
   @IsEnum(['pending', 'accepted', 'rejected'])
   status: string;
+
+  @IsOptional()
+  save_candidates: Types.ObjectId[];
 }

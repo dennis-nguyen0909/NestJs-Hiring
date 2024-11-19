@@ -12,6 +12,6 @@ import { DistrictsModule } from '../districts/districts.module';
 
   controllers: [CitiesController],
   providers: [CitiesService],
-  exports: [CitiesModule],
+  exports: [CitiesService], 
 })
 export class CitiesModule {}

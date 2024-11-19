@@ -102,8 +102,6 @@ export class AuthController {
   // @Public()
   async refreshToken(@Request() req: RequestExpress, @Request() reqUser) {
     const refresh_token = req.cookies.refresh_token;
-    // console.log('refresh_token', user);
-    // Gọi service để làm mới token
     return this.authService.refreshToken(refresh_token);
   }
 

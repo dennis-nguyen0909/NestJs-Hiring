@@ -27,6 +27,7 @@ import { MajorModule } from './modules/major/major.module';
 import { CitiesModule } from './modules/cities/cities.module';
 import { WardsModule } from './modules/wards/wards.module';
 import { DistrictsModule } from './modules/districts/districts.module';
+import { SkillEmployerModule } from './modules/skill_employer/skill.module';
 @Module({
   imports: [
     UsersModule,
@@ -84,6 +85,7 @@ import { DistrictsModule } from './modules/districts/districts.module';
     CitiesModule,
     WardsModule,
     DistrictsModule,
+    SkillEmployerModule,
   ],
   controllers: [AppController],
   providers: [

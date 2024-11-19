@@ -12,17 +12,19 @@ import { Job } from './schema/Job.schema';
 import { UsersService } from '../users/users.service';
 import aqp from 'api-query-params';
 import { DeleteJobDto } from './dto/delete-job.dto';
+import { CitiesService } from '../cities/cities.service';
+import { SkillEmployer } from '../skill_employer/schema/EmployerSkill.schema';
 
 @Injectable()
 export class JobService {
   constructor(
     @InjectModel('Job') private jobRepository: Model<Job>,
     private userService: UsersService,
+    private citiesService: CitiesService,
   ) {}
   async create(createJobDto: CreateJobDto) {
     const { user_id } = createJobDto;
     const isUserExist = await this.userService.findOne(user_id);
-
     if (isUserExist) {
       const user = await isUserExist.populate('role');
       if (user.role.role_name === 'EMPLOYER') {
@@ -42,7 +44,6 @@ export class JobService {
 
   async findAll(query: string, current: number, pageSize: number) {
     const { filter, sort } = aqp(query);
-    console.log("filter",filter)
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;
@@ -55,7 +56,19 @@ export class JobService {
       .limit(pageSize)
       .skip(skip)
       .sort(sort as any)
-      .populate('cities_id');
+      .populate({
+        path: 'city_id',
+        select: '-districts',
+      })
+      .populate({
+        path: 'district_id',
+        select: '-wards',
+      })
+      .populate({
+        path: 'skills',
+        model: SkillEmployer.name,
+        select: '-createdAt -updatedAt -description',
+      });
     return {
       items: result,
       meta: {
@@ -144,11 +157,91 @@ export class JobService {
     }
   }
 
-  async getJobByEmployer (user_id:string){
-    const job = await this.jobRepository.find({user_id:user_id});
-    if(!job){
-      throw new NotFoundException();
+  async getJobByEmployer(
+    user_id: string,
+    query: string,
+    current: number,
+    pageSize: number,
+  ) {
+    // Sử dụng aqp (Advanced Query Parsing) để phân tích cú pháp `query` thành filter và sort
+    const { filter, sort } = aqp(query);
+
+    // Xóa `current` và `pageSize` khỏi filter nếu chúng tồn tại
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+
+    // Đặt giá trị mặc định cho current và pageSize nếu không có
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+
+    // Thêm điều kiện filter theo `user_id`
+    filter.user_id = user_id;
+
+    // Đếm tổng số công việc theo filter
+    const totalItems = (await this.jobRepository.find(filter)).length;
+
+    // Tính tổng số trang dựa trên tổng số công việc và số lượng công việc trên mỗi trang
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    // Tính số lượng công việc bỏ qua để phân trang
+    const skip = (current - 1) * pageSize;
+
+    // Lấy danh sách công việc dựa trên filter, limit, skip và sort
+    const result = await this.jobRepository
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any) // sort theo tiêu chí sort đã phân tích từ query
+      .populate({
+        path: 'city_id',
+        select: '-districts',
+      })
+      .populate({
+        path: 'district_id',
+        select: '-wards',
+      })
+      .populate({
+        path: 'skills',
+        model: SkillEmployer.name,
+        select: '-createdAt -updatedAt -description',
+      });
+
+    // Trả về kết quả cùng với metadata phân trang
+    return {
+      items: result,
+      meta: {
+        count: result.length, // Số lượng công việc trả về trong kết quả này
+        current_page: current, // Trang hiện tại
+        per_page: pageSize, // Số lượng công việc trên mỗi trang
+        total: totalItems, // Tổng số công việc phù hợp với filter
+        total_pages: totalPages, // Tổng số trang
+      },
+    };
+  }
+
+  async getJobByDistrict(
+    id: string,
+    current: number,
+    pageSize: number,
+    query: string,
+  ) {
+    const { filter, sort } = aqp(query);
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    const totalItems = (await this.jobRepository.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+
+    const res = await this.jobRepository
+      .find({
+        district_id: id,
+      })
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any);
+    if (!res || res.length === 0) {
+      throw new NotFoundException(`No jobs found in district with id: ${id}`);
     }
-    return job
+    return res;
   }
 }

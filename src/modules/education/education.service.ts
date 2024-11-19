@@ -32,16 +32,19 @@ export class EducationService {
       // Tạo mới bản ghi Education
       const education = await this.educationModel.create(createEducationDto);
 
+      // Cập nhật thông tin người dùng, thêm ObjectId của bản ghi Education vào mảng education_ids
       const user = await this.userModel.findOneAndUpdate(
         { _id: createEducationDto.user_id },
-        { $push: { education_ids: education._id } }, // Thêm ObjectId vào mảng
-        { new: true },
+        { $push: { education_ids: education._id } }, // Thêm ObjectId của Education vào mảng education_ids của User
+        { new: true }, // Trả về tài liệu người dùng đã được cập nhật
       );
 
+      // Kiểm tra xem người dùng có tồn tại không
       if (!user) {
         throw new BadRequestException('Không tìm thấy người dùng');
       }
 
+      // Trả về thông tin của Education đã được tạo mới
       return education;
     } catch (error) {
       // Xử lý lỗi nếu có
@@ -97,19 +100,20 @@ export class EducationService {
     updateEducationDto: UpdateEducationDto,
     userId: string,
   ): Promise<any> {
-    const education = await this.educationModel.findById({
-      _id: id,
-    });
+    const education = await this.educationModel.findById({ _id: id });
     if (education.user_id + '' !== userId) {
       throw new BadRequestException('Không có quyền cập nhật');
     }
 
-    return this.educationModel
+    // Cập nhật Education
+    const updatedEducation = await this.educationModel
       .findByIdAndUpdate(id, updateEducationDto, {
         new: true,
         runValidators: true,
       })
       .exec();
+
+    return updatedEducation;
   }
 
   async deleteByUserId(id: string, userId: string): Promise<any> {
@@ -117,16 +121,25 @@ export class EducationService {
       _id: id,
     });
     if (education == null) {
-      throw new BadRequestException('Không tìm thấy dữ liệu');
+      throw new BadRequestException('Không tìm thấy dữ liệu');
     }
     if (education.user_id + '' !== userId) {
       throw new BadRequestException('Không có quyền cập nhật');
     }
+
+    // Xóa Education trong bảng Education
     const res = await this.educationModel.deleteOne({ _id: id });
+
+    // Xóa ObjectId khỏi mảng education_ids trong bảng User
+    await this.userModel.updateOne(
+      { _id: userId },
+      { $pull: { education_ids: new Types.ObjectId(id) } }, // $pull để xóa ObjectId khỏi mảng
+    );
+
     if (res.deletedCount > 0) {
       return [];
     } else {
-      throw new BadRequestException('Xóa không thanh cong');
+      throw new BadRequestException('Xóa không thành công');
     }
   }
 }

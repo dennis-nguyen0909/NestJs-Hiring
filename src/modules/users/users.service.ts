@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { RoleService } from '../role/role.service';
-import { Education } from '../education/schema/Education.schema';
+import { Role } from '../role/schema/Role.schema';
 @Injectable()
 export class UsersService {
   constructor(
@@ -99,7 +99,10 @@ export class UsersService {
       .skip(skip)
       .sort(sort as any)
       .select('-password')
-      .populate('role');
+      .populate({
+        path:'role',
+        select: '-createdAt -updatedAt -description'
+      })
     return {
         items: result,
         meta: {
@@ -122,7 +125,8 @@ export class UsersService {
       const user = await this.userRepository
         .findOne({ _id: id })
         .select('-password') // Use a space-separated string for excluding fields
-        .populate('role'); // Populate 'role' field
+        // .populate('role')
+        // .populate('education_ids')
       if (user) {
         return user;
       }
@@ -154,16 +158,20 @@ export class UsersService {
   }
   async getDetailUser(id: string) {
     try {
-    const user = await this.userRepository
+      const user = await this.userRepository
       .findOne({ _id: id })
       .select(['-password', '-code_id', '-code_expired'])
       .populate('role')
-      .populate({ path: 'education_ids', model: Education.name});
+      .populate('education_ids')
+      .populate('work_experience_ids')
+      .exec();
+    
       if (user) {
         return {
           items: user,
         };
       }
+      console.log("user",user)
       return null;
     } catch (error) {
       console.error("Populate error:", error);  // In ra lỗi populate để debug

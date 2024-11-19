@@ -91,4 +91,10 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   description?: string;
+  @IsOptional()
+  no_experience: boolean;
+  @IsOptional()
+  total_experience_months: number;
+  @IsOptional()
+  total_experience_years: number;
 }

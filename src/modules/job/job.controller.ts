@@ -27,10 +27,25 @@ export class JobController {
     return this.jobService.create(createJobDto);
   }
 
+  @Get('district/:id')
+  getJobByDistrict(@Param('id') id: string) {
+    return 'ok';
+  }
+
   @Get('employer')
   @ResponseMessage('Success')
-  getJobByEmployer(@Query('user_id') user_id: string) {
-    return this.jobService.getJobByEmployer(user_id);
+  getJobByEmployer(
+    @Query('user_id') user_id: string,
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.jobService.getJobByEmployer(
+      user_id,
+      query,
+      +current,
+      +pageSize,
+    );
   }
 
   @Get()
@@ -60,6 +75,4 @@ export class JobController {
   remove(@Body() data: DeleteJobDto) {
     return this.jobService.remove(data);
   }
-
-
 }

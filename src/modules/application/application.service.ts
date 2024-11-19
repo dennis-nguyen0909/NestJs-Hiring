@@ -22,6 +22,12 @@ export class ApplicationService {
 
   async create(createApplicationDto: CreateApplicationDto) {
     try {
+      const findUser = await this.applicationRepository.findOne({
+        user_id: createApplicationDto.user_id,
+      });
+      if (findUser) {
+        throw new BadRequestException('User already applied');
+      }
       const newApplied = await this.applicationRepository.create({
         ...createApplicationDto,
       });
@@ -76,6 +82,7 @@ export class ApplicationService {
 
   async update(id: string, updateApplicationDto: UpdateApplicationDto) {
     try {
+      console.log('updateApplicationDto', updateApplicationDto);
       const applied = await this.applicationRepository.findByIdAndUpdate(
         id,
         updateApplicationDto,
@@ -126,5 +133,66 @@ export class ApplicationService {
         throw new NotFoundException(error);
       }
     }
+  }
+  async getApplicationByJobId(
+    jobId: string,
+    query: string,
+    current: number,
+    pageSize: number,
+  ) {
+    const { filter, sort } = aqp(query);
+
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+
+    const skip = (current - 1) * pageSize;
+    const limit = pageSize;
+    console.log('duy test', filter);
+    const totalItems = await this.applicationRepository.countDocuments({
+      job_id: jobId,
+      ...filter,
+    });
+
+    const result = await this.applicationRepository
+      .find({ job_id: jobId, ...filter })
+      .skip(skip)
+      .limit(limit)
+      .sort(sort as any)
+      .populate('job_id')
+      // .populate('save_candidates')
+      .populate({
+        path: 'employer_id',
+        select: '_id name full_name phone address role',
+      })
+      .populate({
+        path: 'user_id',
+        select:
+          '_id name email full_name phone address role education_ids avatar total_experience_years total_experience_months no_experience',
+        populate: [
+          {
+            path: 'education_ids',
+            select: 'school major start_date currently_studying',
+          },
+          {
+            path: 'work_experience_ids',
+          },
+        ],
+      });
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
   }
 }

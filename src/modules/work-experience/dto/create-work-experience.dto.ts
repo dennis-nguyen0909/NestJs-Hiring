@@ -39,4 +39,5 @@ export class CreateWorkExperienceDto {
   @IsOptional()
   @IsUrl()
   image_url?: string; // URL của hình ảnh công ty hoặc liên quan, có thể bỏ qua
+
 }

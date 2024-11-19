@@ -1,10 +1,11 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Mongoose, Types } from 'mongoose';
 import { Job } from '../../job/schema/Job.schema'; // Nhớ import Job schema
 import { Role } from '../../role/schema/Role.schema';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { CV } from '../../cv/schema/CV.schema';
 import { Education } from 'src/modules/education/schema/Education.schema';
+import { WorkExperience } from 'src/modules/work-experience/schema/WorkExperience.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -32,9 +33,8 @@ export class User extends Document {
   @Prop()
   gender: string;
 
-  @Prop({ type: Types.ObjectId, ref: Role.name, default: null })
+  @Prop({ type: Types.ObjectId, ref: 'Role', default: null })
   role: Role; // Phân biệt người dùng qua role (ADMIN, USERS, EMPLOYER, ...)
-
   @Prop({ default: 'LOCAL' })
   account_type: string;
 
@@ -53,17 +53,29 @@ export class User extends Document {
   @Prop()
   code_expired: Date;
 
-  @Prop([{ type: Types.ObjectId, ref: AuthProvider.name }])
+  @Prop({ type: [Types.ObjectId], ref: AuthProvider.name })
   auth_providers: AuthProvider[];
 
   @Prop([String])
   save_job_ids: string[];
 
-  @Prop([{ type: Types.ObjectId, ref: 'CV' }])
-  cvs: CV[];
+  @Prop({ type: [Types.ObjectId], ref: 'CV' })
+  cv_ids: CV[];
 
-  @Prop([{ type: Types.ObjectId, ref: Education.name }])
+  @Prop({ type: [Types.ObjectId], ref: 'Education' })
   education_ids: Types.ObjectId[];
+
+  @Prop({ type: [Types.ObjectId], ref: 'WorkExperience' })
+  work_experience_ids: Types.ObjectId[];
+
+  @Prop({ required: false })
+  total_experience?: string;
+  @Prop()
+  no_experience: boolean;
+  @Prop()
+  total_experience_months: number;
+  @Prop()
+  total_experience_years: number;
 
   // Các thuộc tính dành cho Employer (Nhà tuyển dụng)
   @Prop({ required: false })

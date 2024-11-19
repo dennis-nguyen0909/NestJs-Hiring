@@ -28,6 +28,22 @@ export class ApplicationController {
     return this.applicationService.create(createApplicationDto);
   }
 
+  @Get('/job_id/:id')
+  @ResponseMessage('Success')
+  getApplicationByJobId(
+    @Param('id') id: string,
+    @Query('query') query,
+    @Query('current') current,
+    @Query('pageSize') pageSize,
+  ) {
+    return this.applicationService.getApplicationByJobId(
+      id,
+      query,
+      +current,
+      +pageSize,
+    );
+  }
+
   @Get()
   @ResponseMessage('Success')
   @ApiQuery({

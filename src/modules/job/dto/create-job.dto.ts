@@ -1,64 +1,112 @@
 import {
   IsString,
-  IsOptional,
-  IsNotEmpty,
-  IsDate,
   IsArray,
-  IsObject,
-  ValidateNested,
+  IsOptional,
+  IsEnum,
+  IsDate,
+  IsNumber,
+  IsMongoId,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { Types } from 'mongoose';
-
-export class SalaryRangeDto {
-  @IsNotEmpty()
-  min: number;
-
-  @IsNotEmpty()
-  max: number;
-}
 
 export class CreateJobDto {
-  @IsNotEmpty()
-  @IsString()
-  user_id: string; // Mã định danh cho Employer (Nhà tuyển dụng)
-
-  @IsNotEmpty()
-  @IsString()
-  title: string; // Tên công việc
+  @IsMongoId()
+  user_id: string;
 
   @IsString()
-  description: string; // Mô tả công việc
+  title: string;
 
-  requirement: string; // Yêu cầu công việc
-
+  @IsOptional()
   @IsString()
-  location: string; // Địa điểm làm việc
+  description?: string;
 
-  @IsObject()
-  @ValidateNested()
-  @Type(() => SalaryRangeDto)
-  salary_range: SalaryRangeDto; // Khoảng lương
-
+  @IsOptional()
   @IsArray()
-  benefit: string[]; // Các lợi ích
+  @IsString({ each: true })
+  requirement?: string[];
 
-  @IsDate()
-  @Type(() => Date)
-  time_work: Date; // Thời gian làm việc
-
-  require_experience: string; // Yêu cầu kinh nghiệm
-
+  @IsOptional()
   @IsString()
-  level: Types.ObjectId; // Trình độ (Level)
+  location?: string;
 
+  @IsOptional()
+  @IsMongoId()
+  city_id?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  district_id?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  ward_id?: string;
+
+  @IsOptional()
+  salary_range?: { min: number; max: number };
+
+  @IsOptional()
+  @IsEnum(['monthly', 'yearly', 'weekly', 'hourly'])
+  salary_type?: string;
+
+  @IsOptional()
+  @IsEnum([
+    'fulltime',
+    'parttime',
+    'freelance',
+    'contract',
+    'project',
+    'hourly',
+  ])
+  job_type?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  benefit?: string[];
+
+  @IsOptional()
   @IsDate()
-  @Type(() => Date)
-  posted_date: Date; // Ngày đăng tuyển
+  time_work?: Date;
 
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  require_experience?: string[];
+
+  @IsOptional()
+  // @IsMongoId()
+  level?: string;
+
+  @IsOptional()
   @IsDate()
-  @Type(() => Date)
-  expire_date: Date; // Ngày hết hạn tuyển dụng
+  posted_date?: Date;
 
-  cities_id: string;
+  @IsOptional()
+  // @IsDate()
+  expire_date?: Date;
+
+  @IsOptional()
+  @IsString()
+  type_money?: string;
+
+  @IsOptional()
+  @IsString()
+  image?: string;
+
+  @IsOptional()
+  @IsEnum(['Bachelor', 'Master', 'PhD', 'None'])
+  degree?: string;
+
+  @IsOptional()
+  @IsNumber()
+  count_apply?: number;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+  @IsOptional()
+  is_negotiable: boolean;
+
+  @IsOptional()
+  @IsArray()
+  skills: string[];
 }

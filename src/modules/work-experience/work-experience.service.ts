@@ -3,22 +3,36 @@ import { BadGatewayException, BadRequestException, Injectable, NotFoundException
 import { CreateWorkExperienceDto } from './dto/create-work-experience.dto';
 import { UpdateWorkExperienceDto } from './dto/update-work-experience.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { WorkExperience } from './schema/WorkExperience.schema';
-import { throwError } from 'rxjs';
 import aqp from 'api-query-params';
+import { User } from '../users/schemas/User.schema';
 
 @Injectable()
 export class WorkExperienceService {
   constructor(
     @InjectModel('WorkExperience')
     private workExperienceModel: Model<WorkExperience>,
+    @InjectModel('User')
+    private userModel: Model<User>,
   ) {}
   async create(createWorkExperienceDto: CreateWorkExperienceDto) {
     try {
       const workExperience = await this.workExperienceModel.create(
         createWorkExperienceDto,
       );
+      // Cập nhật thông tin người dùng, thêm ObjectId của bản ghi Education vào mảng education_ids
+      const user = await this.userModel.findOneAndUpdate(
+        { _id: workExperience.user_id },
+        { $push: { work_experience_ids: workExperience._id } }, // Thêm ObjectId của Education vào mảng education_ids của User
+        { new: true }, // Trả về tài liệu người dùng đã được cập nhật
+      );
+
+      // Kiểm tra xem người dùng có tồn tại không
+      if (!user) {
+        throw new BadRequestException('Không tìm thấy người dùng');
+      }
+
       if (!workExperience) {
         throw new BadGatewayException('WorkExperience not created');
       }
@@ -100,10 +114,18 @@ export class WorkExperienceService {
     }
     if (ids.length === 1) {
       try {
+        const workExperience = await this.workExperienceModel.findById(ids[0]);
+        if (!workExperience) {
+          throw new NotFoundException('Not found');
+        }
         const deleted = await this.workExperienceModel.deleteOne({
           _id: ids[0],
         });
         if (deleted.deletedCount > 0) {
+          await this.userModel.updateOne(
+            { _id:workExperience.user_id  },
+            { $pull: { work_experience_ids: new Types.ObjectId(ids[0]) } },
+          );
           return [];
         } else {
           throw new NotFoundException();
@@ -113,16 +135,30 @@ export class WorkExperienceService {
       }
     } else {
       try {
+        // Bước 1: Tìm các bản ghi workExperience dựa trên ids được truyền vào
+        const workExperiences = await this.workExperienceModel.find({
+          _id: { $in: ids },
+        });
+    
+        if (!workExperiences || workExperiences.length === 0) {
+          throw new NotFoundException('Work experiences not found');
+        }
         const deleted = await this.workExperienceModel.deleteMany({
           _id: { $in: ids },
         });
+    
         if (deleted.deletedCount > 0) {
-          return [];
+          await this.userModel.updateOne(
+            { _id: workExperiences[0].user_id },
+            { $pull: { work_experience_ids: { $in: ids } } }
+          );
+    
+          return { message: 'Work experiences deleted and user updated successfully' };
         } else {
-          throw new NotFoundException();
+          throw new NotFoundException('Failed to delete work experiences');
         }
       } catch (error) {
-        throw new NotFoundException(error);
+        throw new NotFoundException(error.message || 'An error occurred');
       }
     }
   }

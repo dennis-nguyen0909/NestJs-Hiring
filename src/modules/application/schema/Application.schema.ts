@@ -35,6 +35,9 @@ export class Application extends Document {
     default: 'pending',
   })
   status: string;
+
+  @Prop({ type: [Types.ObjectId], ref: User.name, default: [] })
+  save_candidates: Types.ObjectId[];
 }
 
 export const ApplicationSchema = SchemaFactory.createForClass(Application);
