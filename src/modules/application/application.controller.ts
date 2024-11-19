@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Put,
 } from '@nestjs/common';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
@@ -101,5 +102,13 @@ export class ApplicationController {
   })
   remove(@Body() data: DeleteApplicationDto) {
     return this.applicationService.remove(data);
+  }
+
+  @Put(':applicationId/toggle-save/:userId')
+  async toggleSaveCandidate(
+    @Param('applicationId') applicationId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.applicationService.toggleSaveCandidate(applicationId, userId);
   }
 }

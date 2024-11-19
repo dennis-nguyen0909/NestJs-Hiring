@@ -2,22 +2,24 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  SetMetadata,
 } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Application } from './schema/Application.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
 import { DeleteApplicationDto } from './dto/delete-application.dto';
-import { RESPONSE_MESSAGE, ResponseMessage } from 'src/decorator/customize';
+import { App } from 'supertest/types';
+import { SaveCandidate } from '../save_candidates/schema/SaveCandidates.schema';
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectModel('Application')
     private applicationRepository: Model<Application>,
+    @InjectModel('SaveCandidate')
+    private saveCandidateModel: Model<SaveCandidate>,
   ) {}
 
   async create(createApplicationDto: CreateApplicationDto) {
@@ -96,6 +98,39 @@ export class ApplicationService {
     } catch (error) {
       throw new NotFoundException(error);
     }
+  }
+
+  async toggleSaveCandidate(
+    applicationId: string,
+    userId: string,
+  ): Promise<Application> {
+    const application =
+      await this.applicationRepository.findById(applicationId);
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+    const userIdObject = new Types.ObjectId(userId);
+    if (application.save_candidates.includes(userIdObject)) {
+      application.save_candidates.splice(
+        application.save_candidates.indexOf(userIdObject),
+        1,
+      );
+      // xóa bảng save-candidate
+      await this.saveCandidateModel.deleteOne({
+        employer: application.employer_id,
+        candidate: userIdObject,
+      });
+    } else {
+      application.save_candidates.push(userIdObject);
+      // thêm vào bảng save-candidate
+      await this.saveCandidateModel.create({
+        employer: application.employer_id,
+        candidate: userIdObject,
+        isActive: true,
+      });
+    }
+
+    return application.save(); // Lưu lại thay đổi vào database
   }
 
   async remove(data: DeleteApplicationDto) {

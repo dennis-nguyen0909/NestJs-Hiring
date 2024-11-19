@@ -4,12 +4,11 @@ import { Level } from '../../level/schema/Level.schema';
 import { District } from 'src/modules/districts/schema/District.schema';
 import { Ward } from 'src/modules/wards/schema/Wards.schema';
 import { Cities } from 'src/modules/cities/schema/Cities.schema';
-import { SkillEmployer } from 'src/modules/skill_employer/schema/EmployerSkill.schema';
 
 @Schema({ timestamps: true })
 export class Job extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  user_id: string;
+  user_id: Types.ObjectId;
 
   @Prop({ required: true })
   title: string;
@@ -97,9 +96,13 @@ export class Job extends Document {
   is_negotiable: boolean;
 
   @Prop({
-    type: { type: [Types.ObjectId], ref: 'SkillEmployer' },
+    type: [Types.ObjectId],
+    ref: 'SkillEmployer',
   })
   skills: Types.ObjectId[];
+
+  @Prop({ default: true })
+  is_active: boolean;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

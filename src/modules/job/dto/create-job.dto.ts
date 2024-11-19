@@ -1,3 +1,4 @@
+import { Optional } from '@nestjs/common';
 import {
   IsString,
   IsArray,
@@ -109,4 +110,7 @@ export class CreateJobDto {
   @IsOptional()
   @IsArray()
   skills: string[];
+
+  @Optional()
+  is_active: boolean;
 }

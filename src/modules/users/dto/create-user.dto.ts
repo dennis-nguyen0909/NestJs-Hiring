@@ -97,4 +97,9 @@ export class CreateUserDto {
   total_experience_months: number;
   @IsOptional()
   total_experience_years: number;
+
+  @IsOptional()
+  avatar_company?: string;
+  @IsOptional()
+  banner_company?: string;
 }

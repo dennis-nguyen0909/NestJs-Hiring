@@ -48,6 +48,22 @@ export class JobController {
     );
   }
 
+  @Get('recent')
+  @ResponseMessage('Success')
+  findRecentJobs(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.jobService.findRecentJobs(query, +current, +pageSize);
+  }
+
+  @Get('active/:userId')
+  @ResponseMessage('Success')
+  countActiveJobsByUser(@Param('userId') userId: string) {
+    return this.jobService.countActiveJobsByUser(userId);
+  }
+
   @Get()
   @ResponseMessage('Success')
   findAll(
