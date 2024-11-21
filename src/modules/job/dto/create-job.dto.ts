@@ -5,7 +5,6 @@ import {
   IsOptional,
   IsEnum,
   IsDate,
-  IsNumber,
   IsMongoId,
 } from 'class-validator';
 
@@ -22,12 +21,7 @@ export class CreateJobDto {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  requirement?: string[];
-
-  @IsOptional()
-  @IsString()
-  location?: string;
+  require_experience?: string[];
 
   @IsOptional()
   @IsMongoId()
@@ -69,11 +63,6 @@ export class CreateJobDto {
   time_work?: Date;
 
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  require_experience?: string[];
-
-  @IsOptional()
   // @IsMongoId()
   level?: string;
 
@@ -98,7 +87,6 @@ export class CreateJobDto {
   degree?: string;
 
   @IsOptional()
-  @IsNumber()
   count_apply?: number;
 
   @IsOptional()
@@ -113,4 +101,16 @@ export class CreateJobDto {
 
   @Optional()
   is_active: boolean;
+
+  @Optional()
+  is_expired: boolean;
+
+  @IsOptional()
+  apply_linkedin?: string;
+
+  @IsOptional()
+  apply_website?: string;
+
+  @IsOptional()
+  apply_email?: string;
 }

@@ -13,6 +13,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('users')
 @Public()
@@ -52,5 +53,12 @@ export class UsersController {
   @ResponseMessage('Success')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Post('reset-password')
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ): Promise<string> {
+    return this.usersService.resetPassword(resetPasswordDto);
   }
 }

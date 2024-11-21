@@ -14,5 +14,6 @@ import { CitiesModule } from '../cities/cities.module';
   ],
   controllers: [JobController],
   providers: [JobService],
+  exports: [MongooseModule],
 })
 export class JobModule {}

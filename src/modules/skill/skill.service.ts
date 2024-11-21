@@ -6,23 +6,33 @@ import {
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Skill } from './schema/Skill.schema';
 import aqp from 'api-query-params';
 import { DeleteSkillDto } from './dto/delete-skill.dto';
+import { User } from '../users/schemas/User.schema';
 
 @Injectable()
 export class SkillService {
-  constructor(@InjectModel('Skill') private skillRepository: Model<Skill>) {}
+  constructor(
+    @InjectModel('Skill') private skillRepository: Model<Skill>,
+    @InjectModel(User.name) private readonly userRepository: Model<User>,
+  ) {}
   async create(createSkillDto: CreateSkillDto) {
     try {
       const skill = await this.skillRepository.create(createSkillDto);
+
+      const user = await this.userRepository.findById(skill.user_id);
+      if (user) {
+        user.skills.push(new Types.ObjectId(skill._id.toString()));
+        await user.save();
+      }
+
       return skill;
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
-
   async findAll(query: string, current: number, pageSize: number) {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
@@ -70,43 +80,36 @@ export class SkillService {
   async remove(data: DeleteSkillDto) {
     const { ids } = data;
     try {
-      if (!Array.isArray(ids) || ids.length < 0) {
+      if (!Array.isArray(ids) || ids.length === 0) {
         throw new NotFoundException('Ids not found');
       }
-      if (ids.length === 1) {
-        const checkNotExists = await this.skillRepository.findOne({
-          _id: ids[0],
-        });
-        if (!checkNotExists) {
-          throw new NotFoundException('Ids not found');
-        }
-        const result = await this.skillRepository.deleteOne({ _id: ids[0] });
-        if (result.deletedCount > 0) {
-          return [];
-        } else {
-          throw new BadRequestException('Delete failed');
-        }
-      } else {
-        const checkNotExists = await this.skillRepository.findOne({
-          _id: { $in: ids },
-        });
-        if (!checkNotExists) {
-          throw new NotFoundException('Ids not found');
-        }
-        const result = await this.skillRepository.deleteMany({
-          _id: { $in: ids },
-        });
 
-        if (result.deletedCount > 0) {
-          return [];
-        } else {
-          throw new BadRequestException('Delete failed');
-        }
+      // Kiểm tra xem kỹ năng có tồn tại trong DB không
+      const skills = await this.skillRepository.find({ _id: { $in: ids } });
+      if (skills.length !== ids.length) {
+        throw new NotFoundException('Some skills not found');
+      }
+
+      // Xóa kỹ năng khỏi skill repository
+      const result = await this.skillRepository.deleteMany({
+        _id: { $in: ids },
+      });
+
+      if (result.deletedCount > 0) {
+        // Cập nhật lại các user, xóa các kỹ năng đã xóa khỏi trường `skills`
+        await this.userRepository.updateMany(
+          { skills: { $in: ids } }, // Tìm các user có chứa các kỹ năng bị xóa
+          { $pull: { skills: { $in: ids } } }, // Xóa kỹ năng khỏi mảng `skills`
+        );
+        return [];
+      } else {
+        throw new BadRequestException('Delete failed');
       }
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
+
   async getSkillsByUserId(userId: string) {
     try {
       const res = await this.skillRepository.find({ user_id: userId }).exec();

@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/User.schema';
 import { Model, Types } from 'mongoose';
-import { hashPasswordHelper } from 'src/helpers/util';
+import { comparePasswordHelper, emailRegex, hashPasswordHelper, passwordRegex } from 'src/helpers/util';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { RegisterAuthDto } from '../auth/dto/register-auth.dto';
@@ -18,6 +18,7 @@ import * as dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { RoleService } from '../role/role.service';
 import { Role } from '../role/schema/Role.schema';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -164,6 +165,9 @@ export class UsersService {
       .populate('role')
       .populate('education_ids')
       .populate('work_experience_ids')
+      .populate('organization')
+      .populate('skills')
+      .populate('certificates')
       .exec();
     
       if (user) {
@@ -181,21 +185,32 @@ export class UsersService {
 
   async update(updateUserDto: UpdateUserDto) {
     try {
-      // Kiểm tra ID người dùng
+      // Kiểm tra định dạng và độ dài số điện thoại
+      const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g; // Kiểm tra số điện thoại chỉ chứa các chữ số và không quá 10 ký tự
+      if (updateUserDto.phone && !phoneRegex.test(updateUserDto.phone)) {
+        throw new BadRequestException('Phone number must be numeric and up to 10 digits');
+      }
+  
+      // Kiểm tra số điện thoại đã tồn tại trong hệ thống
+      const existingUserByPhone = await this.userRepository.findOne({ phone: updateUserDto.phone });
+      if (existingUserByPhone && existingUserByPhone._id !== updateUserDto.id) {
+        throw new BadRequestException('Phone number is already in use');
+      }
+  
+      // Kiểm tra ID người dùng và cập nhật
       const updatedUser = await this.userRepository.findOneAndUpdate(
         { _id: updateUserDto.id },  // Tìm người dùng theo ID
         { $set: updateUserDto },  // Cập nhật người dùng với dữ liệu mới
         { new: true },  // Trả về bản ghi mới đã được cập nhật
       );
-
+  
       if (!updatedUser) {
         throw new NotFoundException('User not found');
       }
-
+  
       // Loại bỏ password trước khi trả về
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = updatedUser.toObject();
-
+  
       return userWithoutPassword; // Trả về thông tin người dùng đã được cập nhật
     } catch (error) {
       // Xử lý lỗi
@@ -243,11 +258,24 @@ export class UsersService {
       location,
       description,
     } = registerDto;
+    // Kiểm tra định dạng email hợp lệ
+    if (!emailRegex.test(email)) {
+      throw new BadRequestException('Email is not valid');
+    }
+  
+  
     const isEmailExists = await this.isEmailExists(email);
 
     if (isEmailExists) {
       throw new BadRequestException(`Email {${email}} already exists`);    
     }
+      // Kiểm tra mật khẩu hợp lệ theo biểu thức chính quy
+      if (!passwordRegex.test(password)) {
+        throw new BadRequestException(
+          'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
+        );
+      }
+    
 
     const hashPassword = await hashPasswordHelper(password);
     const findRole = await this.roleService.findByRoleName(role);
@@ -333,5 +361,40 @@ export class UsersService {
     return {
         user_id: user._id,
     };
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<string> {
+    const { user_id, current_password, new_password } = resetPasswordDto;
+  
+    // Find the user by user_id
+    const user = await this.userRepository.findOne({ _id: user_id });
+  
+    // If the user doesn't exist, throw an exception
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    // Compare the current password with the stored hashed password
+    const isPasswordValid = await comparePasswordHelper(current_password, user.password);
+  
+    // If the passwords don't match, throw an exception
+    if (!isPasswordValid) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+  
+    // Check if the new password is the same as the current password
+    const isNewPasswordSameAsCurrent = await comparePasswordHelper(new_password, user.password);
+    if (isNewPasswordSameAsCurrent) {
+      throw new BadRequestException('New password cannot be the same as the current password');
+    }
+  
+    // Hash the new password
+    const hashedPassword = await hashPasswordHelper(new_password);
+  
+    // Update the user's password
+    user.password = hashedPassword;
+    await user.save();
+  
+    return 'Password reset successfully';
   }
 }

@@ -77,6 +77,7 @@ export class JobController {
   @Get(':id')
   @ResponseMessage('Success')
   findOne(@Param('id') id: string) {
+    console.log('id', id);
     return this.jobService.findOne(id);
   }
 

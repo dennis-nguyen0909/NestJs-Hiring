@@ -29,4 +29,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   background?: string;
 
   // Các trường khác có thể được thêm vào đây nếu muốn
+  @IsOptional()
+  toggle_dashboard?: boolean;
 }

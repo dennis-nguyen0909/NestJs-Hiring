@@ -6,6 +6,9 @@ import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { CV } from '../../cv/schema/CV.schema';
 import { Education } from 'src/modules/education/schema/Education.schema';
 import { WorkExperience } from 'src/modules/work-experience/schema/WorkExperience.schema';
+import { Organization } from 'src/modules/organization/schema/organization.schema';
+import { Skill } from 'src/modules/skill/schema/Skill.schema';
+import { Certificate } from 'src/modules/certificate/schema/certificate.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -45,6 +48,9 @@ export class User extends Document {
   is_active: boolean;
 
   @Prop({ default: false })
+  toggle_dashboard: boolean;
+
+  @Prop({ default: false })
   is_search_jobs_status: boolean;
 
   @Prop()
@@ -65,6 +71,11 @@ export class User extends Document {
   @Prop({ type: [Types.ObjectId], ref: 'Education' })
   education_ids: Types.ObjectId[];
 
+  @Prop({ type: [Types.ObjectId], ref: Skill.name })
+  skills: Types.ObjectId[];
+
+  @Prop({ type: [Types.ObjectId], ref: 'Certificate' })
+  certificates: Types.ObjectId[];
   @Prop({ type: [Types.ObjectId], ref: 'WorkExperience' })
   work_experience_ids: Types.ObjectId[];
 
@@ -98,6 +109,15 @@ export class User extends Document {
 
   @Prop({ required: false })
   banner_company?: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: Organization.name,
+    unique: true,
+    sparse: true,
+  })
+  organization: Types.ObjectId;
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

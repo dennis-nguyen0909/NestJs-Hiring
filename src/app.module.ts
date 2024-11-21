@@ -29,6 +29,8 @@ import { WardsModule } from './modules/wards/wards.module';
 import { DistrictsModule } from './modules/districts/districts.module';
 import { SkillEmployerModule } from './modules/skill_employer/skill.module';
 import { SaveCandidatesModule } from './modules/save_candidates/save_candidates.module';
+import { OrganizationModule } from './modules/organization/organization.module';
+import { CertificateModule } from './modules/certificate/certificate.module';
 @Module({
   imports: [
     UsersModule,
@@ -88,6 +90,8 @@ import { SaveCandidatesModule } from './modules/save_candidates/save_candidates.
     DistrictsModule,
     SkillEmployerModule,
     SaveCandidatesModule,
+    OrganizationModule,
+    CertificateModule,
   ],
   controllers: [AppController],
   providers: [

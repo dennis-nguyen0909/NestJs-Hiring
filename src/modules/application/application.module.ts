@@ -4,6 +4,7 @@ import { ApplicationController } from './application.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Application, ApplicationSchema } from './schema/Application.schema';
 import { SaveCandidatesModule } from '../save_candidates/save_candidates.module';
+import { JobModule } from '../job/job.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { SaveCandidatesModule } from '../save_candidates/save_candidates.module'
       { name: Application.name, schema: ApplicationSchema },
     ]),
     SaveCandidatesModule,
+    JobModule,
   ],
   controllers: [ApplicationController],
   providers: [ApplicationService],

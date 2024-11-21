@@ -17,10 +17,7 @@ export class Job extends Document {
   description: string;
 
   @Prop()
-  requirement: string[];
-
-  @Prop()
-  location: string;
+  address: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Cities' })
   city_id: Cities;
@@ -65,9 +62,9 @@ export class Job extends Document {
   require_experience: string[];
 
   @Prop({ type: Types.ObjectId, ref: 'Level' })
-  level: Level;
+  level: Types.ObjectId;
 
-  @Prop({ type: Date })
+  @Prop({ type: Date, default: Date.now })
   posted_date: Date;
 
   @Prop({ type: Date })
@@ -75,9 +72,6 @@ export class Job extends Document {
 
   @Prop({ type: String })
   type_money: string;
-
-  @Prop({ type: String, default: '' })
-  image: string;
 
   @Prop({
     type: String,
@@ -90,9 +84,6 @@ export class Job extends Document {
   count_apply: number;
 
   @Prop()
-  address: string;
-
-  @Prop()
   is_negotiable: boolean;
 
   @Prop({
@@ -103,6 +94,25 @@ export class Job extends Document {
 
   @Prop({ default: true })
   is_active: boolean;
+
+  @Prop({ default: false })
+  is_expired: boolean;
+
+  @Prop({
+    type: [Types.ObjectId],
+    ref: 'User',
+  })
+  candidate_ids: Types.ObjectId[];
+
+  // New fields for job application methods
+  @Prop({ type: String, default: '' })
+  apply_linkedin: string;
+
+  @Prop({ type: String, default: '' })
+  apply_website: string; 
+
+  @Prop({ type: String, default: '' })
+  apply_email: string; 
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

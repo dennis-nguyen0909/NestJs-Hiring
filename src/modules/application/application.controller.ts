@@ -29,6 +29,15 @@ export class ApplicationController {
     return this.applicationService.create(createApplicationDto);
   }
 
+  @Delete(':id/cancel')
+  @ResponseMessage('Success')
+  async cancelApplication(
+    @Param('id') applicationId: string,
+    @Body('user_id') userId: string,
+  ) {
+    return this.applicationService.cancelApplication(applicationId, userId);
+  }
+
   @Get('/job_id/:id')
   @ResponseMessage('Success')
   getApplicationByJobId(
@@ -104,6 +113,7 @@ export class ApplicationController {
     return this.applicationService.remove(data);
   }
 
+  @ResponseMessage('Success')
   @Put(':applicationId/toggle-save/:userId')
   async toggleSaveCandidate(
     @Param('applicationId') applicationId: string,

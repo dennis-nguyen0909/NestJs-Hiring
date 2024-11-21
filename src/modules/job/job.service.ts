@@ -25,6 +25,7 @@ export class JobService {
   ) {}
   async create(createJobDto: CreateJobDto) {
     const { user_id } = createJobDto;
+    console.log('createJobDto', createJobDto);
     const isUserExist = await this.userService.findOne(user_id);
     if (isUserExist) {
       const user = await isUserExist.populate('role');
@@ -91,8 +92,7 @@ export class JobService {
   async findOne(id: string) {
     const job = await this.jobRepository
       .findOne({ _id: id })
-      .populate('user_id')
-      .populate('level');
+      .populate('user_id');
     if (!job) {
       throw new NotFoundException();
     }
@@ -101,6 +101,7 @@ export class JobService {
 
   async update(id: string, updateJobDto: UpdateJobDto) {
     try {
+      console.log("is_active",updateJobDto);
       const job = await this.jobRepository.findByIdAndUpdate(id, updateJobDto, {
         new: true, // Trả về tài liệu mới sau khi cập nhật
         runValidators: true, // Kiểm tra các ràng buộc khi cập nhật
@@ -265,7 +266,7 @@ export class JobService {
     const recentFilter = {
       ...filter,
       is_active: true,
-      expire_date: { $gte: new Date() },
+      posted_date: { $gte: new Date() },
     };
 
     // Đếm tổng số công việc dựa trên bộ lọc

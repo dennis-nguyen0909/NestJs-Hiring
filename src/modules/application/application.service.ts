@@ -12,6 +12,7 @@ import aqp from 'api-query-params';
 import { DeleteApplicationDto } from './dto/delete-application.dto';
 import { App } from 'supertest/types';
 import { SaveCandidate } from '../save_candidates/schema/SaveCandidates.schema';
+import { Job } from '../job/schema/Job.schema';
 
 @Injectable()
 export class ApplicationService {
@@ -20,23 +21,45 @@ export class ApplicationService {
     private applicationRepository: Model<Application>,
     @InjectModel('SaveCandidate')
     private saveCandidateModel: Model<SaveCandidate>,
+    @InjectModel('Job') private jobModel: Model<Job>,
   ) {}
 
   async create(createApplicationDto: CreateApplicationDto) {
     try {
+      // Kiểm tra xem Job có tồn tại, còn hạn và đang hoạt động không
+      const job = await this.jobModel.findOne({
+        _id: createApplicationDto.job_id,
+        is_active: true,
+        expire_date: { $gt: new Date() }, // Kiểm tra expired_date > ngày hiện tại
+      });
+
+      if (!job) {
+        throw new BadRequestException('Job is either inactive or expired');
+      }
+
+      // Kiểm tra xem user đã ứng tuyển hay chưa
       const findUser = await this.applicationRepository.findOne({
         user_id: createApplicationDto.user_id,
+        job_id: createApplicationDto.job_id, // Đảm bảo kiểm tra theo job_id
       });
       if (findUser) {
         throw new BadRequestException('User already applied');
       }
+
+      // Tạo mới Application
       const newApplied = await this.applicationRepository.create({
         ...createApplicationDto,
       });
+
       if (newApplied) {
+        // Cập nhật Job với user_id vào candidate_ids
+        await this.jobModel.updateOne(
+          { _id: newApplied.job_id }, // Điều kiện để tìm Job
+          { $push: { candidate_ids: newApplied?.user_id } }, // Sử dụng $push để thêm userId vào candidate_ids
+        );
         return newApplied;
       } else {
-        throw new NotFoundException();
+        throw new NotFoundException('Failed to apply for job');
       }
     } catch (error) {
       throw new NotFoundException(error);
@@ -229,5 +252,31 @@ export class ApplicationService {
         total_pages: totalPages,
       },
     };
+  }
+  async cancelApplication(applicationId: string, userId: string) {
+    try {
+      console.log('cancelApplication', applicationId, userId);
+      const application = await this.applicationRepository.findOne({
+        _id: applicationId,
+        user_id: userId,
+      });
+
+      if (!application) {
+        throw new NotFoundException('Application not found');
+      }
+
+      // Xóa bản ghi ứng tuyển
+      await this.applicationRepository.deleteOne({ _id: applicationId });
+
+      // Xóa user_id khỏi mảng candidate_ids trong Job
+      await this.jobModel.updateOne(
+        { _id: application.job_id },
+        { $pull: { candidate_ids: userId } }, // Xóa user_id khỏi danh sách candidate_ids
+      );
+
+      return { message: 'Application cancelled successfully' };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

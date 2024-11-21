@@ -102,4 +102,7 @@ export class CreateUserDto {
   avatar_company?: string;
   @IsOptional()
   banner_company?: string;
+
+  @IsOptional()
+  toggle_dashboard?: boolean;
 }
