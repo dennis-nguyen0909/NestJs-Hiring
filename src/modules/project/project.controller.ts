@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -26,8 +27,12 @@ export class ProjectController {
 
   @Get()
   @ResponseMessage('success')
-  findAll() {
-    return this.projectService.findAll();
+  findAll(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.projectService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')

@@ -26,7 +26,7 @@ export class Project extends Document {
   @Prop()
   project_image: string;
   @Prop()
-  descroption: string;
+  description: string;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

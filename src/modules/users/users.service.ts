@@ -170,14 +170,15 @@ export class UsersService {
       .populate('certificates')
       .populate('prizes')
       .populate('projects')
+      .populate('courses')
       .exec();
     
+      console.log("user",user)
       if (user) {
         return {
           items: user,
         };
       }
-      console.log("user",user)
       return null;
     } catch (error) {
       console.error("Populate error:", error);  // In ra lỗi populate để debug

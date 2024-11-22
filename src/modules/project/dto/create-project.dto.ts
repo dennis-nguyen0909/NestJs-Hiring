@@ -33,7 +33,7 @@ export class CreateProjectDto {
   mission?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   technology?: string;
   @IsNotEmpty()
   start_date?: Date;

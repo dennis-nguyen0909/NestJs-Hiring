@@ -16,7 +16,7 @@ export class CreateSkillDto {
   name: string;
 
   @IsOptional()
-  @Min(1)
+  @Min(0)
   @Max(5)
   evalute?: number;
 

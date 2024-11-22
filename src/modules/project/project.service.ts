@@ -10,6 +10,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Project } from './schema/project.schema';
 import { Model, Types } from 'mongoose';
 import { User } from '../users/schemas/User.schema';
+import { Meta } from '../types';
+import aqp from 'api-query-params';
 
 @Injectable()
 export class ProjectService {
@@ -32,12 +34,40 @@ export class ProjectService {
     return project;
   }
 
-  async findAll() {
-    return this.projectModel.find();
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Project[]; meta: Meta }> {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    const totalItems = (await this.projectModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+    const result = await this.projectModel
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any);
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
   }
 
   async findOne(id: string) {
-    return this.projectModel.findById(id);
+    console.log('id', id);
+    return this.projectModel.findById({ _id: id });
   }
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {

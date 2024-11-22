@@ -12,7 +12,7 @@ export class Skill extends Document {
   @Prop({
     type: Number,
     required: true,
-    min: 1,
+    min: 0,
     max: 5,
   })
   evalute: number;

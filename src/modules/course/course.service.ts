@@ -66,6 +66,7 @@ export class CourseService {
   }
 
   async findOne(id: string) {
+    console.log('id', id);
     const course = await this.courseModel
       .findOne({ _id: id })
       // .populate('user_id')
