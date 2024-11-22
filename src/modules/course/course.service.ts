@@ -10,6 +10,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Course } from './schema/course.schema';
 import { Model, Types } from 'mongoose';
 import { User } from '../users/schemas/User.schema';
+import { Meta } from '../types';
+import aqp from 'api-query-params';
 
 @Injectable()
 export class CourseService {
@@ -32,8 +34,35 @@ export class CourseService {
     return course;
   }
 
-  async findAll() {
-    return this.courseModel.find().exec();
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Course[]; meta: Meta }> {
+   const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    const totalItems = (await this.courseModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+    const result = await this.courseModel
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any);
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
   }
 
   async findOne(id: string) {
@@ -66,6 +95,8 @@ export class CourseService {
     }
 
     // Chỉ cho phép chủ sở hữu khóa học xóa khóa học
+    console.log('userId', userId);
+    console.log('course', course);
     if (course.user_id.toString() !== userId) {
       throw new ForbiddenException('You are not allowed to delete this course');
     }

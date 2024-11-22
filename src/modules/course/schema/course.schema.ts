@@ -12,7 +12,7 @@ export class Course extends Document {
   @Prop({ required: true })
   organization_name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   description: string;
 
   @Prop({ type: Date })

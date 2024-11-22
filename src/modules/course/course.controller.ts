@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -25,8 +26,12 @@ export class CourseController {
 
   @Get()
   @ResponseMessage('Success')
-  findAll() {
-    return this.courseService.findAll();
+  findAll(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.courseService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')

@@ -12,8 +12,8 @@ export class CreateCourseDto {
   @IsNotEmpty()
   organization_name: string;
   @IsString()
-  @IsNotEmpty()
-  description: string;
+  @IsOptional()
+  description?: string;
 
   @IsOptional()
   @IsDateString()
