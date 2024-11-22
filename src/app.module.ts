@@ -31,6 +31,9 @@ import { SkillEmployerModule } from './modules/skill_employer/skill.module';
 import { SaveCandidatesModule } from './modules/save_candidates/save_candidates.module';
 import { OrganizationModule } from './modules/organization/organization.module';
 import { CertificateModule } from './modules/certificate/certificate.module';
+import { PrizeModule } from './modules/prize/prize.module';
+import { CourseModule } from './modules/course/course.module';
+import { ProjectModule } from './modules/project/project.module';
 @Module({
   imports: [
     UsersModule,
@@ -92,6 +95,9 @@ import { CertificateModule } from './modules/certificate/certificate.module';
     SaveCandidatesModule,
     OrganizationModule,
     CertificateModule,
+    PrizeModule,
+    CourseModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [

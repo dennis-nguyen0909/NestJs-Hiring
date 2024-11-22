@@ -168,6 +168,8 @@ export class UsersService {
       .populate('organization')
       .populate('skills')
       .populate('certificates')
+      .populate('prizes')
+      .populate('projects')
       .exec();
     
       if (user) {

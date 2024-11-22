@@ -1,14 +1,14 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Mongoose, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { Job } from '../../job/schema/Job.schema'; // Nhớ import Job schema
 import { Role } from '../../role/schema/Role.schema';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { CV } from '../../cv/schema/CV.schema';
-import { Education } from 'src/modules/education/schema/Education.schema';
-import { WorkExperience } from 'src/modules/work-experience/schema/WorkExperience.schema';
 import { Organization } from 'src/modules/organization/schema/organization.schema';
 import { Skill } from 'src/modules/skill/schema/Skill.schema';
-import { Certificate } from 'src/modules/certificate/schema/certificate.schema';
+import { Prize } from 'src/modules/prize/schema/prize.schema';
+import { Course } from 'src/modules/course/schema/course.schema';
+import { Project } from 'src/modules/project/schema/project.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -76,6 +76,16 @@ export class User extends Document {
 
   @Prop({ type: [Types.ObjectId], ref: 'Certificate' })
   certificates: Types.ObjectId[];
+
+  @Prop({ type: [Types.ObjectId], ref: Prize.name })
+  prizes: Types.ObjectId[];
+
+  @Prop({ type: [Types.ObjectId], ref: Course.name })
+  courses: Types.ObjectId[];
+
+  @Prop({ type: [Types.ObjectId], ref: Project.name })
+  projects: Types.ObjectId[];
+
   @Prop({ type: [Types.ObjectId], ref: 'WorkExperience' })
   work_experience_ids: Types.ObjectId[];
 
@@ -117,7 +127,6 @@ export class User extends Document {
     sparse: true,
   })
   organization: Types.ObjectId;
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
