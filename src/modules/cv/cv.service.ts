@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   BadRequestException,
   Injectable,
@@ -10,10 +11,17 @@ import { Model } from 'mongoose';
 import { CV } from './schema/CV.schema';
 import aqp from 'api-query-params';
 import { DeleteCvDto } from './dto/delete-cv.dto';
-
+import * as PDFDocument from 'pdfkit';
+import * as fs from 'fs';
+import * as path from 'path';
+import { User } from '../users/schemas/User.schema';
+import { Project } from '../project/schema/project.schema';
 @Injectable()
 export class CvService {
-  constructor(@InjectModel('CV') private cvRepository: Model<CV>) {}
+  constructor(
+    @InjectModel('CV') private cvRepository: Model<CV>,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {}
   async create(createCvDto: CreateCvDto) {
     const {
       title,
@@ -161,5 +169,168 @@ export class CvService {
         },
       },
     };
+  }
+  async generalPDF(id: string): Promise<Buffer> {
+    // Populate the 'projects' field when querying the user
+    const user = await this.userModel
+      .findById(id)
+      .populate('projects')
+      .select(['-password', '-code_id', '-code_expired'])
+      .populate('role')
+      .populate('education_ids')
+      .populate('work_experience_ids')
+      .populate('organization')
+      .populate('skills')
+      .populate('certificates')
+      .populate('prizes')
+      .populate('projects')
+      .populate('courses')
+      .exec();
+
+    console.log(user);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // TypeScript expects user.projects to be an array of ObjectIds by default
+    const projects: Project[] = user.projects as unknown as Project[];
+
+    const pdfBuffer: Buffer = await new Promise((resolve, reject) => {
+      const doc = new PDFDocument({
+        size: 'LETTER',
+        bufferPages: true,
+      });
+
+      // Add Header
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(30)
+        .text(user.full_name || 'Full Name', {
+          align: 'center',
+        })
+        .moveDown()
+        .fontSize(12)
+        .text(`Email: ${user.email || 'N/A'}`, 100, 100)
+        .text(`Phone: ${user.phone || 'N/A'}`, 100, 120)
+        .text(`Address: ${user.address || 'N/A'}`, 100, 140)
+        .text(`Role: ${user.role?.role_name || 'N/A'}`, 100, 160)
+        .moveDown();
+
+      // Education Section
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(16)
+        .text('Education', 100, doc.y)
+        .moveDown()
+        .fontSize(12);
+      user.education_ids.forEach((education: any) => {
+        doc
+          .text(`School: ${education.school || 'N/A'}`)
+          .text(`Major: ${education.major || 'N/A'}`)
+          .text(
+            `Start Date: ${new Date(education.start_date).toLocaleDateString() || 'N/A'}`,
+          )
+          .text(
+            `Currently Studying: ${education.currently_studying ? 'Yes' : 'No'}`,
+          )
+          .moveDown();
+      });
+
+      // Work Experience Section
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(16)
+        .text('Work Experience', 100, doc.y)
+        .moveDown()
+        .fontSize(12);
+      user.work_experience_ids.forEach((work: any) => {
+        doc
+          .text(`Company: ${work.company || 'N/A'}`)
+          .text(`Position: ${work.position || 'N/A'}`)
+          .text(
+            `Start Date: ${new Date(work.start_date).toLocaleDateString() || 'N/A'}`,
+          )
+          .text(`Currently Working: ${work.currently_working ? 'Yes' : 'No'}`)
+          .moveDown();
+      });
+
+      // Skills Section
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(16)
+        .text('Skills', 100, doc.y)
+        .moveDown()
+        .fontSize(12);
+      user.skills.forEach((skill: any) => {
+        doc
+          .text(`Skill: ${skill.name || 'N/A'}`)
+          .text(`Evaluation: ${skill.evalute || 'N/A'}`)
+          .text(`Description: ${skill.description || 'N/A'}`)
+          .moveDown();
+      });
+
+      // Certificates Section
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(16)
+        .text('Certificates', 100, doc.y)
+        .moveDown()
+        .fontSize(12);
+      user.certificates.forEach((certificate: any) => {
+        doc
+          .text(`Certificate: ${certificate.certificate_name || 'N/A'}`)
+          .text(`Organization: ${certificate.organization_name || 'N/A'}`)
+          .text(
+            `Start Date: ${new Date(certificate.start_date).toLocaleDateString() || 'N/A'}`,
+          )
+          .moveDown();
+      });
+
+      // Projects Section
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(16)
+        .text('Projects', 100, doc.y)
+        .moveDown()
+        .fontSize(12);
+      projects.forEach((proj: any) => {
+        doc
+          .text(`Project Name: ${proj.project_name || 'N/A'}`)
+          .text(`Technology: ${proj.technology || 'N/A'}`)
+          .text(`Link: ${proj.project_link || 'N/A'}`)
+          .moveDown();
+      });
+
+      // Prizes Section
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(16)
+        .text('Prizes', 100, doc.y)
+        .moveDown()
+        .fontSize(12);
+      user.prizes.forEach((prize: any) => {
+        doc
+          .text(`Prize: ${prize.prize_name || 'N/A'}`)
+          .text(`Organization: ${prize.organization_name || 'N/A'}`)
+          .text(
+            `Date: ${new Date(prize.date_of_receipt).toLocaleDateString() || 'N/A'}`,
+          )
+          .text(`Link: ${prize.prize_link || 'N/A'}`)
+          .moveDown();
+      });
+
+      const buffer: any[] = [];
+      doc.on('data', buffer.push.bind(buffer));
+      doc.on('end', () => {
+        resolve(Buffer.concat(buffer));
+      });
+      doc.end();
+    });
+
+    return pdfBuffer;
+  }
+
+  async downloadPFD(){
+
   }
 }

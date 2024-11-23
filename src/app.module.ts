@@ -10,7 +10,6 @@ import { JwtAuthGuard } from './modules/auth/passport/jwt-auth-guard';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { JobModule } from './modules/job/job.module';
-import { CvModule } from './modules/cv/cv.module';
 import { CvUploadModule } from './modules/cv-upload/cv-upload.module';
 import { ApplicationModule } from './modules/application/application.module';
 import { AuthProviderModule } from './modules/auth-provider/auth-provider.module';
@@ -34,6 +33,7 @@ import { CertificateModule } from './modules/certificate/certificate.module';
 import { PrizeModule } from './modules/prize/prize.module';
 import { CourseModule } from './modules/course/course.module';
 import { ProjectModule } from './modules/project/project.module';
+import { CvModule } from './modules/cv/cv.module';
 @Module({
   imports: [
     UsersModule,

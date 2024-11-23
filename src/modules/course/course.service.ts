@@ -66,7 +66,6 @@ export class CourseService {
   }
 
   async findOne(id: string) {
-    console.log('id', id);
     const course = await this.courseModel
       .findOne({ _id: id })
       // .populate('user_id')
@@ -95,9 +94,6 @@ export class CourseService {
       throw new NotFoundException(`Course #${id} not found`);
     }
 
-    // Chỉ cho phép chủ sở hữu khóa học xóa khóa học
-    console.log('userId', userId);
-    console.log('course', course);
     if (course.user_id.toString() !== userId) {
       throw new ForbiddenException('You are not allowed to delete this course');
     }

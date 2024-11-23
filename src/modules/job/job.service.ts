@@ -25,7 +25,6 @@ export class JobService {
   ) {}
   async create(createJobDto: CreateJobDto) {
     const { user_id } = createJobDto;
-    console.log('createJobDto', createJobDto);
     const isUserExist = await this.userService.findOne(user_id);
     if (isUserExist) {
       const user = await isUserExist.populate('role');
@@ -101,7 +100,6 @@ export class JobService {
 
   async update(id: string, updateJobDto: UpdateJobDto) {
     try {
-      console.log("is_active",updateJobDto);
       const job = await this.jobRepository.findByIdAndUpdate(id, updateJobDto, {
         new: true, // Trả về tài liệu mới sau khi cập nhật
         runValidators: true, // Kiểm tra các ràng buộc khi cập nhật

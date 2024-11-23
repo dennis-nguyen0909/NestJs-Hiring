@@ -107,7 +107,6 @@ export class ApplicationService {
 
   async update(id: string, updateApplicationDto: UpdateApplicationDto) {
     try {
-      console.log('updateApplicationDto', updateApplicationDto);
       const applied = await this.applicationRepository.findByIdAndUpdate(
         id,
         updateApplicationDto,
@@ -208,7 +207,6 @@ export class ApplicationService {
 
     const skip = (current - 1) * pageSize;
     const limit = pageSize;
-    console.log('duy test', filter);
     const totalItems = await this.applicationRepository.countDocuments({
       job_id: jobId,
       ...filter,
@@ -255,7 +253,6 @@ export class ApplicationService {
   }
   async cancelApplication(applicationId: string, userId: string) {
     try {
-      console.log('cancelApplication', applicationId, userId);
       const application = await this.applicationRepository.findOne({
         _id: applicationId,
         user_id: userId,

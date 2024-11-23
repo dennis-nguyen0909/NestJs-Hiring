@@ -172,8 +172,6 @@ export class UsersService {
       .populate('projects')
       .populate('courses')
       .exec();
-    
-      console.log("user",user)
       if (user) {
         return {
           items: user,

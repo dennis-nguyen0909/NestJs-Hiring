@@ -99,14 +99,12 @@ export class CertificateService {
     current: number,
     pageSize: number,
   ): Promise<{ items: Certificate[]; meta: Meta }> {
-    console.log("diude[trao ",query)
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
 
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
-console.log('filter', filter);
     const totalItems = (await this.certificateModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;

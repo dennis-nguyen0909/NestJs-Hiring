@@ -24,13 +24,19 @@ export class ProjectService {
     if (!project) {
       throw new BadRequestException('Create project failed');
     }
+
     const user = await this.userModel.findById(project.user_id);
     if (!user) {
       throw new NotFoundException(`user #${project.user_id} not found`);
     }
+
+    // Cast project._id to ObjectId
     const projectId = new Types.ObjectId(project._id + '');
+
+    // Add the ObjectId to the user's projects array
     user.projects.push(projectId);
     await user.save();
+
     return project;
   }
 
@@ -66,7 +72,6 @@ export class ProjectService {
   }
 
   async findOne(id: string) {
-    console.log('id', id);
     return this.projectModel.findById({ _id: id });
   }
 
