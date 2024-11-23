@@ -276,4 +276,85 @@ export class ApplicationService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async getAppliedUserId(userId: string) {
+    try {
+      console.log(userId);
+
+      // Sử dụng countDocuments để đếm số lượng ứng tuyển của user_id
+      const count = await this.applicationRepository.countDocuments({
+        user_id: userId,
+      });
+      if (count === 0) {
+        throw new NotFoundException('No applications found for this user!');
+      }
+
+      return count;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async getRecentlyApplied(candidateId: string, limit: number) {
+    try {
+      const res = await this.applicationRepository
+        .find({ user_id: candidateId })
+        .populate('job_id') // Populate job details
+        .populate(
+          'employer_id',
+          '-password -role -account_type -code_id -code_expired -auth_providers',
+        ) // Populate employer details
+        .sort({ applied_date: -1 }) // Sort by applied_date (descending)
+        .limit(limit)
+        .exec();
+      if (!res) {
+        throw new NotFoundException('Not found!');
+      }
+      return res;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async getRecentlyAppliedCandidate(
+    query: string,
+    current: number,
+    pageSize: number,
+  ) {
+    const { filter, sort } = aqp(query);
+    console.log('filter', filter);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    const totalItems = (await this.applicationRepository.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+    const result = await this.applicationRepository
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort({ ...(sort as any), applied_date: -1 })
+      .populate(
+        'employer_id',
+        '-password -role -account_type -code_id -code_expired -auth_providers',
+      )
+      .populate({
+        path: 'job_id',
+        populate: {
+          path: 'city_id',
+          select: 'name',
+        },
+      });
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: +current,
+        per_page: +pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
+  }
 }

@@ -1,13 +1,14 @@
 /* eslint-disable prettier/prettier */
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CV } from './schema/CV.schema';
 import aqp from 'api-query-params';
 import { DeleteCvDto } from './dto/delete-cv.dto';
@@ -16,39 +17,26 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { User } from '../users/schemas/User.schema';
 import { Project } from '../project/schema/project.schema';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 @Injectable()
 export class CvService {
   constructor(
     @InjectModel('CV') private cvRepository: Model<CV>,
     @InjectModel(User.name) private userModel: Model<User>,
+   private cloudinaryService:CloudinaryService
   ) {}
   async create(createCvDto: CreateCvDto) {
-    const {
-      title,
-      user_id,
-      personal_info,
-      education,
-      work_experience,
-      skills,
-      languages,
-      cv_url,
-      file_name,
-    } = createCvDto;
-    const cv = await this.cvRepository.create({
-      title,
-      user_id,
-      personal_info,
-      education,
-      work_experience,
-      skills,
-      languages,
-      cv_url,
-      file_name,
-    });
-    return {
-      message: 'Cv created successfully',
-      data: cv,
-    };
+   const cv:CV = await this.cvRepository.create(createCvDto);
+   const user:User = await this.userModel.findOne({_id:createCvDto.user_id})
+   if(!user){
+     throw new BadRequestException('user not found')
+   }
+    if(!cv){
+      throw new BadRequestException('cv not created')
+    }
+    user.cvs.push(cv._id as any)
+    await user.save()
+    return cv
   }
 
   async findAll(query: string, current: number, pageSize: number) {
@@ -58,6 +46,7 @@ export class CvService {
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
     const defaultSort = '-createdAt';
+    console.log('filter',filter)
     const sortOption = sort || defaultSort;
     const totalItems = (await this.cvRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
@@ -68,7 +57,6 @@ export class CvService {
       .skip(skip)
       .sort(sortOption as any);
     return {
-      data: {
         items: result,
         meta: {
           count: result.length,
@@ -77,7 +65,6 @@ export class CvService {
           total: totalItems,
           total_pages: totalPages,
         },
-      },
     };
   }
 
@@ -101,8 +88,12 @@ export class CvService {
     }
   }
 
-  async remove(data: DeleteCvDto) {
+  async remove(data: DeleteCvDto,userId:string) {
     const { ids } = data;
+    const user:User = await this.userModel.findOne({_id:userId})
+    if(!user){
+      throw new BadRequestException('user not found')
+    }
     if (!Array.isArray(ids)) {
       throw new BadRequestException('Ids not is array');
     }
@@ -112,6 +103,10 @@ export class CvService {
     if (ids.length === 1) {
       const res = await this.cvRepository.deleteOne({ _id: ids[0] });
       if (res.deletedCount > 0) {
+        await this.userModel.updateOne(
+          { _id: ids[0] },
+          { $pull: { cvs: ids[0] } },
+        );
         return {
           message: 'Cv deleted successfully',
           data: [],
@@ -125,6 +120,11 @@ export class CvService {
     } else {
       const res = await this.cvRepository.deleteMany({ _id: { $in: ids } });
       if (res.deletedCount > 0) {
+        await this.userModel.updateMany(
+          { _id: { $in: ids } },
+          { $pull: { cvs: { $in: ids } } },
+        );
+        
         return {
           message: 'Cv deleted successfully',
           data: [],
@@ -332,5 +332,29 @@ export class CvService {
 
   async downloadPFD(){
 
+  }
+
+  async delete(id: string, userId: string) {
+    const cv = await this.cvRepository.findById(id).exec();
+    if (!cv) {
+      throw new NotFoundException(`cv #${id} not found`);
+    }
+    if (cv?.user_id === new Types.ObjectId(userId)) {
+      throw new ForbiddenException(
+        'You are not allowed to delete this cv',
+      );
+    }
+
+    const result = await this.cvRepository.deleteOne({ _id: id });
+    if (result.deletedCount === 0) {
+      throw new BadRequestException(
+        'cv not found or could not be deleted',
+      );
+    }
+    
+    await this.userModel.updateOne(
+      { _id: cv.user_id },
+      { $pull: { cvs: id } }, 
+    );
   }
 }

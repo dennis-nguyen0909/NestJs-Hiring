@@ -82,6 +82,8 @@ export class User extends Document {
 
   @Prop({ type: [Types.ObjectId], ref: Course.name })
   courses: Types.ObjectId[];
+  @Prop({ type: [Types.ObjectId], ref: CV.name })
+  cvs: Types.ObjectId[];
 
   @Prop({ type: [Types.ObjectId], ref: Project.name })
   projects: Types.ObjectId[];

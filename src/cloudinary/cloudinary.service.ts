@@ -64,4 +64,29 @@ export class CloudinaryService {
   async deleteFile(publicId: string) {
     return await cloudinary.uploader.destroy(publicId);
   }
+
+  async uploadPDF(
+    file: Express.Multer.File,
+  ): Promise<{ url: string; originalName: string; result: any }> {
+    return new Promise<{ url: string; originalName: string; result: any }>(
+      (resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'raw',
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            // Resolve with URL and original file name
+            resolve({
+              url: result.url,
+              originalName: file.originalname,
+              result: result,
+            });
+          },
+        );
+
+        streamifier.createReadStream(file.buffer).pipe(uploadStream);
+      },
+    );
+  }
 }

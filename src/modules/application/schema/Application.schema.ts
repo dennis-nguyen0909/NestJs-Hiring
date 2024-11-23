@@ -20,9 +20,6 @@ export class Application extends Document {
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   employer_id: string;
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, ref: CV.name, required: true })
-  cv_id: string;
-  @ApiProperty()
   @Prop({ required: true })
   cover_letter: string;
   @ApiProperty()

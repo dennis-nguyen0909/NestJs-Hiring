@@ -38,15 +38,6 @@ export class CreateApplicationDto {
   employer_id: string;
 
   @ApiProperty({
-    type: String,
-    description: 'The ID of the CV',
-    example: '60c72b2f9b1e8b001c8e4a13',
-  })
-  @IsString()
-  @IsNotEmpty()
-  cv_id: string;
-
-  @ApiProperty({
     description: 'The cover letter for the application',
     example: 'This is my cover letter.',
   })

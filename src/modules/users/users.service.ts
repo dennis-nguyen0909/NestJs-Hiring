@@ -171,6 +171,10 @@ export class UsersService {
       .populate('prizes')
       .populate('projects')
       .populate('courses')
+      .populate({
+        path:'cvs',
+        select:'-public_id -createdAt -updatedAt -user_id '
+      })
       .exec();
       if (user) {
         return {

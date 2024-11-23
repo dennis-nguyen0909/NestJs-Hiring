@@ -12,7 +12,7 @@ import {
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { DeleteApplicationDto } from './dto/delete-application.dto';
 
@@ -27,6 +27,19 @@ export class ApplicationController {
   @ApiBody({ type: CreateApplicationDto })
   create(@Body() createApplicationDto: CreateApplicationDto) {
     return this.applicationService.create(createApplicationDto);
+  }
+
+  @Get('recently-applied-candidate')
+  getRecentlyAppliedCandidate(
+    @Query('query') query: string,
+    @Query('current') current: number,
+    @Query('pageSize') pageSize: number,
+  ) {
+    return this.applicationService.getRecentlyAppliedCandidate(
+      query,
+      current,
+      pageSize,
+    );
   }
 
   @Delete(':id/cancel')
@@ -77,7 +90,7 @@ export class ApplicationController {
     example: { status: 'pending' },
   })
   findAll(
-    @Query() query,
+    @Query('query') query,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
@@ -120,5 +133,24 @@ export class ApplicationController {
     @Param('userId') userId: string,
   ) {
     return this.applicationService.toggleSaveCandidate(applicationId, userId);
+  }
+
+  @ResponseMessage('Success')
+  @Get('applied/:userId')
+  async getAppliedUserId(@Param('userId') userId: string) {
+    return this.applicationService.getAppliedUserId(userId);
+  }
+
+  @Get('recently-applied/:candidate_id')
+  @ApiParam({
+    name: 'candidate_id',
+    type: String,
+    description: 'ID of the candidate',
+  })
+  async getRecentlyApplied(
+    @Param('candidate_id') candidate_id: string,
+    @Query('limit') limit: string,
+  ) {
+    return this.applicationService.getRecentlyApplied(candidate_id, +limit);
   }
 }

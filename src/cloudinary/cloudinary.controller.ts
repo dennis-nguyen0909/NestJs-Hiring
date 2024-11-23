@@ -39,4 +39,10 @@ export class CloudinaryController {
   deleteFile(@Param('publicId') publicId: string) {
     return this.cloudinaryService.deleteFile(publicId);
   }
+
+  @Post('upload-pdf')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadPDF(@UploadedFile() file: Express.Multer.File) {
+    return this.cloudinaryService.uploadPDF(file);
+  }
 }

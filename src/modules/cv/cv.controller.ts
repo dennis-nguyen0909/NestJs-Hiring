@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   Res,
+  Req,
 } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -18,11 +19,11 @@ import { DeleteCvDto } from './dto/delete-cv.dto';
 
 @Controller('cvs')
 @ApiTags('CV')
-@Public()
 export class CvController {
   constructor(private readonly cvService: CvService) {}
 
   @Post()
+  @ResponseMessage('success')
   create(@Body() createCvDto: CreateCvDto) {
     return this.cvService.create(createCvDto);
   }
@@ -44,8 +45,9 @@ export class CvController {
   }
 
   @Get()
+  @ResponseMessage('success')
   findAll(
-    @Query() query: string,
+    @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
@@ -53,21 +55,32 @@ export class CvController {
   }
 
   @Get(':id')
+  @ResponseMessage('success')
   findOne(@Param('id') id: string) {
     return this.cvService.findOne(id);
   }
 
   @Patch(':id')
+  @ResponseMessage('success')
   update(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto) {
     return this.cvService.update(id, updateCvDto);
   }
 
   @Delete()
-  remove(@Body() data: DeleteCvDto) {
-    return this.cvService.remove(data);
+  @ResponseMessage('success')
+  remove(@Body() data: DeleteCvDto, @Req() req) {
+    const userId = req.user._id;
+    return this.cvService.remove(data, userId);
+  }
+  @Delete(':id')
+  @ResponseMessage('success')
+  delete(@Param('id') id: string, @Req() req) {
+    const userId = req.user._id;
+    return this.cvService.delete(id, userId);
   }
 
   @Get('user/:id')
+  @ResponseMessage('success')
   findCvByUserId(
     @Param('id') id: string,
     @Query() query,

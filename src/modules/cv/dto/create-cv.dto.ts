@@ -1,56 +1,13 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsArray,
-  ValidateNested,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { Education } from '../../education/schema/Education.schema';
-import { WorkExperience } from '../../work-experience/schema/WorkExperience.schema';
-import { Skill } from '../../skill/schema/Skill.schema';
-import { ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateCvDto {
-  @ApiProperty({
-    description: 'title of cv',
-    example: 'Intern Frontend',
-  })
-  @IsString()
   @IsNotEmpty()
-  title: string;
-  @ApiProperty({
-    description: 'User id',
-    example: '1231231y',
-  })
-  @IsString()
+  user_id: Types.ObjectId;
   @IsNotEmpty()
-  user_id: string;
-
-  @IsString()
-  personal_info: string;
-
-  @IsArray()
-  education: Education[];
-
-  @IsArray()
-  work_experience: WorkExperience[];
-
-  @IsArray()
-  @IsOptional()
-  skills: Skill[];
-
-  @IsArray()
-  @IsString({ each: true })
-  languages: string[];
-
-  @IsArray()
-  @IsString({ each: true })
+  cv_name: string;
   @IsNotEmpty()
-  cv_url: string[];
-
-  @IsString()
+  cv_link: string;
   @IsNotEmpty()
-  @IsOptional()
-  file_name: string;
+  public_id: string;
 }
