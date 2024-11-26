@@ -61,4 +61,9 @@ export class UsersController {
   ): Promise<string> {
     return this.usersService.resetPassword(resetPasswordDto);
   }
+
+  @Get(':id/profile-completion')
+  async getProfileCompletion(@Param('id') userId: string): Promise<number> {
+    return this.usersService.calculateProfileCompletion(userId);
+  }
 }

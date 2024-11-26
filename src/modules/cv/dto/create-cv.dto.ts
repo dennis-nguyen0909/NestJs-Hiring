@@ -10,4 +10,7 @@ export class CreateCvDto {
   cv_link: string;
   @IsNotEmpty()
   public_id: string;
+
+  @IsNotEmpty()
+  bytes: number;
 }

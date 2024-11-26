@@ -9,6 +9,9 @@ import { Skill } from 'src/modules/skill/schema/Skill.schema';
 import { Prize } from 'src/modules/prize/schema/prize.schema';
 import { Course } from 'src/modules/course/schema/course.schema';
 import { Project } from 'src/modules/project/schema/project.schema';
+import { Cities } from 'src/modules/cities/schema/Cities.schema';
+import { District } from 'src/modules/districts/schema/District.schema';
+import { Ward } from 'src/modules/wards/schema/Wards.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -34,8 +37,11 @@ export class User extends Document {
   address: string;
 
   @Prop()
-  gender: string;
-
+  introduce: string;
+  @Prop({ type: Number, enum: [0, 1, 2], default: 2 })
+  gender: number;
+  @Prop()
+  port_folio: string;
   @Prop({ type: Types.ObjectId, ref: 'Role', default: null })
   role: Role; // Phân biệt người dùng qua role (ADMIN, USERS, EMPLOYER, ...)
   @Prop({ default: 'LOCAL' })
@@ -52,7 +58,14 @@ export class User extends Document {
 
   @Prop({ default: false })
   is_search_jobs_status: boolean;
+  @Prop({ type: Types.ObjectId, ref: 'Cities' })
+  city_id: Cities;
 
+  @Prop({ type: Types.ObjectId, ref: 'District' })
+  district_id: District;
+
+  @Prop({ type: Types.ObjectId, ref: 'Ward' })
+  ward_id: Ward;
   @Prop()
   code_id: string;
 
@@ -93,6 +106,8 @@ export class User extends Document {
 
   @Prop({ required: false })
   total_experience?: string;
+  @Prop()
+  experience_string: string;
   @Prop()
   no_experience: boolean;
   @Prop()

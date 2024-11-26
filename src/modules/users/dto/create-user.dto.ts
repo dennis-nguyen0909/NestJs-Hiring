@@ -1,8 +1,9 @@
-import { IsString, IsEmail, IsOptional, IsBoolean, IsArray } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsBoolean, IsArray, IsNumber, IsIn, IsMongoId } from 'class-validator';
 import { Types } from 'mongoose';
 import { Role } from '../../role/schema/Role.schema';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { Job } from '../../job/schema/Job.schema';
+import { Type } from '@nestjs/common';
 
 export class CreateUserDto {
   @IsEmail()
@@ -31,11 +32,12 @@ export class CreateUserDto {
   address?: string;
 
   @IsOptional()
-  @IsString()
-  gender?: string;
+  @IsNumber()
+  @IsIn([0, 1, 2]) // 0: Nam, 1: Nữ, 2: Không xác định
+  gender?: number;
 
-  @IsOptional()
-  role?: string;
+  @IsMongoId()
+  role: string;
 
   @IsOptional()
   @IsString()

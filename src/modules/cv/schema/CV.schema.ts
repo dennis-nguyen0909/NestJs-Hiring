@@ -14,6 +14,9 @@ export class CV extends Document {
 
   @Prop()
   public_id: string;
+
+  @Prop()
+  bytes: number;
 }
 
 export const CVSchema = SchemaFactory.createForClass(CV);

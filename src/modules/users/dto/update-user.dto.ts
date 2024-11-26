@@ -1,6 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-import { IsNotEmpty, IsString, IsOptional, IsEmail } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsMongoId,
+} from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsNotEmpty({ message: 'Id is required.' })
@@ -31,4 +37,21 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   // Các trường khác có thể được thêm vào đây nếu muốn
   @IsOptional()
   toggle_dashboard?: boolean;
+
+  @IsOptional()
+  port_folio?: string;
+
+  @IsOptional()
+  introduce?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  city_id?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  district_id?: string;
+  @IsOptional()
+  @IsMongoId()
+  ward_id?: string;
 }

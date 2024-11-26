@@ -299,11 +299,16 @@ export class ApplicationService {
     try {
       const res = await this.applicationRepository
         .find({ user_id: candidateId })
-        .populate('job_id') // Populate job details
+        .populate({
+          path: 'job_id',
+          populate: {
+            path: 'city_id', // Populate city_id in job_id
+          },
+        }) // Populate job details
         .populate(
           'employer_id',
           '-password -role -account_type -code_id -code_expired -auth_providers',
-        ) // Populate employer details
+        )
         .sort({ applied_date: -1 }) // Sort by applied_date (descending)
         .limit(limit)
         .exec();

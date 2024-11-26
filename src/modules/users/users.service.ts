@@ -171,11 +171,15 @@ export class UsersService {
       .populate('prizes')
       .populate('projects')
       .populate('courses')
+      .populate('city_id')
+      .populate('district_id')
+      .populate('ward_id')
       .populate({
         path:'cvs',
         select:'-public_id -createdAt -updatedAt -user_id '
       })
       .exec();
+      console.log("user",user)
       if (user) {
         return {
           items: user,
@@ -196,9 +200,11 @@ export class UsersService {
         throw new BadRequestException('Phone number must be numeric and up to 10 digits');
       }
   
-      // Kiểm tra số điện thoại đã tồn tại trong hệ thống
+      // Kiểm tra số điện thoại đã tồn tại trong hệ thống, ngoại trừ chính người dùng hiện tại
       const existingUserByPhone = await this.userRepository.findOne({ phone: updateUserDto.phone });
-      if (existingUserByPhone && existingUserByPhone._id !== updateUserDto.id) {
+      console.log('exis',existingUserByPhone)
+      console.log('exis',existingUserByPhone)
+      if (existingUserByPhone && existingUserByPhone._id+"" !== updateUserDto.id) {
         throw new BadRequestException('Phone number is already in use');
       }
   
@@ -401,5 +407,49 @@ export class UsersService {
     await user.save();
   
     return 'Password reset successfully';
+  }
+
+  async calculateProfileCompletion(userId: string): Promise<number> {
+    const user = await this.userRepository.findOne({_id:userId})
+    .select(['-password', '-code_id', '-code_expired'])
+    .populate('role')
+    .populate('education_ids')
+    .populate('work_experience_ids')
+    .populate('organization')
+    .populate('skills')
+    .populate('certificates')
+    .populate('prizes')
+    .populate('projects')
+    .populate('courses')
+    .populate({
+      path:'cvs',
+      select:'-public_id -createdAt -updatedAt -user_id '
+    }).exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const sections = {
+      skills: 15,         // 15% cho kỹ năng
+      certificates: 10,   // 10% cho chứng chỉ
+      prizes: 10,         // 10% cho giải thưởng
+      courses: 10,        // 10% cho khóa học
+      cvs: 15,            // 15% cho CVs
+      projects: 20,       // 20% cho dự án
+      education: 20,      // 20% cho giáo dục
+    };
+
+    let completion = 0;
+
+    if (user.skills && user.skills.length > 0) completion += sections.skills;
+    if (user.certificates && user.certificates.length > 0) completion += sections.certificates;
+    if (user.prizes && user.prizes.length > 0) completion += sections.prizes;
+    if (user.courses && user.courses.length > 0) completion += sections.courses;
+    if (user.cvs && user.cvs.length > 0) completion += sections.cvs;
+    if (user.projects && user.projects.length > 0) completion += sections.projects;
+    if (user.education_ids && user.education_ids.length > 0) completion += sections.education;
+
+    return completion;
   }
 }
