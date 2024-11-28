@@ -7,6 +7,7 @@ import {
   IsDate,
   IsMongoId,
 } from 'class-validator';
+import { ProfessionalSkillDTO } from './general-requirement.dto';
 
 export class CreateJobDto {
   @IsMongoId()
@@ -38,6 +39,8 @@ export class CreateJobDto {
   @IsOptional()
   salary_range?: { min: number; max: number };
 
+  @IsOptional()
+  age_range?: { min: number; max: number };
   @IsOptional()
   @IsEnum(['monthly', 'yearly', 'weekly', 'hourly'])
   salary_type?: string;
@@ -113,4 +116,18 @@ export class CreateJobDto {
 
   @IsOptional()
   apply_email?: string;
+
+  @IsOptional()
+  professional_skills?: ProfessionalSkillDTO[];
+  @IsOptional()
+  general_requirements?: { requirement: string }[];
+  @IsOptional()
+  job_responsibilities?: { responsibility: string }[];
+  @IsOptional()
+  interview_process?: { process: string }[];
+
+  @IsOptional()
+  type_of_work: string;
+  @IsOptional()
+  min_experience?: number;
 }

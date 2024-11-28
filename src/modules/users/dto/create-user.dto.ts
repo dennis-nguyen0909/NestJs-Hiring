@@ -1,4 +1,13 @@
-import { IsString, IsEmail, IsOptional, IsBoolean, IsArray, IsNumber, IsIn, IsMongoId } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsBoolean,
+  IsArray,
+  IsNumber,
+  IsIn,
+  IsMongoId,
+} from 'class-validator';
 import { Types } from 'mongoose';
 import { Role } from '../../role/schema/Role.schema';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
@@ -107,4 +116,8 @@ export class CreateUserDto {
 
   @IsOptional()
   toggle_dashboard?: boolean;
+
+  @IsOptional()
+  @IsMongoId()
+  primary_cv_id?: boolean;
 }

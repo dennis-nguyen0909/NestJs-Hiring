@@ -4,6 +4,7 @@ import { Level } from '../../level/schema/Level.schema';
 import { District } from 'src/modules/districts/schema/District.schema';
 import { Ward } from 'src/modules/wards/schema/Wards.schema';
 import { Cities } from 'src/modules/cities/schema/Cities.schema';
+import { IsArray, IsOptional } from 'class-validator';
 
 @Schema({ timestamps: true })
 export class Job extends Document {
@@ -30,6 +31,8 @@ export class Job extends Document {
 
   @Prop({ type: Map, of: Number })
   salary_range: { min: number; max: number };
+  @Prop({ type: Map, of: Number })
+  age_range?: { min: number; max: number };
 
   @Prop({
     type: String,
@@ -52,6 +55,27 @@ export class Job extends Document {
   })
   job_type: string;
 
+  @Prop()
+  type_of_work: string;
+
+  @Prop()
+  min_experience: string;
+  @Prop({
+    type: [
+      {
+        title: { type: String, required: true },
+        items: { type: [String], required: true },
+      },
+    ],
+    default: [],
+  })
+  professional_skills: { title: string; items: string[] }[];
+  @Prop()
+  general_requirements: { requirement: string }[];
+  @Prop()
+  job_responsibilities: { responsibility: string }[];
+  @Prop()
+  interview_process: { process: string }[];
   @Prop([String])
   benefit: string[];
 
@@ -109,10 +133,10 @@ export class Job extends Document {
   apply_linkedin: string;
 
   @Prop({ type: String, default: '' })
-  apply_website: string; 
+  apply_website: string;
 
   @Prop({ type: String, default: '' })
-  apply_email: string; 
+  apply_email: string;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

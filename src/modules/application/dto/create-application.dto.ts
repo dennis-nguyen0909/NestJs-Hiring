@@ -42,8 +42,8 @@ export class CreateApplicationDto {
     example: 'This is my cover letter.',
   })
   @IsString()
-  @IsNotEmpty()
-  cover_letter: string;
+  @IsOptional()
+  cover_letter?: string;
 
   @ApiProperty({
     type: Date,
@@ -51,8 +51,6 @@ export class CreateApplicationDto {
     example: '2023-09-28T10:00:00Z',
   })
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
   applied_date?: Date;
 
   @ApiProperty({
@@ -60,7 +58,7 @@ export class CreateApplicationDto {
     enum: ['pending', 'accepted', 'rejected'],
     example: 'pending',
   })
-  @IsString()
+  @IsOptional()
   @IsEnum(['pending', 'accepted', 'rejected'])
   status: string;
 

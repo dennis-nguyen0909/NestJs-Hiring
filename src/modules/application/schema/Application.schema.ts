@@ -20,7 +20,7 @@ export class Application extends Document {
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   employer_id: string;
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ required: false })
   cover_letter: string;
   @ApiProperty()
   @Prop({ type: Date, default: Date.now })

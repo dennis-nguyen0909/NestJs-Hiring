@@ -13,6 +13,7 @@ import { DeleteApplicationDto } from './dto/delete-application.dto';
 import { App } from 'supertest/types';
 import { SaveCandidate } from '../save_candidates/schema/SaveCandidates.schema';
 import { Job } from '../job/schema/Job.schema';
+import { Type } from 'class-transformer';
 
 @Injectable()
 export class ApplicationService {
@@ -34,7 +35,7 @@ export class ApplicationService {
       });
 
       if (!job) {
-        throw new BadRequestException('Job is either inactive or expired');
+        throw new BadRequestException('Công việc này đã hết hạn');
       }
 
       // Kiểm tra xem user đã ứng tuyển hay chưa
@@ -43,7 +44,7 @@ export class ApplicationService {
         job_id: createApplicationDto.job_id, // Đảm bảo kiểm tra theo job_id
       });
       if (findUser) {
-        throw new BadRequestException('User already applied');
+        throw new BadRequestException('Bạn đã ứng tuyển vị trí này rồi');
       }
 
       // Tạo mới Application
@@ -52,10 +53,9 @@ export class ApplicationService {
       });
 
       if (newApplied) {
-        // Cập nhật Job với user_id vào candidate_ids
         await this.jobModel.updateOne(
-          { _id: newApplied.job_id }, // Điều kiện để tìm Job
-          { $push: { candidate_ids: newApplied?.user_id } }, // Sử dụng $push để thêm userId vào candidate_ids
+          { _id: newApplied.job_id },
+          { $push: { candidate_ids: new Types.ObjectId(newApplied?.user_id) } },
         );
         return newApplied;
       } else {
@@ -235,6 +235,7 @@ export class ApplicationService {
           {
             path: 'work_experience_ids',
           },
+          { path: 'primary_cv_id' },
         ],
       });
 

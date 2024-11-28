@@ -144,6 +144,9 @@ export class User extends Document {
     sparse: true,
   })
   organization: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'CV', required: false })
+  primary_cv_id: CV;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

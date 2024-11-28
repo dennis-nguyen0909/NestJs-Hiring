@@ -67,7 +67,7 @@ export class JobController {
   @Get()
   @ResponseMessage('Success')
   findAll(
-    @Query() query: string,
+    @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {

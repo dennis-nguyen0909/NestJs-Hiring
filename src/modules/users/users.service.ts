@@ -179,7 +179,6 @@ export class UsersService {
         select:'-public_id -createdAt -updatedAt -user_id '
       })
       .exec();
-      console.log("user",user)
       if (user) {
         return {
           items: user,
@@ -202,8 +201,6 @@ export class UsersService {
   
       // Kiểm tra số điện thoại đã tồn tại trong hệ thống, ngoại trừ chính người dùng hiện tại
       const existingUserByPhone = await this.userRepository.findOne({ phone: updateUserDto.phone });
-      console.log('exis',existingUserByPhone)
-      console.log('exis',existingUserByPhone)
       if (existingUserByPhone && existingUserByPhone._id+"" !== updateUserDto.id) {
         throw new BadRequestException('Phone number is already in use');
       }
@@ -410,6 +407,7 @@ export class UsersService {
   }
 
   async calculateProfileCompletion(userId: string): Promise<number> {
+    console.log("userIDuserIDuserID",userId)
     const user = await this.userRepository.findOne({_id:userId})
     .select(['-password', '-code_id', '-code_expired'])
     .populate('role')

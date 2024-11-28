@@ -25,6 +25,7 @@ export class JobService {
   ) {}
   async create(createJobDto: CreateJobDto) {
     const { user_id } = createJobDto;
+    console.log(createJobDto)
     const isUserExist = await this.userService.findOne(user_id);
     if (isUserExist) {
       const user = await isUserExist.populate('role');
@@ -49,6 +50,14 @@ export class JobService {
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
+    const keyword = filter.keyword; // lấy keyword từ query
+    if (keyword) {
+      filter.$or = [
+        { title: { $regex: keyword, $options: 'i' } }, // Tìm theo title (không phân biệt chữ hoa/thường)
+        { description: { $regex: keyword, $options: 'i' } }, // Tìm theo description
+      ];
+      delete filter.keyword; // Xóa keyword khỏi filter để tránh lỗi
+    }
     const totalItems = (await this.jobRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
@@ -76,6 +85,7 @@ export class JobService {
         select:
           '-password -avatar -role -is_active -is_deleted -createdAt -updatedAt -__v',
       });
+    console.log(result);
     return {
       items: result,
       meta: {
@@ -91,7 +101,11 @@ export class JobService {
   async findOne(id: string) {
     const job = await this.jobRepository
       .findOne({ _id: id })
-      .populate('user_id');
+      .populate('user_id')
+      .populate('city_id', '-districts')
+      .populate('district_id', '-wards')
+      .populate('skills')
+      .populate('ward_id');
     if (!job) {
       throw new NotFoundException();
     }
@@ -256,19 +270,11 @@ export class JobService {
     if (filter.current) delete filter.current; // Xóa các tham số phân trang không cần thiết từ filter
     if (filter.pageSize) delete filter.pageSize;
 
-    // Thiết lập giá trị mặc định cho trang và số lượng trên mỗi trang
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
 
-    // Lọc theo ngày đăng công việc gần nhất (mặc định)
-    const recentFilter = {
-      ...filter,
-      is_active: true,
-      posted_date: { $gte: new Date() },
-    };
-
-    // Đếm tổng số công việc dựa trên bộ lọc
-    const totalItems = await this.jobRepository.countDocuments(recentFilter);
+    // Đếm tổng số công việc dựa trên bộ f
+    const totalItems = await this.jobRepository.countDocuments(filter);
 
     // Tính toán số trang dựa trên tổng số công việc và kích thước trang
     const totalPages = Math.ceil(totalItems / pageSize);
@@ -278,7 +284,7 @@ export class JobService {
 
     // Truy vấn dữ liệu từ database với phân trang
     const jobs = await this.jobRepository
-      .find(recentFilter)
+      .find(filter)
       .limit(pageSize)
       .skip(skip)
       .sort([['posted_date', -1]])

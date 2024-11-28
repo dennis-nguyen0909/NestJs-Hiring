@@ -46,7 +46,6 @@ export class CvService {
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
     const defaultSort = '-createdAt';
-    console.log('filter',filter)
     const sortOption = sort || defaultSort;
     const totalItems = (await this.cvRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
@@ -187,7 +186,6 @@ export class CvService {
       .populate('courses')
       .exec();
 
-    console.log(user);
     if (!user) {
       throw new Error('User not found');
     }
