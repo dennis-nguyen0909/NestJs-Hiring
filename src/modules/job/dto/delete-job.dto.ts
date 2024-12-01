@@ -7,3 +7,10 @@ export class DeleteJobDto {
   @IsNotEmpty()
   user_id: string;
 }
+
+export class ToggleLikeDTO {
+  @IsNotEmpty()
+  user_id: string;
+  @IsNotEmpty()
+  job_id: string;
+}

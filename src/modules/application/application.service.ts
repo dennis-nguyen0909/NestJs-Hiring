@@ -226,7 +226,7 @@ export class ApplicationService {
       .populate({
         path: 'user_id',
         select:
-          '_id name email full_name phone address role education_ids avatar total_experience_years total_experience_months no_experience',
+          '_id name email full_name phone address role education_ids avatar total_experience_years total_experience_months no_experience cv_ids',
         populate: [
           {
             path: 'education_ids',
@@ -280,7 +280,6 @@ export class ApplicationService {
 
   async getAppliedUserId(userId: string) {
     try {
-      console.log(userId);
 
       // Sử dụng countDocuments để đếm số lượng ứng tuyển của user_id
       const count = await this.applicationRepository.countDocuments({
@@ -328,7 +327,6 @@ export class ApplicationService {
     pageSize: number,
   ) {
     const { filter, sort } = aqp(query);
-    console.log('filter', filter);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;

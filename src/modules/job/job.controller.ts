@@ -13,7 +13,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public, ResponseMessage } from 'src/decorator/customize';
-import { DeleteJobDto } from './dto/delete-job.dto';
+import { DeleteJobDto, ToggleLikeDTO } from './dto/delete-job.dto';
 
 @Controller('jobs')
 @ApiTags('Job')
@@ -90,5 +90,11 @@ export class JobController {
   @ResponseMessage('Success')
   remove(@Body() data: DeleteJobDto) {
     return this.jobService.remove(data);
+  }
+
+  @Post('toggle-like')
+  @ResponseMessage('Success')
+  toggleLikeJob(@Body() data: ToggleLikeDTO) {
+    return this.jobService.toggleLikeJob(data.user_id, data.job_id);
   }
 }

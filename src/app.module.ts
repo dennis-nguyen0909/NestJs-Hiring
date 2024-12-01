@@ -34,6 +34,7 @@ import { PrizeModule } from './modules/prize/prize.module';
 import { CourseModule } from './modules/course/course.module';
 import { ProjectModule } from './modules/project/project.module';
 import { CvModule } from './modules/cv/cv.module';
+import { FavoriteJobModule } from './modules/favorite-job/favorite-job.module';
 @Module({
   imports: [
     UsersModule,
@@ -98,6 +99,7 @@ import { CvModule } from './modules/cv/cv.module';
     PrizeModule,
     CourseModule,
     ProjectModule,
+    FavoriteJobModule,
   ],
   controllers: [AppController],
   providers: [

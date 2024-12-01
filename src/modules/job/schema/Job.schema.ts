@@ -5,6 +5,7 @@ import { District } from 'src/modules/districts/schema/District.schema';
 import { Ward } from 'src/modules/wards/schema/Wards.schema';
 import { Cities } from 'src/modules/cities/schema/Cities.schema';
 import { IsArray, IsOptional } from 'class-validator';
+import { SkillEmployer } from 'src/modules/skill_employer/schema/EmployerSkill.schema';
 
 @Schema({ timestamps: true })
 export class Job extends Document {
@@ -112,7 +113,7 @@ export class Job extends Document {
 
   @Prop({
     type: [Types.ObjectId],
-    ref: 'SkillEmployer',
+    ref: SkillEmployer.name,
   })
   skills: Types.ObjectId[];
 

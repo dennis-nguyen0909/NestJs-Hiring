@@ -12,6 +12,7 @@ import { Project } from 'src/modules/project/schema/project.schema';
 import { Cities } from 'src/modules/cities/schema/Cities.schema';
 import { District } from 'src/modules/districts/schema/District.schema';
 import { Ward } from 'src/modules/wards/schema/Wards.schema';
+import { FavoriteJob } from 'src/modules/favorite-job/schema/favorite-job.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -83,6 +84,9 @@ export class User extends Document {
 
   @Prop({ type: [Types.ObjectId], ref: 'Education' })
   education_ids: Types.ObjectId[];
+
+  @Prop({ type: [Types.ObjectId], ref: FavoriteJob.name })
+  favorite_jobs: Types.ObjectId[];
 
   @Prop({ type: [Types.ObjectId], ref: Skill.name })
   skills: Types.ObjectId[];

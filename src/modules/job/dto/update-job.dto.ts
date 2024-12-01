@@ -20,4 +20,9 @@ export class UpdateJobDto extends PartialType(CreateJobDto) {
   apply_website?: string;
   @IsOptional()
   apply_email?: string;
+
+  @IsOptional()
+  skills?: string[];
+  @IsOptional()
+  job_responsibilities: { responsibility: string }[];
 }

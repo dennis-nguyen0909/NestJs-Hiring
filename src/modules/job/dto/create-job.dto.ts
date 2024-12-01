@@ -100,7 +100,7 @@ export class CreateJobDto {
 
   @IsOptional()
   @IsArray()
-  skills: string[];
+  skills?: string[];
 
   @Optional()
   is_active: boolean;

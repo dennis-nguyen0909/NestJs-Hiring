@@ -407,7 +407,6 @@ export class UsersService {
   }
 
   async calculateProfileCompletion(userId: string): Promise<number> {
-    console.log("userIDuserIDuserID",userId)
     const user = await this.userRepository.findOne({_id:userId})
     .select(['-password', '-code_id', '-code_expired'])
     .populate('role')
