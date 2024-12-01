@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { LevelService } from './level.service';
 import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
@@ -24,7 +33,8 @@ export class LevelController {
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.levelService.findAll(query,+current,+pageSize);
+    console.log("duydeptrai",current)
+    return this.levelService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')

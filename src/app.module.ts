@@ -35,6 +35,10 @@ import { CourseModule } from './modules/course/course.module';
 import { ProjectModule } from './modules/project/project.module';
 import { CvModule } from './modules/cv/cv.module';
 import { FavoriteJobModule } from './modules/favorite-job/favorite-job.module';
+import { JobTypeModule } from './modules/job-type/job-type.module';
+import { JobContractTypeModule } from './modules/job-contract-type/job-contract-type.module';
+import { DegreeTypeModule } from './modules/degree-type/degree-type.module';
+import { CurrenciesModule } from './modules/currencies/currencies.module';
 @Module({
   imports: [
     UsersModule,
@@ -100,6 +104,10 @@ import { FavoriteJobModule } from './modules/favorite-job/favorite-job.module';
     CourseModule,
     ProjectModule,
     FavoriteJobModule,
+    JobTypeModule,
+    JobContractTypeModule,
+    DegreeTypeModule,
+    CurrenciesModule,
   ],
   controllers: [AppController],
   providers: [

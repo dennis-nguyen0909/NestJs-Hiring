@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Level extends Document {
+export class JobContractType extends Document {
   @Prop({ required: true })
   name: string;
 
@@ -13,4 +13,5 @@ export class Level extends Document {
   description: string;
 }
 
-export const LevelSchema = SchemaFactory.createForClass(Level);
+export const JobContractTypeSchema =
+  SchemaFactory.createForClass(JobContractType);

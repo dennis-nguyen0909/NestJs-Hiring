@@ -2,26 +2,26 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { CreateLevelDto } from './dto/create-level.dto';
-import { UpdateLevelDto } from './dto/update-level.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Level } from './schema/Level.schema';
 import aqp from 'api-query-params';
+import { JobContractType } from './schema/job-contract-type.schema';
+import { CreateJobContractTypeDto } from './dto/create-job-contract-type.dto';
+import { UpdateJobContractTypeDto } from './dto/update-job-contract-type.dto';
 
 @Injectable()
-export class LevelService {
+export class JobContractTypeService {
   constructor(
-    @InjectModel('Level') private readonly levelModel: Model<Level>,
+    @InjectModel(JobContractType.name)
+    private readonly jobContractType: Model<JobContractType>,
   ) {}
-  async create(createLevelDto: CreateLevelDto) {
-    const level = await this.levelModel.create(createLevelDto);
-    if (!level) {
+  async create(data: CreateJobContractTypeDto) {
+    const response = await this.jobContractType.create(data);
+    if (!response) {
       throw new BadRequestException('Failed');
     }
-    return level;
+    return response;
   }
 
   async findAll(query: string, current: number, pageSize: number) {
@@ -30,11 +30,10 @@ export class LevelService {
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
-    const totalItems = (await this.levelModel.find(filter)).length;
-    console.log("duydeptrai",totalItems)
+    const totalItems = (await this.jobContractType.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
-    const result = await this.levelModel
+    const result = await this.jobContractType
       .find(filter)
       .limit(pageSize)
       .skip(skip)
@@ -52,18 +51,22 @@ export class LevelService {
   }
 
   async findOne(id: string) {
-    const job = await this.levelModel.findOne({ _id: id });
+    const job = await this.jobContractType.findOne({ _id: id });
     if (!job) {
       throw new NotFoundException();
     }
     return job;
   }
 
-  async update(id: string, updateLevelDto: UpdateLevelDto) {
-    const job = await this.levelModel.findByIdAndUpdate(id, updateLevelDto, {
-      new: true,
-      runValidators: true,
-    });
+  async update(id: string, updateLevelDto: UpdateJobContractTypeDto) {
+    const job = await this.jobContractType.findByIdAndUpdate(
+      id,
+      updateLevelDto,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
     if (!job) {
       throw new NotFoundException();
     }
@@ -79,22 +82,22 @@ export class LevelService {
         throw new BadRequestException('Ids phai la mang');
       }
       if (ids.length === 1) {
-        const job = await this.levelModel.findById(ids[0]);
+        const job = await this.jobContractType.findById(ids[0]);
         if (!job) {
           throw new NotFoundException();
         }
-        const result = await this.levelModel.deleteOne({ _id: ids[0] });
+        const result = await this.jobContractType.deleteOne({ _id: ids[0] });
         if (result.deletedCount > 0) {
           return [];
         } else {
           throw new BadRequestException('Delete failed!');
         }
       } else {
-        const jobs = await this.levelModel.find({ _id: { $in: ids } });
+        const jobs = await this.jobContractType.find({ _id: { $in: ids } });
         if (!jobs) {
           throw new NotFoundException();
         }
-        const result = await this.levelModel.deleteMany({
+        const result = await this.jobContractType.deleteMany({
           _id: { $in: ids },
         });
         if (result.deletedCount > 0) {

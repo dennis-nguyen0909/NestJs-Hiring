@@ -414,4 +414,55 @@ export class JobService {
       throw new BadGatewayException(error)
     }
   }
+  async findSearch(query: string, current: number, pageSize: number) {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    
+    // Ghi log chi tiết filter sau khi xử lý
+    console.log('Filter being applied:', filter);
+    
+    
+
+    console.log('filter',filter)
+    const totalItems = (await this.jobRepository.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+    const result = await this.jobRepository
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any)
+      .populate({
+        path: 'city_id',
+        select: '-districts',
+      })
+      .populate({
+        path: 'district_id',
+        select: '-wards',
+      })
+      .populate({
+        path: 'skills',
+        model: SkillEmployer.name,
+        select: '-createdAt -updatedAt -description',
+      })
+      .populate({
+        path: 'user_id',
+        model: User.name,
+        select:
+          '-password -avatar -role -is_active -is_deleted -createdAt -updatedAt -__v',
+      });
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
+  }
 }
