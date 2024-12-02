@@ -82,4 +82,9 @@ export class UsersController {
   async sendJobApplicationEmail(@Body() body: any) {
     return await this.usersService.employerSendMail(body);
   }
+
+  @Get('check-update-company/:user_id')
+  async checkAndUpdateProgressSetupCompany(@Param('user_id') userId:string){
+    return await this.usersService.checkAndUpdateProgressSetupCompany(userId);
+  }
 }

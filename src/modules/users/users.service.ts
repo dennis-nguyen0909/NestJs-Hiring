@@ -501,4 +501,36 @@ export class UsersService {
       console.error(error)
     }
   }
+  async checkAndUpdateProgressSetupCompany(userId: string): Promise<User> {
+    const user = await this.userRepository.findById(userId).select("-code -password -code_expired -account_type").exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Kiểm tra và cập nhật company_info
+    if (user.company_name && user.description && user.avatar_company && user.banner_company) {
+      user.progress_setup.company_info = true;
+    }
+
+    // Kiểm tra và cập nhật founding_info
+    if (user.organization) {
+      user.progress_setup.founding_info = true;
+    }
+
+    // Kiểm tra và cập nhật social_info
+    if (user.social_links && user.social_links.length > 0) {
+      user.progress_setup.social_info = true;
+    }
+    console.log("user",user)
+    // Kiểm tra và cập nhật contact
+    if (user.phone && user.email && user.ward_id && user.district_id && user.city_id) {
+      user.progress_setup.contact = true;
+    }
+
+    // Lưu lại cập nhật vào cơ sở dữ liệu
+    await user.save();
+
+    return user;
+  }
+
 }

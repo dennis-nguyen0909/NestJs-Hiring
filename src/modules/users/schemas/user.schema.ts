@@ -13,6 +13,7 @@ import { Cities } from 'src/modules/cities/schema/Cities.schema';
 import { District } from 'src/modules/districts/schema/District.schema';
 import { Ward } from 'src/modules/wards/schema/Wards.schema';
 import { FavoriteJob } from 'src/modules/favorite-job/schema/favorite-job.schema';
+import { SocialLink } from 'src/modules/social_link/schema/social_link.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -148,6 +149,9 @@ export class User extends Document {
     sparse: true,
   })
   organization: Types.ObjectId;
+
+  @Prop({ type: [Types.ObjectId], ref: SocialLink.name })
+  social_links: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId, ref: 'CV', required: false })
   primary_cv_id: CV;

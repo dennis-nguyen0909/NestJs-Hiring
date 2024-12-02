@@ -39,6 +39,7 @@ import { JobTypeModule } from './modules/job-type/job-type.module';
 import { JobContractTypeModule } from './modules/job-contract-type/job-contract-type.module';
 import { DegreeTypeModule } from './modules/degree-type/degree-type.module';
 import { CurrenciesModule } from './modules/currencies/currencies.module';
+import { SocialLinkModule } from './modules/social_link/social_link.module';
 @Module({
   imports: [
     UsersModule,
@@ -108,6 +109,7 @@ import { CurrenciesModule } from './modules/currencies/currencies.module';
     JobContractTypeModule,
     DegreeTypeModule,
     CurrenciesModule,
+    SocialLinkModule,
   ],
   controllers: [AppController],
   providers: [

@@ -9,11 +9,25 @@ import {
   IsMongoId,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { Role } from '../../role/schema/Role.schema';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { Job } from '../../job/schema/Job.schema';
-import { Type } from '@nestjs/common';
+export class ProgressSetupDTO {
+  @IsOptional()
+  @IsBoolean()
+  company_info?: boolean;
 
+  @IsOptional()
+  @IsBoolean()
+  founding_info?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  social_info?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  contact?: boolean;
+}
 export class CreateUserDto {
   @IsEmail()
   email: string;
@@ -120,4 +134,9 @@ export class CreateUserDto {
   @IsOptional()
   @IsMongoId()
   primary_cv_id?: boolean;
+  @IsOptional()
+  progress_setup: ProgressSetupDTO;
+
+  @IsOptional()
+  social_links: Types.ObjectId[];
 }
