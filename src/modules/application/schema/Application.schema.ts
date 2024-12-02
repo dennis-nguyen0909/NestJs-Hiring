@@ -4,6 +4,7 @@ import { User } from '../../users/schemas/User.schema';
 import { Job } from '../../job/schema/Job.schema';
 import { CV } from '../../cv/schema/CV.schema';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from '@nestjs/common';
 
 @Schema()
 export class Application extends Document {
@@ -32,6 +33,8 @@ export class Application extends Document {
     default: 'pending',
   })
   status: string;
+  @Prop({ type: Types.ObjectId, ref: CV.name })
+  cv_id: Types.ObjectId;
 
   @Prop({ type: [Types.ObjectId], ref: User.name, default: [] })
   save_candidates: Types.ObjectId[];

@@ -33,7 +33,6 @@ export class LevelController {
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    console.log("duydeptrai",current)
     return this.levelService.findAll(query, +current, +pageSize);
   }
 

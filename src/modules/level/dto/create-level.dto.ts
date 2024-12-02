@@ -10,5 +10,5 @@ export class CreateLevelDto {
   description: string;
   @IsOptional()
   @IsString()
-  key: string;
+  key?: string;
 }

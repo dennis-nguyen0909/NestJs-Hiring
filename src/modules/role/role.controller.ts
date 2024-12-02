@@ -11,12 +11,18 @@ import {
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
-import { Public } from 'src/decorator/customize';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
+import { Public, ResponseMessage } from 'src/decorator/customize';
 
 @Controller('role')
-@ApiTags('Role') // Tag cho Swagger
-@Public() // Đánh dấu API là public
+@ApiTags('Role')
+@Public()
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
@@ -28,11 +34,32 @@ export class RoleController {
     return this.roleService.create(createRoleDto);
   }
 
+  @Get('employer')
+  @ResponseMessage('Success')
+  async getRoleEmployer() {
+    return this.roleService.getRoleEmployer();
+  }
+
   @Get()
   @ApiOperation({ summary: 'Lấy danh sách các role' })
-  @ApiQuery({ name: 'current', required: false, description: 'Trang hiện tại', type: String })
-  @ApiQuery({ name: 'pageSize', required: false, description: 'Số lượng phần tử trên mỗi trang', type: String })
-  @ApiQuery({ name: 'query', required: false, description: 'Từ khóa tìm kiếm', type: String })
+  @ApiQuery({
+    name: 'current',
+    required: false,
+    description: 'Trang hiện tại',
+    type: String,
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'Số lượng phần tử trên mỗi trang',
+    type: String,
+  })
+  @ApiQuery({
+    name: 'query',
+    required: false,
+    description: 'Từ khóa tìm kiếm',
+    type: String,
+  })
   @ApiResponse({ status: 200, description: 'Danh sách các role.' })
   findAll(
     @Query() query: string,
@@ -53,7 +80,11 @@ export class RoleController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Cập nhật thông tin của một role' })
-  @ApiParam({ name: 'id', description: 'ID của role cần cập nhật', type: String })
+  @ApiParam({
+    name: 'id',
+    description: 'ID của role cần cập nhật',
+    type: String,
+  })
   @ApiResponse({ status: 200, description: 'Role được cập nhật thành công.' })
   @ApiResponse({ status: 404, description: 'Role không tồn tại.' })
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
@@ -68,4 +99,5 @@ export class RoleController {
   remove(@Param('id') id: string) {
     return this.roleService.remove(id);
   }
+
 }

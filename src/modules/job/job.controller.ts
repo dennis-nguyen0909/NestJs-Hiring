@@ -27,6 +27,15 @@ export class JobController {
     return this.jobService.create(createJobDto);
   }
 
+  @Get('getJobSearchName')
+  @ResponseMessage('Success')
+  findJobsByCompanyName(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.jobService.findJobsByCompanyName(query, +current, +pageSize);
+  }
   @Get('district/:id')
   getJobByDistrict(@Param('id') id: string) {
     return 'ok';

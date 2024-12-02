@@ -64,4 +64,7 @@ export class CreateApplicationDto {
 
   @IsOptional()
   save_candidates: Types.ObjectId[];
+
+  @IsOptional()
+  cv_id: Types.ObjectId;
 }

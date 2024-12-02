@@ -46,14 +46,6 @@ export class CreateJobDto {
   salary_type?: string;
 
   @IsOptional()
-  @IsEnum([
-    'fulltime',
-    'parttime',
-    'freelance',
-    'contract',
-    'project',
-    'hourly',
-  ])
   job_type?: string;
 
   @IsOptional()
@@ -86,7 +78,6 @@ export class CreateJobDto {
   image?: string;
 
   @IsOptional()
-  @IsEnum(['Bachelor', 'Master', 'PhD', 'None'])
   degree?: string;
 
   @IsOptional()

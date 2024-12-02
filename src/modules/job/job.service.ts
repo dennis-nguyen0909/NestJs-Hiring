@@ -17,46 +17,54 @@ import { DeleteJobDto } from './dto/delete-job.dto';
 import { CitiesService } from '../cities/cities.service';
 import { SkillEmployer } from '../skill_employer/schema/EmployerSkill.schema';
 import { User } from '../users/schemas/User.schema';
+import { Cities } from '../cities/schema/Cities.schema';
+import { Level } from '../level/schema/Level.schema';
 
 @Injectable()
 export class JobService {
   constructor(
     @InjectModel('Job') private jobRepository: Model<Job>,
     @InjectModel('User') private userModel: Model<User>,
+    @InjectModel(Cities.name) private cityModel: Model<Cities>,
+    @InjectModel(Level.name) private levelModel: Model<Cities>,
     private userService: UsersService,
     private citiesService: CitiesService,
   ) {}
   async create(createJobDto: CreateJobDto) {
     const { user_id, expire_date, salary_range, age_range } = createJobDto;
-  
+
     // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
     const isUserExist = await this.userService.findOne(user_id);
     if (!isUserExist) {
       throw new BadRequestException('User not found');
     }
-  
+
     const user = await isUserExist.populate('role');
     if (user.role.role_name !== 'EMPLOYER') {
       throw new UnauthorizedException('User is not an employer');
     }
-  
+
     // Kiểm tra ngày hết hạn (expiry_date) phải lớn hơn ngày hiện tại
     const currentDate = new Date();
     const jobExpiryDate = new Date(expire_date);
     if (jobExpiryDate <= currentDate) {
-      throw new BadRequestException('Expiry date must be later than the current date');
+      throw new BadRequestException(
+        'Expiry date must be later than the current date',
+      );
     }
-  
+
     // Kiểm tra salary_range max phải lớn hơn min
     if (salary_range?.min >= salary_range?.max) {
-      throw new BadRequestException('Salary range max must be greater than min');
+      throw new BadRequestException(
+        'Salary range max must be greater than min',
+      );
     }
-  
+
     // Kiểm tra age_range max phải lớn hơn min
     if (age_range?.min >= age_range?.max) {
       throw new BadRequestException('Age range max must be greater than min');
     }
-  
+
     // Nếu tất cả các kiểm tra đều vượt qua, tiếp tục tạo công việc
     const job = await this.jobRepository.create(createJobDto);
     if (job) {
@@ -78,32 +86,29 @@ export class JobService {
       filter.$or = [
         { title: keyword }, // Lọc theo trường 'title'
         { company: keyword }, // Lọc theo trường 'company'
-        { 'user_id.company': keyword }, // Lọc theo trường 'user_id.company'
+        { 'user_id.company_name': keyword }, // Lọc theo trường 'user_id.company'
       ];
       delete filter.keyword; // Xóa keyword khỏi filter sau khi sử dụng
     }
-    if (filter.salary_range_min !== undefined || filter.salary_range_max !== undefined) {
-      filter['salary_range'] =  {
-        min:filter.salary_range_min,
-        max:filter.salary_range_max
+    if (
+      filter.salary_range_min !== undefined ||
+      filter.salary_range_max !== undefined
+    ) {
+      filter['salary_range'] = {
+        min: filter.salary_range_min,
+        max: filter.salary_range_max,
       };
-         // Lọc salary_range_max nếu có và không phải là Infinity
-      if(filter.salary_range.max === 'Infinity'){
-        filter['salary_range'] =  {
-          min:filter.salary_range_min,
-          max:Infinity
+      // Lọc salary_range_max nếu có và không phải là Infinity
+      if (filter.salary_range.max === 'Infinity') {
+        filter['salary_range'] = {
+          min: filter.salary_range_min,
+          max: Infinity,
         };
       }
       delete filter.salary_range_min;
       delete filter.salary_range_max;
     }
-    
-    // Ghi log chi tiết filter sau khi xử lý
-    console.log('Filter being applied:', filter);
-    
-    
 
-    console.log('filter',filter)
     const totalItems = (await this.jobRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
@@ -130,7 +135,12 @@ export class JobService {
         model: User.name,
         select:
           '-password -avatar -role -is_active -is_deleted -createdAt -updatedAt -__v',
-      });
+      })
+      .populate('degree')
+      .populate('type_money')
+      .populate('level')
+      .populate('job_type')
+      .populate('type_of_work');
     return {
       items: result,
       meta: {
@@ -150,6 +160,11 @@ export class JobService {
       .populate('city_id', '-districts')
       .populate('district_id', '-wards')
       .populate('skills')
+      .populate('degree')
+      .populate('type_money')
+      .populate('level')
+      .populate('job_type')
+      .populate('type_of_work')
       .populate('ward_id');
     if (!job) {
       throw new NotFoundException();
@@ -159,40 +174,43 @@ export class JobService {
 
   async update(id: string, updateJobDto: UpdateJobDto) {
     try {
-      const { expire_date, salary_range, age_range ,is_negotiable} = updateJobDto;
-  
+      const { expire_date, salary_range, age_range, is_negotiable } =
+        updateJobDto;
+
       // Kiểm tra ngày hết hạn (expire_date) phải lớn hơn ngày hiện tại
       if (expire_date) {
         const currentDate = new Date();
         const jobExpiryDate = new Date(expire_date);
         if (jobExpiryDate <= currentDate) {
-          throw new BadRequestException('Expiry date must be later than the current date');
+          throw new BadRequestException(
+            'Expiry date must be later than the current date',
+          );
         }
       }
-      console.log("salaasdasd",salary_range)
-  
+
       // Kiểm tra salary_range max phải lớn hơn min
-      if (salary_range?.min >= salary_range?.max && is_negotiable===false ) {
-        throw new BadRequestException('Salary range max must be greater than min');
+      if (salary_range?.min >= salary_range?.max && is_negotiable === false) {
+        throw new BadRequestException(
+          'Salary range max must be greater than min',
+        );
       }
-  
+
       // Kiểm tra age_range max phải lớn hơn min
       if (age_range?.min >= age_range?.max) {
         throw new BadRequestException('Age range max must be greater than min');
       }
-  
+
       // Tiến hành cập nhật công việc nếu tất cả các kiểm tra đều hợp lệ
       const job = await this.jobRepository.findByIdAndUpdate(id, updateJobDto, {
         new: true, // Trả về tài liệu mới sau khi cập nhật
         runValidators: true, // Kiểm tra các ràng buộc khi cập nhật
       });
-  
+
       if (!job) {
         throw new NotFoundException('Job not found');
       }
-  
+
       return job;
-  
     } catch (error) {
       throw new NotFoundException(error);
     }
@@ -292,7 +310,11 @@ export class JobService {
         path: 'skills',
         model: SkillEmployer.name,
         select: '-createdAt -updatedAt -description',
-      });
+      }).populate('degree')
+      .populate('type_money')
+      .populate('level')
+      .populate('job_type')
+      .populate('type_of_work');
 
     // Trả về kết quả cùng với metadata phân trang
     return {
@@ -374,7 +396,12 @@ export class JobService {
         model: User.name,
         select:
           '-password -avatar -role -is_active -is_deleted -createdAt -updatedAt -__v',
-      });
+      })
+      .populate('degree')
+      .populate('type_money')
+      .populate('level')
+      .populate('job_type')
+      .populate('type_of_work');
 
     // Trả về kết quả cùng metadata phân trang
     return {
@@ -395,74 +422,115 @@ export class JobService {
     });
   }
 
-  async toggleLikeJob(user_id:string,job_id:string){
+  async toggleLikeJob(user_id: string, job_id: string) {
     try {
       const user = await this.userService.findOne(user_id);
       const job = await this.jobRepository.findById(job_id);
-      const jobId = new Types.ObjectId(job._id+"")
-      if(user.favorite_jobs.includes(jobId)){
-        await this.userModel.updateOne({
-          _id:user._id
-        },{
-          $pull:{favorite_jobs:jobId}
-        })
-      }else{
+      const jobId = new Types.ObjectId(job._id + '');
+      if (user.favorite_jobs.includes(jobId)) {
+        await this.userModel.updateOne(
+          {
+            _id: user._id,
+          },
+          {
+            $pull: { favorite_jobs: jobId },
+          },
+        );
+      } else {
         user.favorite_jobs.push(jobId);
         await user.save();
       }
     } catch (error) {
-      throw new BadGatewayException(error)
+      throw new BadGatewayException(error);
     }
   }
-  async findSearch(query: string, current: number, pageSize: number) {
-    const { filter, sort } = aqp(query);
-    if (filter.current) delete filter.current;
-    if (filter.pageSize) delete filter.pageSize;
-    if (!current) current = 1;
-    if (!pageSize) pageSize = 10;
-    
-    // Ghi log chi tiết filter sau khi xử lý
-    console.log('Filter being applied:', filter);
-    
-    
 
-    console.log('filter',filter)
-    const totalItems = (await this.jobRepository.find(filter)).length;
-    const totalPages = Math.ceil(totalItems / pageSize);
-    const skip = (+current - 1) * pageSize;
-    const result = await this.jobRepository
-      .find(filter)
-      .limit(pageSize)
-      .skip(skip)
-      .sort(sort as any)
-      .populate({
-        path: 'city_id',
-        select: '-districts',
-      })
-      .populate({
-        path: 'district_id',
-        select: '-wards',
-      })
-      .populate({
-        path: 'skills',
-        model: SkillEmployer.name,
-        select: '-createdAt -updatedAt -description',
-      })
-      .populate({
-        path: 'user_id',
-        model: User.name,
-        select:
-          '-password -avatar -role -is_active -is_deleted -createdAt -updatedAt -__v',
-      });
-    return {
-      items: result,
-      meta: {
-        count: result.length,
-        current_page: current,
-        per_page: pageSize,
-        total: totalItems,
-        total_pages: totalPages,
-      },
-    };
+  async findJobsByCompanyName(query: any,current:number,pageSize:number) {
+    try {
+      const { filter, sort } = aqp(query);
+      if (filter.current) delete filter.current;
+      if (filter.pageSize) delete filter.pageSize;
+      if (!current) current = 1;
+      if (!pageSize) pageSize = 10;
+      
+      if (filter.keyword) {
+        query.title = { $eq: filter.keyword }; 
+      }
+
+      if (query?.title) {
+        query.title = { $regex: query.title, $options: 'i' };
+      }
+      if (query?.title === '') {
+        delete query.title;
+      }
+      if (
+        query?.city_id?.codename &&
+        query?.city_id?.codename !== 'all-locations'
+      ) {
+        const res = await this.cityModel.find({
+          codename: query?.city_id?.codename,
+        });
+        if (res) {
+          query.city_id = res[0]?._id?.toString();
+        }
+      }
+      if (query?.city_id?.codename === 'all-locations') {
+        delete query.city_id;
+      }
+      if (query?.job_type && query.job_type !== 'tat_ca_loai_hop_dong') {
+        query.job_type = query.job_type;
+      }
+      if (query?.job_type === 'tat_ca_loai_hop_dong') {
+        delete query.job_type;
+      }
+      if (query?.level && query.level !== 'all_levels') {
+        const levelRes = await this.levelModel.findOne({ key: query.level });
+        if (levelRes) {
+          query.level = levelRes._id.toString();
+        } else {
+          delete query.level;  // If no matching level found, remove the filter
+        }
+      } else if (query?.level === 'all_levels') {
+        delete query.level;
+      }
+
+      console.log('Final query:', query);
+      const totalItems = (await this.jobRepository.find(query)).length;
+      const totalPages = Math.ceil(totalItems / pageSize);
+      const skip = (+current - 1) * pageSize;
+      const jobs = await this.jobRepository
+        .find(query)
+        .limit(pageSize)
+        .skip(skip)
+        .sort(sort as any)
+        .populate('city_id','name')
+        .populate('ward_id','name')
+        .populate('district_id','name')
+        .populate('skills')
+        .populate('degree')
+        .populate('type_money')
+        .populate('level')
+        .populate('job_type')
+        .populate('type_of_work')
+        .populate('user_id','-password -code_id -code_expired')
+        .exec();
+
+      // Nếu không tìm thấy công việc nào
+
+      return{
+        items: jobs,
+        meta: {
+          count: jobs.length,
+          current_page: current,
+          per_page: pageSize,
+          total: totalItems,
+          total_pages: totalPages,
+        },
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        error.message || 'An error occurred while searching for jobs',
+      );
+    }
   }
 }

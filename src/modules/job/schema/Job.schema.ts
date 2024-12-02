@@ -4,8 +4,11 @@ import { Level } from '../../level/schema/Level.schema';
 import { District } from 'src/modules/districts/schema/District.schema';
 import { Ward } from 'src/modules/wards/schema/Wards.schema';
 import { Cities } from 'src/modules/cities/schema/Cities.schema';
-import { IsArray, IsOptional } from 'class-validator';
 import { SkillEmployer } from 'src/modules/skill_employer/schema/EmployerSkill.schema';
+import { JobType } from 'src/modules/job-type/schema/JobType.schema';
+import { JobContractType } from 'src/modules/job-contract-type/schema/job-contract-type.schema';
+import { Currency } from 'src/modules/currencies/schema/currencies.schema';
+import { DegreeType } from 'src/modules/degree-type/schema/degree-type.schema';
 
 @Schema({ timestamps: true })
 export class Job extends Document {
@@ -43,21 +46,13 @@ export class Job extends Document {
   salary_type: string;
 
   @Prop({
-    type: String,
-    enum: [
-      'fulltime',
-      'parttime',
-      'freelance',
-      'contract',
-      'project',
-      'hourly',
-    ],
-    default: 'fulltime',
+    type: Types.ObjectId,
+    ref: JobContractType.name,
   })
-  job_type: string;
+  job_type: Types.ObjectId;
 
-  @Prop()
-  type_of_work: string;
+  @Prop({ type: Types.ObjectId, ref: JobType.name })
+  type_of_work: Types.ObjectId;
 
   @Prop()
   min_experience: string;
@@ -86,7 +81,7 @@ export class Job extends Document {
   @Prop()
   require_experience: string[];
 
-  @Prop({ type: Types.ObjectId, ref: 'Level' })
+  @Prop({ type: Types.ObjectId, ref: Level.name })
   level: Types.ObjectId;
 
   @Prop({ type: Date, default: Date.now })
@@ -95,15 +90,14 @@ export class Job extends Document {
   @Prop({ type: Date })
   expire_date: Date;
 
-  @Prop({ type: String })
-  type_money: string;
+  @Prop({ type: Types.ObjectId, ref: Currency.name })
+  type_money: Types.ObjectId;
 
   @Prop({
-    type: String,
-    enum: ['Bachelor', 'Master', 'PhD', 'None'],
-    default: 'None',
+    type: Types.ObjectId,
+    ref: DegreeType.name,
   })
-  degree: string;
+  degree: Types.ObjectId;
 
   @Prop()
   count_apply: number;

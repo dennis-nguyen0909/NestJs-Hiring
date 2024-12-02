@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -14,6 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { query } from 'express';
 
 @Controller('users')
 @Public()
@@ -35,6 +37,10 @@ export class UsersController {
     @Query('pageSize') pageSize: string,
   ) {
     return this.usersService.findAll(query, +current, +pageSize);
+  }
+  @Get('/company')
+  async getAllCompany(@Query('query') query:string,@Query('current') current:string ,@Query('pageSize') pageSize:string){
+    return this.usersService.getAllCompany(query,+current,+pageSize)
   }
 
   @Get(':id')

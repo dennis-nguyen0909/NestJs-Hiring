@@ -19,6 +19,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { RoleService } from '../role/role.service';
 import { Role } from '../role/schema/Role.schema';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { Type } from 'class-transformer';
 @Injectable()
 export class UsersService {
   constructor(
@@ -448,5 +449,33 @@ export class UsersService {
     if (user.education_ids && user.education_ids.length > 0) completion += sections.education;
 
     return completion;
+  }
+ async getAllCompany(query:string,current:number,pageSize:number){
+    const {filter,sort}=aqp(query);
+    if(filter.current) delete filter.current;
+    if(filter.pageSize) delete filter.pageSize;
+    if(!current) current=1;
+    if(!pageSize) pageSize=10;
+
+    const totalItems = await this.userRepository.find(filter).countDocuments();
+    const totalPages = Math.ceil(totalItems/pageSize);
+    const skip = (+current - 1) * pageSize;
+    if(filter?.role){
+      filter.role = new Types.ObjectId(filter.role);
+    }
+ 
+    const result = (await this.userRepository.find(filter).limit(pageSize).skip(skip).sort(sort as any).populate('city_id').select('-password -code_id -code_expired -is_active -is_search_jobs_status -phone -toggle_dashboard -certificates -courses -prizes -projects -skills -education_ids -cv_ids -account_type -work_experience_ids'));
+    if(result){
+      return {
+        items: result,
+        meta: {
+          count: result.length,
+          current_page: current,
+          per_page: pageSize,
+          total: totalItems,
+          total_pages: totalPages,
+        },
+      }
+    }
   }
 }

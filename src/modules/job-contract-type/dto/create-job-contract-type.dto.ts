@@ -4,8 +4,8 @@ export class CreateJobContractTypeDto {
   @IsNotEmpty()
   @IsString()
   name: string;
-
-  key: string;
+  @IsOptional()
+  key?: string;
   @IsOptional()
   description?: string;
 }

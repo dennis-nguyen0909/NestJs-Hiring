@@ -15,5 +15,6 @@ import { Level, LevelSchema } from './schema/Level.schema';
   ],
   controllers: [LevelController],
   providers: [LevelService],
+  exports: [MongooseModule],
 })
 export class LevelModule {}

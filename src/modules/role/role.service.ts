@@ -94,4 +94,8 @@ export class RoleService {
     const role = await this.roleRepository.findOne({ role_name });
     return role;
   }
+
+  async getRoleEmployer() {
+    return this.roleRepository.findOne({ role_name: 'EMPLOYER' });
+  }
 }

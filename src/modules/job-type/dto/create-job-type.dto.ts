@@ -4,10 +4,8 @@ export class CreateJobTypeDto {
   @IsNotEmpty()
   @IsString()
   name: string;
-
-  key: string;
-  // eslint-disable-next-line prettier/prettier
-
-@IsOptional()
+  @IsOptional()
+  key?: string;
+  @IsOptional()
   description?: string;
 }

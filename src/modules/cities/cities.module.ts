@@ -12,6 +12,6 @@ import { DistrictsModule } from '../districts/districts.module';
 
   controllers: [CitiesController],
   providers: [CitiesService],
-  exports: [CitiesService], 
+  exports: [CitiesService, MongooseModule],
 })
 export class CitiesModule {}

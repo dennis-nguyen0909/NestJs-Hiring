@@ -31,7 +31,6 @@ export class LevelService {
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
     const totalItems = (await this.levelModel.find(filter)).length;
-    console.log("duydeptrai",totalItems)
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
     const result = await this.levelModel

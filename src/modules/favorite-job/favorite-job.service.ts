@@ -54,7 +54,6 @@ export class FavoriteJobService {
         user_id: data.user_id,
         job_id: data.job_id,
       });
-      console.log('resss', res, data);
       if (!res) {
         throw new NotFoundException('Not found');
       }
