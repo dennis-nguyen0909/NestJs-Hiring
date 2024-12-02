@@ -20,35 +20,38 @@ export class DegreeTypeController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createJobType: CreateDegreeTypeDto) {
-    return this.degreeTypeService.create(createJobType);
+  async create(@Body() createJobType: CreateDegreeTypeDto) {
+    return await this.degreeTypeService.create(createJobType);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
+  async findAll(
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.degreeTypeService.findAll(query, +current, +pageSize);
+    return await this.degreeTypeService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.degreeTypeService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.degreeTypeService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(@Param('id') id: string, @Body() updateLevelDto: UpdateDegreeTypeDto) {
-    return this.degreeTypeService.update(id, updateLevelDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateLevelDto: UpdateDegreeTypeDto,
+  ) {
+    return await this.degreeTypeService.update(id, updateLevelDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  remove(@Body('ids') ids: Array<string>) {
-    return this.degreeTypeService.remove(ids);
+  async remove(@Body('ids') ids: Array<string>) {
+    return await this.degreeTypeService.remove(ids);
   }
 }

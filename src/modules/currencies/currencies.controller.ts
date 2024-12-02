@@ -20,35 +20,38 @@ export class CurrenciesController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createJobType: CreateCurrencyDto) {
-    return this.currencyService.create(createJobType);
+  async create(@Body() createJobType: CreateCurrencyDto) {
+    return await this.currencyService.create(createJobType);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
+  async findAll(
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.currencyService.findAll(query, +current, +pageSize);
+    return await this.currencyService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.currencyService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.currencyService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(@Param('id') id: string, @Body() updateLevelDto: UpdateCurrencyDto) {
-    return this.currencyService.update(id, updateLevelDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateLevelDto: UpdateCurrencyDto,
+  ) {
+    return await this.currencyService.update(id, updateLevelDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  remove(@Body('ids') ids: Array<string>) {
-    return this.currencyService.remove(ids);
+  async remove(@Body('ids') ids: Array<string>) {
+    return await this.currencyService.remove(ids);
   }
 }

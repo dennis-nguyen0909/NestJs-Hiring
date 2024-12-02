@@ -20,36 +20,39 @@ export class CourseController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createCourseDto: CreateCourseDto) {
-    return this.courseService.create(createCourseDto);
+  async create(@Body() createCourseDto: CreateCourseDto) {
+    return await this.courseService.create(createCourseDto);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
+  async findAll(
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.courseService.findAll(query, +current, +pageSize);
+    return await this.courseService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.courseService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.courseService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.courseService.update(id, updateCourseDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateCourseDto: UpdateCourseDto,
+  ) {
+    return await this.courseService.update(id, updateCourseDto);
   }
 
   @Delete(':id')
   @ResponseMessage('Success')
-  remove(@Param('id') id: string, @Req() req: any) {
+  async remove(@Param('id') id: string, @Req() req: any) {
     const userId = req.user._id;
-    return this.courseService.remove(id, userId);
+    return await this.courseService.remove(id, userId);
   }
 }

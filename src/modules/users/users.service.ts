@@ -19,7 +19,6 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { RoleService } from '../role/role.service';
 import { Role } from '../role/schema/Role.schema';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { Type } from 'class-transformer';
 @Injectable()
 export class UsersService {
   constructor(
@@ -476,6 +475,30 @@ export class UsersService {
           total_pages: totalPages,
         },
       }
+    }
+  }
+  async employerSendMail(body) {
+    console.log("duydeptrai",body)
+    // Gửi email cho ứng viên với các thông tin công việc và người tuyển dụng
+    try {
+      await this.mailService.sendMail({
+        to: body?.candidateEmail,  // Địa chỉ email của ứng viên
+        subject: `Job Application from ${body?.recruiterCompany}`,  // Tiêu đề email
+        text: `Dear ${body?.candidateName}, thank you for applying!`,  // Nội dung đơn giản, nếu bạn muốn hỗ trợ email không có định dạng HTML
+        template: 'templateEmployer',  // Tên template bạn đã tạo
+        context: {
+          recruiterCompany: body?.recruiterCompany,
+          candidateName: body?.candidateName ?? body?.candidateEmail,  // Tên ứng viên
+          jobTitle: body?.jobTitle,  // Tên vị trí công việc
+          jobDescription: body?.jobDescription,  // Mô tả công việc
+          recruiterEmail: body?.recruiterEmail,  // Email của công ty tuyển dụng
+          interviewDate:body.interviewDate,
+          interviewTime:body.interviewTime,
+          interviewLocation:body.interviewLocation,
+        },
+      });
+    } catch (error) {
+      console.error(error)
     }
   }
 }

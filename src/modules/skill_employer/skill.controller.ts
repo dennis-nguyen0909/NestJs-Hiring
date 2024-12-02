@@ -23,29 +23,29 @@ export class SkillEmployerController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() CreateSkillEmployerDto: CreateSkillEmployerDto) {
-    return this.skillService.create(CreateSkillEmployerDto);
+  async create(@Body() CreateSkillEmployerDto: CreateSkillEmployerDto) {
+    return await this.skillService.create(CreateSkillEmployerDto);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
+  async findAll(
     @Query() query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.skillService.findAll(query, +current, +pageSize);
+    return await this.skillService.findAll(query, +current, +pageSize);
   }
 
   @Get('user')
   @ResponseMessage('Success')
-  getSkillsByUserId(
+  async getSkillsByUserId(
     @Request() req,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
     @Query('query') query: string,
   ) {
-    return this.skillService.getSkillsByUserId(
+    return await this.skillService.getSkillsByUserId(
       req.user._id,
       +current,
       +pageSize,
@@ -55,22 +55,22 @@ export class SkillEmployerController {
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.skillService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.skillService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() UpdateSkillEmployerDto: UpdateSkillEmployerDto,
   ) {
-    return this.skillService.update(id, UpdateSkillEmployerDto);
+    return await this.skillService.update(id, UpdateSkillEmployerDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  remove(@Body() data: DeleteSkillEmployerDto) {
-    return this.skillService.remove(data);
+  async remove(@Body() data: DeleteSkillEmployerDto) {
+    return await this.skillService.remove(data);
   }
 }

@@ -12,10 +12,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CvUploadService } from './cv-upload.service';
 import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
-import { Public, ResponseMessage } from 'src/decorator/customize';
+import { ResponseMessage } from 'src/decorator/customize';
 @Controller('upload-cvs')
 @ApiTags('UploadCv')
-@Public()
 export class CvUploadController {
   constructor(private readonly cvUploadService: CvUploadService) {}
 
@@ -37,22 +36,22 @@ export class CvUploadController {
   })
   @UseInterceptors(FileInterceptor('file'))
   @ResponseMessage('Success')
-  create(
+  async create(
     @UploadedFile() file: Express.Multer.File,
     @Body('user_id') userId: string,
   ) {
-    return this.cvUploadService.create(file, userId);
+    return await this.cvUploadService.create(file, userId);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
   async findOne(@Param('id') id: string) {
-    return this.cvUploadService.findOne(id);
+    return await this.cvUploadService.findOne(id);
   }
   @Get('user/:id')
   @ResponseMessage('Success')
   async findByUserId(@Param('id') id: string) {
-    return this.cvUploadService.findByUserId(id);
+    return await this.cvUploadService.findByUserId(id);
   }
 
   @Get('')
@@ -62,7 +61,7 @@ export class CvUploadController {
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.cvUploadService.findAll(query, +current, +pageSize);
+    return await this.cvUploadService.findAll(query, +current, +pageSize);
   }
 
   @Delete('user/:id')
@@ -71,12 +70,12 @@ export class CvUploadController {
     @Param('id') cvId: string,
     @Body('userId') userId: string,
   ) {
-    return this.cvUploadService.removeByUserId(cvId, userId);
+    return await this.cvUploadService.removeByUserId(cvId, userId);
   }
 
   @Delete('')
   @ResponseMessage('Success')
   async removeMany(@Body('ids') ids: Array<string>) {
-    return this.cvUploadService.removeMany(ids);
+    return await this.cvUploadService.removeMany(ids);
   }
 }

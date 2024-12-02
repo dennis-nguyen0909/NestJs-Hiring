@@ -151,6 +151,28 @@ export class User extends Document {
 
   @Prop({ type: Types.ObjectId, ref: 'CV', required: false })
   primary_cv_id: CV;
+
+  @Prop({
+    type: {
+      company_info: { type: Boolean, default: false },
+      founding_info: { type: Boolean, default: false },
+      social_info: { type: Boolean, default: false },
+      contact: { type: Boolean, default: false },
+    },
+    required: false,
+    default: {
+      company_info: false,
+      founding_info: false,
+      social_info: false,
+      contact: false,
+    },
+  })
+  progress_setup: {
+    company_info: boolean;
+    founding_info: boolean;
+    social_info: boolean;
+    contact: boolean;
+  };
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -21,18 +21,18 @@ export class PrizeController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createPrizeDto: CreatePrizeDto) {
-    return this.prizeService.create(createPrizeDto);
+  async create(@Body() createPrizeDto: CreatePrizeDto) {
+    return await this.prizeService.create(createPrizeDto);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
-    @Query('query') query,
-    @Query('current') current,
-    @Query('pageSize') pageSize,
+  async findAll(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
   ) {
-    return this.prizeService.findAll(query, +current, +pageSize);
+    return await this.prizeService.findAll(query, +current, +pageSize);
   }
 
   @Get('owner/:id')
@@ -43,21 +43,24 @@ export class PrizeController {
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.prizeService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.prizeService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(@Param('id') id: string, @Body() updatePrizeDto: UpdatePrizeDto) {
-    return this.prizeService.update(id, updatePrizeDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updatePrizeDto: UpdatePrizeDto,
+  ) {
+    return await this.prizeService.update(id, updatePrizeDto);
   }
 
   @Delete(':id')
   @ResponseMessage('Success')
-  remove(@Param('id') id: string, @Req() req: any) {
+  async remove(@Param('id') id: string, @Req() req: any) {
     const userId = req.user._id;
 
-    return this.prizeService.remove(id, userId);
+    return await this.prizeService.remove(id, userId);
   }
 }

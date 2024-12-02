@@ -27,14 +27,14 @@ export class EducationController {
   async addEducation(
     @Body() createEducationDto: CreateEducationDto,
   ): Promise<Education> {
-    return this.educationService.addEducation(createEducationDto);
+    return await this.educationService.addEducation(createEducationDto);
   }
 
   // Lấy danh sách giáo dục của một người dùng
   @Get('user')
   @ResponseMessage('Success')
   async getEducations(@Request() req): Promise<Education[]> {
-    return this.educationService.findEducationsByUserId(req.user._id);
+    return await this.educationService.findEducationsByUserId(req.user._id);
   }
 
   @Get('')
@@ -45,7 +45,7 @@ export class EducationController {
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ): Promise<any> {
-    return this.educationService.findAll(query, +current, +pageSize);
+    return await this.educationService.findAll(query, +current, +pageSize);
   }
 
   @Patch(':id')
@@ -56,7 +56,7 @@ export class EducationController {
     @Body() updateEducationDto: UpdateEducationDto,
     @Request() req,
   ): Promise<Education> {
-    return this.educationService.updateByUserId(
+    return await this.educationService.updateByUserId(
       id,
       updateEducationDto,
       req.user._id,
@@ -67,12 +67,12 @@ export class EducationController {
   @ResponseMessage('Success')
   @UseGuards(JwtAuthGuard)
   async deleteByUserId(@Param('id') id: string, @Request() req) {
-    return this.educationService.deleteByUserId(id, req.user._id);
+    return await this.educationService.deleteByUserId(id, req.user._id);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
   async findOne(@Param('id') id: string): Promise<Education> {
-    return this.educationService.findOne(id);
+    return await this.educationService.findOne(id);
   }
 }

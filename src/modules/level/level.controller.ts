@@ -13,44 +13,42 @@ import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorator/customize';
-import { Public } from 'src/decorator/customize';
 @Controller('levels')
 @ApiTags('Levels')
-@Public()
 export class LevelController {
   constructor(private readonly levelService: LevelService) {}
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createLevelDto: CreateLevelDto) {
-    return this.levelService.create(createLevelDto);
+  async create(@Body() createLevelDto: CreateLevelDto) {
+    return await this.levelService.create(createLevelDto);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
+  async findAll(
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.levelService.findAll(query, +current, +pageSize);
+    return await this.levelService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.levelService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.levelService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(@Param('id') id: string, @Body() updateLevelDto: UpdateLevelDto) {
-    return this.levelService.update(id, updateLevelDto);
+  async update(@Param('id') id: string, @Body() updateLevelDto: UpdateLevelDto) {
+    return await this.levelService.update(id, updateLevelDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  remove(@Body('ids') ids: Array<string>) {
-    return this.levelService.remove(ids);
+  async remove(@Body('ids') ids: Array<string>) {
+    return await this.levelService.remove(ids);
   }
 }

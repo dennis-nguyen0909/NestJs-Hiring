@@ -22,38 +22,42 @@ export class JobContractTypeController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createJobType: CreateJobContractTypeDto) {
-    return this.jobContractTypeService.create(createJobType);
+  async create(@Body() createJobType: CreateJobContractTypeDto) {
+    return await this.jobContractTypeService.create(createJobType);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
+  async findAll(
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.jobContractTypeService.findAll(query, +current, +pageSize);
+    return await this.jobContractTypeService.findAll(
+      query,
+      +current,
+      +pageSize,
+    );
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.jobContractTypeService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.jobContractTypeService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateLevelDto: UpdateJobContractTypeDto,
   ) {
-    return this.jobContractTypeService.update(id, updateLevelDto);
+    return await this.jobContractTypeService.update(id, updateLevelDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  remove(@Body('ids') ids: Array<string>) {
-    return this.jobContractTypeService.remove(ids);
+  async remove(@Body('ids') ids: Array<string>) {
+    return await this.jobContractTypeService.remove(ids);
   }
 }

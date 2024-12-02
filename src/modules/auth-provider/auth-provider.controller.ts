@@ -23,38 +23,38 @@ export class AuthProviderController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createAuthProviderDto: CreateAuthProviderDto) {
-    return this.authProviderService.create(createAuthProviderDto);
+  async create(@Body() createAuthProviderDto: CreateAuthProviderDto) {
+    return await this.authProviderService.create(createAuthProviderDto);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
+  async findAll(
     @Query() query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.authProviderService.findAll(query, +current, +pageSize);
+    return await this.authProviderService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.authProviderService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.authProviderService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateAuthProviderDto: UpdateAuthProviderDto,
   ) {
-    return this.authProviderService.update(id, updateAuthProviderDto);
+    return await this.authProviderService.update(id, updateAuthProviderDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  remove(@Body() data: DeleteAuthProviderDTO) {
-    return this.authProviderService.remove(data);
+  async remove(@Body() data: DeleteAuthProviderDTO) {
+    return await this.authProviderService.remove(data);
   }
 }

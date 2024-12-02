@@ -25,51 +25,61 @@ export class UsersController {
 
   @Post('create')
   @ResponseMessage('Create user successfully')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.create(createUserDto);
   }
 
   @Get('')
   @ResponseMessage('List of users')
-  findAll(
+  async findAll(
     @Query() query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.usersService.findAll(query, +current, +pageSize);
+    return await this.usersService.findAll(query, +current, +pageSize);
   }
   @Get('/company')
-  async getAllCompany(@Query('query') query:string,@Query('current') current:string ,@Query('pageSize') pageSize:string){
-    return this.usersService.getAllCompany(query,+current,+pageSize)
+  async getAllCompany(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.usersService.getAllCompany(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.usersService.getDetailUser(id);
+  async findOne(@Param('id') id: string) {
+    return await this.usersService.getDetailUser(id);
   }
 
   @Patch()
   @ResponseMessage('Success')
-  update(@Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(updateUserDto);
+  async update(@Body() updateUserDto: UpdateUserDto) {
+    return await this.usersService.update(updateUserDto);
   }
 
   @Delete(':id')
   @ResponseMessage('Success')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.usersService.remove(id);
   }
 
   @Post('reset-password')
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<string> {
-    return this.usersService.resetPassword(resetPasswordDto);
+    return await this.usersService.resetPassword(resetPasswordDto);
   }
 
   @Get(':id/profile-completion')
   async getProfileCompletion(@Param('id') userId: string): Promise<number> {
-    return this.usersService.calculateProfileCompletion(userId);
+    return await this.usersService.calculateProfileCompletion(userId);
+  }
+
+  @Post('send-application-email')
+  @ResponseMessage('Success')
+  async sendJobApplicationEmail(@Body() body: any) {
+    return await this.usersService.employerSendMail(body);
   }
 }

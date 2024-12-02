@@ -25,17 +25,17 @@ export class ApplicationController {
   @Post()
   @ResponseMessage('Success')
   @ApiBody({ type: CreateApplicationDto })
-  create(@Body() createApplicationDto: CreateApplicationDto) {
-    return this.applicationService.create(createApplicationDto);
+  async create(@Body() createApplicationDto: CreateApplicationDto) {
+    return await this.applicationService.create(createApplicationDto);
   }
 
   @Get('recently-applied-candidate')
-  getRecentlyAppliedCandidate(
+  async getRecentlyAppliedCandidate(
     @Query('query') query: string,
     @Query('current') current: number,
     @Query('pageSize') pageSize: number,
   ) {
-    return this.applicationService.getRecentlyAppliedCandidate(
+    return await this.applicationService.getRecentlyAppliedCandidate(
       query,
       current,
       pageSize,
@@ -48,18 +48,21 @@ export class ApplicationController {
     @Param('id') applicationId: string,
     @Body('user_id') userId: string,
   ) {
-    return this.applicationService.cancelApplication(applicationId, userId);
+    return await this.applicationService.cancelApplication(
+      applicationId,
+      userId,
+    );
   }
 
   @Get('/job_id/:id')
   @ResponseMessage('Success')
-  getApplicationByJobId(
+  async getApplicationByJobId(
     @Param('id') id: string,
     @Query('query') query,
     @Query('current') current,
     @Query('pageSize') pageSize,
   ) {
-    return this.applicationService.getApplicationByJobId(
+    return await this.applicationService.getApplicationByJobId(
       id,
       query,
       +current,
@@ -89,28 +92,28 @@ export class ApplicationController {
     type: 'object',
     example: { status: 'pending' },
   })
-  findAll(
+  async findAll(
     @Query('query') query,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.applicationService.findAll(query, +current, +pageSize);
+    return await this.applicationService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.applicationService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.applicationService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
   @ApiBody({ type: UpdateApplicationDto })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateApplicationDto: UpdateApplicationDto,
   ) {
-    return this.applicationService.update(id, updateApplicationDto);
+    return await this.applicationService.update(id, updateApplicationDto);
   }
 
   @Delete()
@@ -122,8 +125,8 @@ export class ApplicationController {
     type: 'object',
     example: { ids: ['id1', 'id2'] },
   })
-  remove(@Body() data: DeleteApplicationDto) {
-    return this.applicationService.remove(data);
+  async remove(@Body() data: DeleteApplicationDto) {
+    return await this.applicationService.remove(data);
   }
 
   @ResponseMessage('Success')
@@ -138,7 +141,7 @@ export class ApplicationController {
   @ResponseMessage('Success')
   @Get('applied/:userId')
   async getAppliedUserId(@Param('userId') userId: string) {
-    return this.applicationService.getAppliedUserId(userId);
+    return await this.applicationService.getAppliedUserId(userId);
   }
 
   @Get('recently-applied/:candidate_id')
@@ -151,6 +154,9 @@ export class ApplicationController {
     @Param('candidate_id') candidate_id: string,
     @Query('limit') limit: string,
   ) {
-    return this.applicationService.getRecentlyApplied(candidate_id, +limit);
+    return await this.applicationService.getRecentlyApplied(
+      candidate_id,
+      +limit,
+    );
   }
 }

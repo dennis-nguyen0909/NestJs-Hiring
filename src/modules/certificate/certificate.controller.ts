@@ -20,39 +20,39 @@ export class CertificateController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createCertificateDto: CreateCertificateDto) {
-    return this.certificateService.create(createCertificateDto);
+  async create(@Body() createCertificateDto: CreateCertificateDto) {
+    return await this.certificateService.create(createCertificateDto);
   }
 
   @Get()
   @ResponseMessage('Success')
-  findAll(
+  async findAll(
     @Query('current') current: string,
     @Query('query') query: string,
     @Query('pageSize') pageSize: string,
   ) {
-    return this.certificateService.findAll(query, +current, +pageSize);
+    return await this.certificateService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
-    return this.certificateService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.certificateService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCertificateDto: UpdateCertificateDto,
   ) {
-    return this.certificateService.update(id, updateCertificateDto);
+    return await this.certificateService.update(id, updateCertificateDto);
   }
 
   @Delete(':id')
   @ResponseMessage('Success')
-  remove(@Param('id') id: string, @Req() req:any) {
+  async remove(@Param('id') id: string, @Req() req: any) {
     const userId = req.user._id;
-    return this.certificateService.remove(id, userId);
+    return await this.certificateService.remove(id, userId);
   }
 }

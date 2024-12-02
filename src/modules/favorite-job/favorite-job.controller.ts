@@ -19,13 +19,13 @@ export class FavoriteJobController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createFavoriteJobDto: CreateFavoriteJobDto) {
-    return this.favoriteJobService.create(createFavoriteJobDto);
+  async create(@Body() createFavoriteJobDto: CreateFavoriteJobDto) {
+    return await this.favoriteJobService.create(createFavoriteJobDto);
   }
 
   @Get('/get-detail')
   @ResponseMessage('Success')
-  getFavoriteJobDetailByUserId(
+  async getFavoriteJobDetailByUserId(
     @Query('user_id') user_id: any,
     @Query('job_id') job_id: any,
   ) {
@@ -33,33 +33,33 @@ export class FavoriteJobController {
       user_id,
       job_id,
     };
-    return this.favoriteJobService.getFavoriteJobDetailByUserId(data);
+    return await this.favoriteJobService.getFavoriteJobDetailByUserId(data);
   }
 
   @Get()
-  findAll(
+  async findAll(
     @Query('query') query: string,
     @Query('current') current,
     @Query('pageSize') pageSize,
   ) {
-    return this.favoriteJobService.findAll(query, +current, +pageSize);
+    return await this.favoriteJobService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.favoriteJobService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.favoriteJobService.findOne(+id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateFavoriteJobDto: UpdateFavoriteJobDto,
   ) {
-    return this.favoriteJobService.update(+id, updateFavoriteJobDto);
+    return await this.favoriteJobService.update(+id, updateFavoriteJobDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.favoriteJobService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.favoriteJobService.remove(+id);
   }
 }

@@ -43,22 +43,22 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   @ResponseMessage('Success')
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req) {
+    return await req.user;
   }
 
   @Public()
   @Post('register')
   @ResponseMessage('Success')
-  register(@Body() registerDto: RegisterAuthDto) {
-    return this.authService.register(registerDto);
+  async register(@Body() registerDto: RegisterAuthDto) {
+    return await this.authService.register(registerDto);
   }
 
   @Get('email')
   @Public()
   @ResponseMessage('Success')
-  testMail() {
-    this.mailService.sendMail({
+  async testMail() {
+    await this.mailService.sendMail({
       to: 'dennis.nguyen0909@gmail.com', // list of receivers
       subject: 'Testing Nest MailerModule ✔', // Subject line
       text: 'welcome', // plaintext body
@@ -85,15 +85,15 @@ export class AuthController {
   @Post('verify')
   @Public()
   @ResponseMessage('Success')
-  verify(@Body() verifyDto: VerifyAuthDto) {
-    return this.authService.verify(verifyDto);
+  async verify(@Body() verifyDto: VerifyAuthDto) {
+    return await this.authService.verify(verifyDto);
   }
 
   @Post('retry-active')
   @Public()
   @ResponseMessage('Success')
-  retryActive(@Body('email') email: string) {
-    return this.authService.retryActive(email);
+  async retryActive(@Body('email') email: string) {
+    return await this.authService.retryActive(email);
   }
 
   @Post('refresh-token')
@@ -102,7 +102,7 @@ export class AuthController {
   // @Public()
   async refreshToken(@Request() req: RequestExpress, @Request() reqUser) {
     const refresh_token = req.cookies.refresh_token;
-    return this.authService.refreshToken(refresh_token);
+    return await this.authService.refreshToken(refresh_token);
   }
 
   @Post('logout')
@@ -110,6 +110,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ResponseMessage('Success')
   async logout(@Request() req) {
-    return this.authService.logout(req.user);
+    return await this.authService.logout(req.user);
   }
 }
