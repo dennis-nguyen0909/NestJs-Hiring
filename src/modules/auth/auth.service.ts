@@ -75,12 +75,11 @@ export class AuthService {
   async verify(verifyDto: VerifyAuthDto): Promise<any> {
     try {
       const { id, code_id } = verifyDto;
-      const findUser = await this.userService.findOne(id);
+      const findUser = await this.userService.findOneFilter(id);
       const currentDay = dayjs(); // Lấy thời gian hiện tại bằng dayjs
       if (!findUser) {
         throw new BadRequestException('User not found');
       }
-
       if (findUser?.code_id !== code_id) {
         throw new BadRequestException('Code not correct');
       }
@@ -95,9 +94,11 @@ export class AuthService {
       }
 
       const { user } = await this.signIn(findUser);
+      console.log("user_id",user)
       return {
         access_token: user.access_token,
         refresh_token: user.refresh_token,
+        user_id: user.user_id,
       };
     } catch (error) {
       throw new UnauthorizedException(error.message || 'Lỗi từ server');

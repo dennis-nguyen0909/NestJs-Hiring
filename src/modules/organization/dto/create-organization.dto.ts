@@ -30,7 +30,7 @@ export class CreateOrganizationDto {
   @IsUrl()
   company_website?: string; // Website của tổ chức
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   company_vision?: string; // Tầm nhìn của tổ chức
 

@@ -494,7 +494,6 @@ export class JobService {
         delete query.level;
       }
 
-      console.log('Final query:', query);
       const totalItems = (await this.jobRepository.find(query)).length;
       const totalPages = Math.ceil(totalItems / pageSize);
       const skip = (+current - 1) * pageSize;

@@ -120,12 +120,25 @@ export class UsersService {
     const user = await this.userRepository.findOne({ email });
     return user;
   }
+  async findOneFilter(id:string){
+    try {
+      const user = await this.userRepository
+        .findOne({ _id: id })
+        .select('-password ')
+      if (user) {
+        return user;
+      }
+      return null;
+    } catch (error) {
+      throw new NotFoundException();
+    }
+  }
 
   async findOne(id: string) {
     try {
       const user = await this.userRepository
         .findOne({ _id: id })
-        .select('-password') // Use a space-separated string for excluding fields
+        .select('-password -code_id -code_expired ')
         // .populate('role')
         // .populate('education_ids')
       if (user) {
@@ -478,7 +491,6 @@ export class UsersService {
     }
   }
   async employerSendMail(body) {
-    console.log("duydeptrai",body)
     // Gửi email cho ứng viên với các thông tin công việc và người tuyển dụng
     try {
       await this.mailService.sendMail({
@@ -502,9 +514,12 @@ export class UsersService {
     }
   }
   async checkAndUpdateProgressSetupCompany(userId: string): Promise<User> {
-    const user = await this.userRepository.findById(userId).select("-code -password -code_expired -account_type").exec();
+    const user = await this.userRepository.findById(userId).select("-code -password -code_expired -account_type").populate("role").exec();
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+    if (!user.role || user?.role?.role_name !== "EMPLOYER") {
+      return user; // Bỏ qua việc kiểm tra tiếp theo
     }
 
     // Kiểm tra và cập nhật company_info
@@ -521,7 +536,6 @@ export class UsersService {
     if (user.social_links && user.social_links.length > 0) {
       user.progress_setup.social_info = true;
     }
-    console.log("user",user)
     // Kiểm tra và cập nhật contact
     if (user.phone && user.email && user.ward_id && user.district_id && user.city_id) {
       user.progress_setup.contact = true;
