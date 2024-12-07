@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ObjectId } from 'mongoose';
 
 export class CreateCurrencyDto {
   @IsNotEmpty()
@@ -13,4 +14,7 @@ export class CreateCurrencyDto {
   @IsNotEmpty()
   @IsString()
   symbol: string;
+
+  @IsNotEmpty()
+  user_id: ObjectId;
 }

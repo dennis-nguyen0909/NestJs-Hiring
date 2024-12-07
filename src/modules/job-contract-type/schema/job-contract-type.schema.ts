@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class JobContractType extends Document {
@@ -11,6 +11,8 @@ export class JobContractType extends Document {
 
   @Prop()
   description: string;
+  @Prop({ type: Types.ObjectId, ref: 'Users' })
+  user_id: Types.ObjectId;
 }
 
 export const JobContractTypeSchema =

@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ObjectId } from 'mongoose';
 
 export class CreateJobTypeDto {
   @IsNotEmpty()
@@ -8,4 +9,7 @@ export class CreateJobTypeDto {
   key?: string;
   @IsOptional()
   description?: string;
+
+  @IsNotEmpty()
+  user_id: ObjectId;
 }

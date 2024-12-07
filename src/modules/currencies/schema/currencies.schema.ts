@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Currency extends Document {
   @Prop({ required: true })
@@ -12,6 +12,9 @@ export class Currency extends Document {
   @Prop()
   @Prop({ required: true })
   symbol: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'Users' })
+  user_id: Types.ObjectId;
 }
 
 export const CurrenciesSchema = SchemaFactory.createForClass(Currency);

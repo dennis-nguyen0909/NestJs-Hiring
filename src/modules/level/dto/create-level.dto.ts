@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ObjectId } from 'mongoose';
 
 export class CreateLevelDto {
   @IsNotEmpty()
@@ -11,4 +12,7 @@ export class CreateLevelDto {
   @IsOptional()
   @IsString()
   key?: string;
+
+  @IsNotEmpty()
+  user_id: ObjectId;
 }
