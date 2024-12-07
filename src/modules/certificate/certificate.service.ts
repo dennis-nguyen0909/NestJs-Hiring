@@ -14,7 +14,6 @@ import { User } from '../users/schemas/User.schema';
 import aqp from 'api-query-params';
 import { Meta } from '../types';
 
-
 @Injectable()
 export class CertificateService {
   constructor(
@@ -38,7 +37,7 @@ export class CertificateService {
         `Candidate #${newCertificate.candidate_id} not found`,
       );
     }
-    candidate.certificates.push(newCertificate._id);
+    candidate.certificates.push(new Types.ObjectId(newCertificate._id + ''));
     await candidate.save();
     return newCertificate;
   }
@@ -90,7 +89,7 @@ export class CertificateService {
 
     await this.userModel.updateOne(
       { _id: certificate.candidate_id },
-      { $pull: { certificates: id } }, 
+      { $pull: { certificates: id } },
     );
   }
 

@@ -49,10 +49,10 @@ export class Job extends Document {
     type: Types.ObjectId,
     ref: JobContractType.name,
   })
-  job_type: Types.ObjectId;
+  job_contract_type: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: JobType.name })
-  type_of_work: Types.ObjectId;
+  job_type: Types.ObjectId;
 
   @Prop()
   min_experience: string;

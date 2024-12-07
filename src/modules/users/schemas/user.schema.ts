@@ -60,6 +60,10 @@ export class User extends Document {
 
   @Prop({ default: false })
   is_search_jobs_status: boolean;
+
+  @Prop({ default: false })
+  is_suggestion_job: boolean;
+
   @Prop({ type: Types.ObjectId, ref: 'Cities' })
   city_id: Cities;
 
@@ -80,8 +84,8 @@ export class User extends Document {
   @Prop([String])
   save_job_ids: string[];
 
-  @Prop({ type: [Types.ObjectId], ref: 'CV' })
-  cv_ids: CV[];
+  // @Prop({ type: [Types.ObjectId], ref: 'CV' })
+  // cv_ids: CV[];
 
   @Prop({ type: [Types.ObjectId], ref: 'Education' })
   education_ids: Types.ObjectId[];

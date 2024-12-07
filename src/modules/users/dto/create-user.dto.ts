@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsIn,
   IsMongoId,
+  IsNotEmpty,
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
@@ -48,6 +49,7 @@ export class CreateUserDto {
   background?: string;
 
   @IsString()
+  @IsNotEmpty()
   password: string;
 
   @IsOptional()
@@ -60,6 +62,7 @@ export class CreateUserDto {
   gender?: number;
 
   @IsMongoId()
+  @IsNotEmpty()
   role: string;
 
   @IsOptional()
@@ -133,10 +136,14 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsMongoId()
-  primary_cv_id?: boolean;
+  primary_cv_id?: string;
   @IsOptional()
   progress_setup: ProgressSetupDTO;
 
   @IsOptional()
   social_links: Types.ObjectId[];
+
+  @IsOptional()
+  @IsBoolean()
+  is_suggestion_job?: boolean;
 }

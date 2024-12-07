@@ -139,8 +139,8 @@ export class JobService {
       .populate('degree')
       .populate('type_money')
       .populate('level')
-      .populate('job_type')
-      .populate('type_of_work');
+      .populate('job_contract_type')
+      .populate('job_type');
     return {
       items: result,
       meta: {
@@ -163,8 +163,8 @@ export class JobService {
       .populate('degree')
       .populate('type_money')
       .populate('level')
+      .populate('job_contract_type')
       .populate('job_type')
-      .populate('type_of_work')
       .populate('ward_id');
     if (!job) {
       throw new NotFoundException();
@@ -313,8 +313,8 @@ export class JobService {
       }).populate('degree')
       .populate('type_money')
       .populate('level')
-      .populate('job_type')
-      .populate('type_of_work');
+      .populate('job_contract_type')
+      .populate('job_type');
 
     // Trả về kết quả cùng với metadata phân trang
     return {
@@ -400,8 +400,8 @@ export class JobService {
       .populate('degree')
       .populate('type_money')
       .populate('level')
-      .populate('job_type')
-      .populate('type_of_work');
+      .populate('job_contract_type')
+      .populate('job_type');
 
     // Trả về kết quả cùng metadata phân trang
     return {
@@ -477,11 +477,11 @@ export class JobService {
       if (query?.city_id?.codename === 'all-locations') {
         delete query.city_id;
       }
-      if (query?.job_type && query.job_type !== 'tat_ca_loai_hop_dong') {
-        query.job_type = query.job_type;
+      if (query?.job_contract_type && query.job_contract_type !== 'tat_ca_loai_hop_dong') {
+        query.job_contract_type = query.job_contract_type;
       }
-      if (query?.job_type === 'tat_ca_loai_hop_dong') {
-        delete query.job_type;
+      if (query?.job_contract_type === 'tat_ca_loai_hop_dong') {
+        delete query.job_contract_type;
       }
       if (query?.level && query.level !== 'all_levels') {
         const levelRes = await this.levelModel.findOne({ key: query.level });
@@ -509,8 +509,8 @@ export class JobService {
         .populate('degree')
         .populate('type_money')
         .populate('level')
+        .populate('job_contract_type')
         .populate('job_type')
-        .populate('type_of_work')
         .populate('user_id','-password -code_id -code_expired')
         .exec();
 

@@ -46,7 +46,7 @@ export class CreateJobDto {
   salary_type?: string;
 
   @IsOptional()
-  job_type?: string;
+  job_contract_type?: string;
 
   @IsOptional()
   @IsArray()
@@ -118,7 +118,7 @@ export class CreateJobDto {
   interview_process?: { process: string }[];
 
   @IsOptional()
-  type_of_work: string;
+  job_type: string;
   @IsOptional()
   min_experience?: number;
 }
