@@ -302,7 +302,6 @@ export class UsersService {
 
     const hashPassword = await hashPasswordHelper(password);
     const findRole = await this.roleService.findByRoleName(role);
-    console.log("duydeptrai",findRole)
     if (!findRole) {
       throw new BadRequestException(
         'Role not found. Please check if the role exists.',
@@ -555,4 +554,11 @@ export class UsersService {
     return user;
   }
 
+    async validateGoogleUser(googleUser:any){
+        const user = await this.userRepository.findOne({
+          email:googleUser?.email
+        })
+        if(user) return user;
+        return await this.create(googleUser);
+    }
 }

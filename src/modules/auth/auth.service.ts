@@ -94,7 +94,6 @@ export class AuthService {
       }
 
       const { user } = await this.signIn(findUser);
-      console.log("user_id",user)
       return {
         access_token: user.access_token,
         refresh_token: user.refresh_token,

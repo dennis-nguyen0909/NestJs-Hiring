@@ -7,6 +7,7 @@ import {
   Body,
   UnauthorizedException,
   Res,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local-auth.guard';
@@ -17,6 +18,9 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { ApiTags } from '@nestjs/swagger';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
 import { Request as RequestExpress, Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { GoogleStrategy } from './passport/google-auth/google.strategy';
+import { GoogleAuthGuard } from './passport/google-auth/google-auth-guard';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -111,5 +115,19 @@ export class AuthController {
   @ResponseMessage('Success')
   async logout(@Request() req) {
     return await this.authService.logout(req.user);
+  }
+
+  @Public()
+  @Get('google/login')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth(@Req() req) {
+    // Route này sẽ redirect tới Google để login
+  }
+  @Public()
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    const response = await this.authService.signIn(req.user);
+    res.redirect(`http://localhost:5173?token=${response.user.access_token}`);
   }
 }
