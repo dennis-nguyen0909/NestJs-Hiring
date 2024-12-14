@@ -561,4 +561,12 @@ export class UsersService {
         if(user) return user;
         return await this.create(googleUser);
     }
+
+    async validateFacebookUser(facebookUser:any){
+      const user = await this.userRepository.findOne({
+        email:facebookUser?.email
+      })
+      if(user) return user;
+      return await this.create(facebookUser);
+    }
 }

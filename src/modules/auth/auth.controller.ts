@@ -18,9 +18,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { ApiTags } from '@nestjs/swagger';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
 import { Request as RequestExpress, Response } from 'express';
-import { AuthGuard } from '@nestjs/passport';
-import { GoogleStrategy } from './passport/google-auth/google.strategy';
 import { GoogleAuthGuard } from './passport/google-auth/google-auth-guard';
+import { FacebookAuthGuard } from './passport/facebook-auth/facebook-auth-guard';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -127,6 +126,20 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(@Req() req, @Res() res) {
+    const response = await this.authService.signIn(req.user);
+    res.redirect(`http://localhost:5173?token=${response.user.access_token}`);
+  }
+
+  @Public()
+  @Get('facebook/login')
+  @UseGuards(FacebookAuthGuard)
+  async facebookAuth(@Req() req) {
+    // Route này sẽ redirect tới Google để login
+  }
+  @Public()
+  @Get('facebook/callback')
+  @UseGuards(FacebookAuthGuard)
+  async facebookAuthRedirect(@Req() req, @Res() res) {
     const response = await this.authService.signIn(req.user);
     res.redirect(`http://localhost:5173?token=${response.user.access_token}`);
   }
