@@ -20,4 +20,3 @@ export class Ward {
 }
 
 export const WardSchema = SchemaFactory.createForClass(Ward);
-

@@ -17,5 +17,6 @@ import { UsersModule } from '../users/users.module';
   ],
   controllers: [SkillEmployerController],
   providers: [SkillEmployerServices],
+  exports: [MongooseModule],
 })
 export class SkillEmployerModule {}

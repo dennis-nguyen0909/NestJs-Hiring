@@ -29,7 +29,7 @@ export class SocialLinkController {
   @Get()
   @ResponseMessage('Success')
   async findAll(
-    @Query() query: string,
+    @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {

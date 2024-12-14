@@ -26,6 +26,14 @@ export class JobController {
   async create(@Body() createJobDto: CreateJobDto) {
     return await this.jobService.create(createJobDto);
   }
+  @Get('test')
+  async testSearch(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.jobService.testSearch(query, +current, +pageSize);
+  }
 
   @Get('getJobSearchName')
   @ResponseMessage('Success')

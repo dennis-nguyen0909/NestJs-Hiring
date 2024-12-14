@@ -6,6 +6,7 @@ import { Job, JobSchema } from './schema/Job.schema';
 import { UsersModule } from '../users/users.module';
 import { CitiesModule } from '../cities/cities.module';
 import { LevelModule } from '../level/level.module';
+import { SkillEmployerModule } from '../skill_employer/skill.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { LevelModule } from '../level/level.module';
     UsersModule,
     CitiesModule,
     LevelModule,
+    SkillEmployerModule,
   ],
   controllers: [JobController],
   providers: [JobService],

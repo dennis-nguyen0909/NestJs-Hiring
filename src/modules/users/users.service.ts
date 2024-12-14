@@ -139,7 +139,7 @@ export class UsersService {
       const user = await this.userRepository
         .findOne({ _id: id })
         .select('-password -code_id -code_expired ')
-        // .populate('role')
+        .populate('social_links')
         // .populate('education_ids')
       if (user) {
         return user;
@@ -187,6 +187,8 @@ export class UsersService {
       .populate('city_id')
       .populate('district_id')
       .populate('ward_id')
+      .populate('social_links')
+      .populate('favorite_jobs')
       .populate({
         path:'cvs',
         select:'-public_id -createdAt -updatedAt -user_id '
@@ -300,7 +302,7 @@ export class UsersService {
 
     const hashPassword = await hashPasswordHelper(password);
     const findRole = await this.roleService.findByRoleName(role);
-
+    console.log("duydeptrai",findRole)
     if (!findRole) {
       throw new BadRequestException(
         'Role not found. Please check if the role exists.',
@@ -462,6 +464,7 @@ export class UsersService {
 
     return completion;
   }
+
  async getAllCompany(query:string,current:number,pageSize:number){
     const {filter,sort}=aqp(query);
     if(filter.current) delete filter.current;
@@ -476,7 +479,11 @@ export class UsersService {
       filter.role = new Types.ObjectId(filter.role);
     }
  
-    const result = (await this.userRepository.find(filter).limit(pageSize).skip(skip).sort(sort as any).populate('city_id').select('-password -code_id -code_expired -is_active -is_search_jobs_status -phone -toggle_dashboard -certificates -courses -prizes -projects -skills -education_ids -cv_ids -account_type -work_experience_ids'));
+    const result = (await this.userRepository.find(filter).limit(pageSize).skip(skip).sort(sort as any)
+    .populate('city_id')
+    .populate('district_id')
+    .populate('jobs_ids')
+    .select('-password -code_id -code_expired -is_active -is_search_jobs_status -phone -toggle_dashboard -certificates -courses -prizes -projects -skills -education_ids -cv_ids -account_type -work_experience_ids'));
     if(result){
       return {
         items: result,
@@ -490,6 +497,7 @@ export class UsersService {
       }
     }
   }
+
   async employerSendMail(body) {
     // Gửi email cho ứng viên với các thông tin công việc và người tuyển dụng
     try {

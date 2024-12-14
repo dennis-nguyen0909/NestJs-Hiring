@@ -27,6 +27,7 @@ export class JobService {
     @InjectModel('User') private userModel: Model<User>,
     @InjectModel(Cities.name) private cityModel: Model<Cities>,
     @InjectModel(Level.name) private levelModel: Model<Cities>,
+    @InjectModel(SkillEmployer.name) private employerModel: Model<SkillEmployer>,
     private userService: UsersService,
     private citiesService: CitiesService,
   ) {}
@@ -68,6 +69,8 @@ export class JobService {
     // Nếu tất cả các kiểm tra đều vượt qua, tiếp tục tạo công việc
     const job = await this.jobRepository.create(createJobDto);
     if (job) {
+      user.jobs_ids.push(new Types.ObjectId(job?._id+""))
+      user.save()
       return job;
     } else {
       throw new BadRequestException('Create job failed');
@@ -135,6 +138,14 @@ export class JobService {
         model: User.name,
         select:
           '-password -avatar -role -is_active -is_deleted -createdAt -updatedAt -__v',
+          populate:[
+            {
+              path:'district_id'
+            },
+            {
+              path:'city_id'
+            }
+          ]
       })
       .populate('degree')
       .populate('type_money')
@@ -156,7 +167,15 @@ export class JobService {
   async findOne(id: string) {
     const job = await this.jobRepository
       .findOne({ _id: id })
-      .populate('user_id')
+      .populate({
+        path:'user_id',
+        populate:[
+          {
+            path:"organization"
+          },
+          {path:"social_links"}
+        ]
+      })
       .populate('city_id', '-districts')
       .populate('district_id', '-wards')
       .populate('skills')
@@ -229,12 +248,15 @@ export class JobService {
         if (!job) {
           throw new NotFoundException();
         }
-        if (job.user_id !== new Types.ObjectId(user_id)) {
+        if (job.user_id+"" !== user_id) {
           throw new UnauthorizedException();
         }
-
         const result = await this.jobRepository.deleteOne({ _id: ids[0] });
         if (result.deletedCount > 0) {
+          await this.userModel.updateOne(
+            { _id: ids[0] },
+            { $pull: { jobs_ids: ids[0] } },
+          );
           return [];
         } else {
           throw new BadRequestException('Delete failed!');
@@ -245,7 +267,7 @@ export class JobService {
           throw new NotFoundException();
         }
         jobs.map((job) => {
-          if (job.user_id !== new Types.ObjectId(user_id)) {
+          if (job.user_id+"" !== user_id) {
             throw new UnauthorizedException('ko co quyen');
           }
         });
@@ -253,6 +275,10 @@ export class JobService {
           _id: { $in: ids },
         });
         if (result.deletedCount > 0) {
+          await this.userModel.updateMany(
+            { _id: { $in: ids } },
+            { $pull: { jobs_ids: { $in: ids } } },
+          );  
           return [];
         } else {
           throw new BadRequestException('Delete failed!');
@@ -514,6 +540,8 @@ export class JobService {
         .populate('user_id','-password -code_id -code_expired')
         .exec();
 
+      await jobs.map((job)=>{
+      })
       // Nếu không tìm thấy công việc nào
 
       return{
@@ -532,4 +560,60 @@ export class JobService {
       );
     }
   }
+
+  async testSearch(query: any, current: number, pageSize: number) {
+    const { filter, sort } = aqp(query);
+  
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+  
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+  
+    // Nếu có query.title, tìm kiếm gần đúng theo title
+    if (query?.title) {
+      // Tìm kiếm theo tên công việc (title) gần đúng
+      query.title = { $regex: query.title, $options: 'i' }; // Tìm kiếm không phân biệt chữ hoa chữ thường
+    }
+  
+    // Nếu có query.skillsName, tìm kiếm gần đúng theo skillsName
+    if (query?.skillsName) {
+      // Tìm kiếm kỹ năng gần đúng theo tên kỹ năng
+      const skills = await this.employerModel.find({
+        name: { $regex: query.skillsName, $options: 'i' } // Tìm kiếm kỹ năng gần đúng
+      });
+  
+      // Nếu không có kỹ năng nào tìm được, trả về mảng rỗng
+      if (skills.length === 0) {
+        return [];
+      }
+  
+      // Lấy mảng ObjectId của các kỹ năng tìm được và chuyển chúng thành ObjectId
+      const skillIds = skills.map(skill => skill._id + "");
+  
+      filter['skills'] = { $in: skillIds };
+    }
+  
+  
+    try {
+      const jobs = await this.jobRepository.find({
+        $or: [
+          query?.title ? { title: query.title } : {}, 
+          filter.skills ? { skills: { $in: filter.skills.$in } } : {} 
+        ]
+      })
+      .populate('skills')
+      .skip((current - 1) * pageSize) 
+      .limit(pageSize);
+  
+      return jobs;
+  
+    } catch (error) {
+      console.error('Error in search:', error); 
+      return [];
+    }
+  }
+  
+  
+  
 }

@@ -134,8 +134,8 @@ export class User extends Document {
   @Prop({ required: false })
   location?: string;
 
-  @Prop([{ type: Types.ObjectId, ref: Job.name, required: false }])
-  jobs_ids?: Job[];
+  @Prop({ type: [Types.ObjectId], ref: Job.name, required: false })
+  jobs_ids?: Types.ObjectId[];
 
   @Prop({ required: false })
   description?: string;

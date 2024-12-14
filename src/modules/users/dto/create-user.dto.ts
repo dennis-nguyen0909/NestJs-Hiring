@@ -61,7 +61,7 @@ export class CreateUserDto {
   @IsIn([0, 1, 2]) // 0: Nam, 1: Nữ, 2: Không xác định
   gender?: number;
 
-  @IsMongoId()
+  // @IsMongoId()
   @IsNotEmpty()
   role: string;
 
