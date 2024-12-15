@@ -69,6 +69,14 @@ export class AuthProviderService {
     return result;
   }
 
+  async findDynamic(filter: Record<string, any>) {
+    const result = await this.authProviderRepository.findOne(filter);
+    if (!result) {
+      throw new BadRequestException('AuthProvider not found');
+    }
+    return result;
+  }
+
   async update(id: string, updateAuthProviderDto: UpdateAuthProviderDto) {
     const result = await this.authProviderRepository.updateOne(
       { _id: id },

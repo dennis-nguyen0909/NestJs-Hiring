@@ -21,4 +21,7 @@ export class RegisterAuthDto {
   location?: string;
   @IsOptional()
   description?: string;
+
+  @IsOptional()
+  authProvider?: string;
 }

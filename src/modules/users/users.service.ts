@@ -19,12 +19,14 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { RoleService } from '../role/role.service';
 import { Role } from '../role/schema/Role.schema';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { AuthProviderService } from '../auth-provider/auth-provider.service';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userRepository: Model<User>,
     private mailService: MailerService,
     private roleService: RoleService,
+    private authProviderService:AuthProviderService
   ) {}
 
   isEmailExists = async (email: string) => {
@@ -54,29 +56,37 @@ export class UsersService {
 
     // Hash password trước khi lưu vào DB
     const hashedPassword = await hashPasswordHelper(password);
-    const findRole = await this.roleService.findByRoleName(role);
-    if (!findRole) {
-      throw new BadRequestException(
-        'Role not found. Please check if the role exists.',
-      );
-    }
+    // const findRole = await this.roleService.findByRoleName(role);
+    // if (!findRole) {
+    //   throw new BadRequestException(
+    //     'Role not found. Please check if the role exists.',
+    //   );
+    // }
     const user = new this.userRepository({
       ...createUserDto,
       password: hashedPassword,
-      role: findRole._id,
+      // role: findRole._id,
     });
 
     // Phân biệt giữa User và Employer
-    if (role === 'EMPLOYER') {
-      if (!company_name || !website || !location) {
-        throw new BadRequestException(
-          'Missing employer details: company_name, website, and location are required.',
-        );
-      }
-      user.company_name = company_name;
-      user.website = website;
-      user.location = location;
-      user.description = description || '';
+    // if (role === 'EMPLOYER') {
+    //   if (!company_name || !website || !location) {
+    //     throw new BadRequestException(
+    //       'Missing employer details: company_name, website, and location are required.',
+    //     );
+    //   }
+    //   user.company_name = company_name;
+    //   user.website = website;
+    //   user.location = location;
+    //   user.description = description || '';
+    // }
+    if(createUserDto?.authProvider){
+      user.auth_providers.push(new Types.ObjectId(createUserDto?.authProvider+""));
+    }else {
+      const authProviderLocal = await this.authProviderService.findDynamic({
+        provider_id:'local'
+      })
+      user.auth_providers.push(new Types.ObjectId(authProviderLocal?._id+""))
     }
 
     return user.save();
@@ -176,6 +186,8 @@ export class UsersService {
       .findOne({ _id: id })
       .select(['-password', '-code_id', '-code_expired'])
       .populate('role')
+      .populate('auth_providers')
+      .populate('account_type')
       .populate('education_ids')
       .populate('work_experience_ids')
       .populate('organization')
@@ -202,7 +214,7 @@ export class UsersService {
       return null;
     } catch (error) {
       console.error("Populate error:", error);  // In ra lỗi populate để debug
-      throw new NotFoundException();
+      throw new BadRequestException();
     }
   }
 
@@ -309,7 +321,18 @@ export class UsersService {
     }
 
     const codeId = uuidv4();
-
+    const authProviders = []
+    let accountType;
+    if(registerDto?.authProvider){
+      authProviders.push(new Types.ObjectId(registerDto?.authProvider+""));
+      accountType=new Types.ObjectId(registerDto?.authProvider+"");
+    }else {
+      const authProviderLocal = await this.authProviderService.findDynamic({
+        provider_id:'local'
+      })
+      authProviders.push(new Types.ObjectId(authProviderLocal?._id+""))
+      accountType=new Types.ObjectId(new Types.ObjectId(authProviderLocal?._id+""));
+    }
     // Prepare the base user data
     const userData: any = {
       full_name,
@@ -319,6 +342,8 @@ export class UsersService {
       is_active: false,
       code_id: codeId,
       code_expired: dayjs().add(30, 'd'),
+      auth_providers:authProviders,
+      account_type:accountType
     };
 
     // If the role is EMPLOYER, add employer-specific fields

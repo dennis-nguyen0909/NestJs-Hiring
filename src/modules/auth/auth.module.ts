@@ -9,10 +9,13 @@ import { LocalStrategy } from './passport/local.strategy';
 import { JwtStrategy } from './passport/jwt.strategy';
 import { GoogleStrategy } from './passport/google-auth/google.strategy';
 import { FacebookStrategy } from './passport/facebook-auth/facebook.strategy';
+import { AuthProviderService } from '../auth-provider/auth-provider.service';
+import { AuthProviderModule } from '../auth-provider/auth-provider.module';
 
 @Module({
   imports: [
     UsersModule,
+    AuthProviderModule,
     PassportModule.register({ session: false }),
     // 1. config JWT
     JwtModule.registerAsync({

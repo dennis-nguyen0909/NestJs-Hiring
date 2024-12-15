@@ -61,8 +61,9 @@ export class RoleController {
     type: String,
   })
   @ApiResponse({ status: 200, description: 'Danh sách các role.' })
+  @ResponseMessage('success')
   async findAll(
-    @Query() query: string,
+    @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {

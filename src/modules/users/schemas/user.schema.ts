@@ -46,8 +46,8 @@ export class User extends Document {
   port_folio: string;
   @Prop({ type: Types.ObjectId, ref: 'Role', default: null })
   role: Role; // Phân biệt người dùng qua role (ADMIN, USERS, EMPLOYER, ...)
-  @Prop({ default: 'LOCAL' })
-  account_type: string;
+  @Prop({ type: Types.ObjectId, default: 'LOCAL', ref: AuthProvider.name })
+  account_type: Types.ObjectId;
 
   @Prop()
   token_expiry: Date;
@@ -79,7 +79,7 @@ export class User extends Document {
   code_expired: Date;
 
   @Prop({ type: [Types.ObjectId], ref: AuthProvider.name })
-  auth_providers: AuthProvider[];
+  auth_providers: Types.ObjectId[];
 
   @Prop([String])
   save_job_ids: string[];

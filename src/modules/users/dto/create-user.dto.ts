@@ -146,4 +146,6 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean()
   is_suggestion_job?: boolean;
+  @IsOptional()
+  authProvider?: string;
 }

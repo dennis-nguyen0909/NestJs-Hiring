@@ -46,15 +46,13 @@ export class RoleService {
         .skip(skip)
         .sort(sort as any);
       return {
-        data: {
-          items: result,
-          meta: {
-            count: result.length,
-            current_page: current,
-            per_page: pageSize,
-            total: totalItems,
-            total_pages: totalPages,
-          },
+        items: result,
+        meta: {
+          count: result.length,
+          current_page: current,
+          per_page: pageSize,
+          total: totalItems,
+          total_pages: totalPages,
         },
       };
     } catch (error) {

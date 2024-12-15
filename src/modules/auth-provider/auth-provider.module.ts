@@ -11,6 +11,7 @@ import { AuthProvider, AuthProviderSchema } from './schema/AuthProvider.schema';
     ]),
   ],
   controllers: [AuthProviderController],
-  providers: [AuthProviderService],
+  providers: [AuthProviderService, AuthProviderModule],
+  exports: [AuthProviderModule, AuthProviderService],
 })
 export class AuthProviderModule {}
