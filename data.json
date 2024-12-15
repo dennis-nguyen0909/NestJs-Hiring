@@ -1,0 +1,175 @@
+[
+    {
+      "name": "Corporation",
+      "user_id": "123"
+    },
+    {
+      "name": "Limited Liability Company (LLC)",
+      "user_id": "124"
+    },
+    {
+      "name": "Partnership",
+      "user_id": "125"
+    },
+    {
+      "name": "Sole Proprietorship",
+      "user_id": "126"
+    },
+    {
+      "name": "Non-Profit Organization",
+      "user_id": "127"
+    },
+    {
+      "name": "Công ty Cổ phần",
+      "user_id": "128"
+    },
+    {
+      "name": "Công ty Trách nhiệm Hữu hạn (TNHH)",
+      "user_id": "129"
+    },
+    {
+      "name": "Doanh nghiệp Tư nhân",
+      "user_id": "130"
+    },
+    {
+      "name": "Công ty Hợp danh",
+      "user_id": "131"
+    },
+    {
+      "name": "Tổ chức Phi lợi nhuận",
+      "user_id": "132"
+    },
+    {
+      "name": "Hợp tác xã",
+      "user_id": "133"
+    },
+    {
+      "name": "Doanh nghiệp Nhà nước",
+      "user_id": "134"
+    },
+    {
+      "name": "Công ty Liên doanh",
+      "user_id": "135"
+    },
+    {
+      "name": "Công ty TNHH Một thành viên",
+      "user_id": "136"
+    },
+    {
+      "name": "Công ty TNHH Hai thành viên trở lên",
+      "user_id": "137"
+    },
+    {
+      "name": "Doanh nghiệp Khoa học và Công nghệ",
+      "user_id": "138"
+    },
+    {
+      "name": "Tập đoàn",
+      "user_id": "139"
+    },
+    {
+      "name": "Chi nhánh",
+      "user_id": "140"
+    },
+    {
+      "name": "Tổng công ty",
+      "user_id": "141"
+    },
+    {
+      "name": "Công ty Đa quốc gia",
+      "user_id": "142"
+    },
+    {
+      "name": "Công ty Cổ phần Đại chúng",
+      "user_id": "143"
+    },
+    {
+      "name": "Liên minh Hợp tác xã",
+      "user_id": "144"
+    },
+    {
+      "name": "Tổ chức Tín dụng",
+      "user_id": "145"
+    },
+    {
+      "name": "Doanh nghiệp FDI",
+      "user_id": "146"
+    },
+    {
+      "name": "Tổ chức Quốc tế",
+      "user_id": "147"
+    },
+    {
+      "name": "Tổ chức Chính phủ (NGO)",
+      "user_id": "148"
+    },
+    {
+      "name": "Hiệp hội Nghề nghiệp",
+      "user_id": "149"
+    },
+    {
+      "name": "Doanh nghiệp Xã hội",
+      "user_id": "150"
+    },
+    {
+      "name": "Quỹ Đầu tư",
+      "user_id": "151"
+    },
+    {
+      "name": "Công ty Tài chính",
+      "user_id": "152"
+    },
+    {
+      "name": "Ngân hàng Thương mại",
+      "user_id": "153"
+    },
+    {
+      "name": "Quỹ Tín dụng Nhân dân",
+      "user_id": "154"
+    },
+    {
+      "name": "Quỹ Đầu tư mạo hiểm",
+      "user_id": "155"
+    },
+    {
+      "name": "Công ty Chứng khoán",
+      "user_id": "156"
+    },
+    {
+      "name": "Công ty Bảo hiểm",
+      "user_id": "157"
+    },
+    {
+      "name": "Doanh nghiệp Công nghệ cao",
+      "user_id": "158"
+    },
+    {
+      "name": "Tổ chức Giáo dục",
+      "user_id": "159"
+    },
+    {
+      "name": "Tổ chức Nghiên cứu",
+      "user_id": "160"
+    },
+    {
+      "name": "Quỹ Từ thiện",
+      "user_id": "161"
+    },
+    {
+      "name": "Hiệp hội Doanh nghiệp",
+      "user_id": "162"
+    },
+    {
+      "name": "Hợp tác xã Dịch vụ",
+      "user_id": "163"
+    },
+    {
+      "name": "Công ty Xuất nhập khẩu",
+      "user_id": "164"
+    },
+    {
+      "name": "Doanh nghiệp Địa phương",
+      "user_id": "165"
+    }
+  ]
+  

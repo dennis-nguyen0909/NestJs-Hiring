@@ -1,0 +1,131 @@
+[
+    {
+      "name": "Technology",
+      "user_id": "123"
+    },
+    {
+      "name": "Healthcare",
+      "user_id": "124"
+    },
+    {
+      "name": "Finance",
+      "user_id": "125"
+    },
+    {
+      "name": "Education",
+      "user_id": "126"
+    },
+    {
+      "name": "Manufacturing",
+      "user_id": "127"
+    },
+    {
+      "name": "Retail",
+      "user_id": "128"
+    },
+    {
+      "name": "Services",
+      "user_id": "129"
+    },
+    {
+      "name": "Agriculture",
+      "user_id": "130"
+    },
+    {
+      "name": "Transportation",
+      "user_id": "131"
+    },
+    {
+      "name": "Construction",
+      "user_id": "132"
+    },
+    {
+      "name": "Real Estate",
+      "user_id": "133"
+    },
+    {
+      "name": "Energy",
+      "user_id": "134"
+    },
+    {
+      "name": "Hospitality",
+      "user_id": "135"
+    },
+    {
+      "name": "Tourism",
+      "user_id": "136"
+    },
+    {
+      "name": "Automotive",
+      "user_id": "137"
+    },
+    {
+      "name": "Telecommunications",
+      "user_id": "138"
+    },
+    {
+      "name": "Media & Entertainment",
+      "user_id": "139"
+    },
+    {
+      "name": "Food & Beverage",
+      "user_id": "140"
+    },
+    {
+      "name": "Pharmaceutical",
+      "user_id": "141"
+    },
+    {
+      "name": "Chemical",
+      "user_id": "142"
+    },
+    {
+      "name": "Logistics",
+      "user_id": "143"
+    },
+    {
+      "name": "Fashion",
+      "user_id": "144"
+    },
+    {
+      "name": "Beauty & Cosmetics",
+      "user_id": "145"
+    },
+    {
+      "name": "Security",
+      "user_id": "146"
+    },
+    {
+      "name": "Construction Materials",
+      "user_id": "147"
+    },
+    {
+      "name": "Insurance",
+      "user_id": "148"
+    },
+    {
+      "name": "Aerospace",
+      "user_id": "149"
+    },
+    {
+      "name": "Marine & Shipping",
+      "user_id": "150"
+    },
+    {
+      "name": "Mining",
+      "user_id": "151"
+    },
+    {
+      "name": "Electronics",
+      "user_id": "152"
+    },
+    {
+      "name": "Sports & Recreation",
+      "user_id": "153"
+    },
+    {
+      "name": "Environmental Services",
+      "user_id": "154"
+    }
+  ]
+  

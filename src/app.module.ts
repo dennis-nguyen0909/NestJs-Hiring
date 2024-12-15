@@ -40,6 +40,9 @@ import { JobContractTypeModule } from './modules/job-contract-type/job-contract-
 import { DegreeTypeModule } from './modules/degree-type/degree-type.module';
 import { CurrenciesModule } from './modules/currencies/currencies.module';
 import { SocialLinkModule } from './modules/social_link/social_link.module';
+import { OrganizationTypeModule } from './modules/organization_type/organization_type.module';
+import { IndustryTypeModule } from './modules/industry_type/industry_type.module';
+import { TeamsizeModule } from './modules/teamsize/teamsize.module';
 @Module({
   imports: [
     UsersModule,
@@ -110,6 +113,9 @@ import { SocialLinkModule } from './modules/social_link/social_link.module';
     DegreeTypeModule,
     CurrenciesModule,
     SocialLinkModule,
+    OrganizationTypeModule,
+    IndustryTypeModule,
+    TeamsizeModule,
   ],
   controllers: [AppController],
   providers: [
