@@ -18,7 +18,6 @@ import { DeleteApplicationDto } from './dto/delete-application.dto';
 
 @Controller('applications')
 @ApiTags('Application')
-@Public()
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 

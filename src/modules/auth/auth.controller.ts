@@ -100,16 +100,12 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  // @UseGuards(RefreshTokenGuard)
-  @ResponseMessage('Success')
-  // @Public()
-  async refreshToken(@Request() req: RequestExpress, @Request() reqUser) {
-    const refresh_token = req.cookies.refresh_token;
-    return await this.authService.refreshToken(refresh_token);
+  @Public()
+  async refreshToken(@Body('refresh_token') refreshToken: string) {
+    return await this.authService.refreshToken(refreshToken);
   }
 
   @Post('logout')
-  // @Public()
   @UseGuards(JwtAuthGuard)
   @ResponseMessage('Success')
   async logout(@Request() req) {
@@ -127,20 +123,24 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(@Req() req, @Res() res) {
     const response = await this.authService.signIn(req.user);
-    res.redirect(`http://localhost:5173?token=${response.user.access_token}`);
+    res.redirect(
+      `http://localhost:5173?access_token=${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
+    );
   }
 
   @Public()
   @Get('facebook/login')
   @UseGuards(FacebookAuthGuard)
   async facebookAuth(@Req() req) {
-    // Route này sẽ redirect tới Google để login
+    // Route này sẽ redirect tới Facebook để login
   }
   @Public()
   @Get('facebook/callback')
   @UseGuards(FacebookAuthGuard)
   async facebookAuthRedirect(@Req() req, @Res() res) {
     const response = await this.authService.signIn(req.user);
-    res.redirect(`http://localhost:5173?token=${response.user.access_token}`);
+    res.redirect(
+      `http://localhost:5173?access_token=${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
+    );
   }
 }

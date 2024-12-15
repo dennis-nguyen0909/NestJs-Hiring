@@ -39,59 +39,29 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const {
-      email,
       password,
-      role,
-      company_name,
-      website,
-      location,
-      description,
+      authProvider,
     } = createUserDto;
 
-    // Kiểm tra nếu email đã tồn tại
-    const existingUser = await this.userRepository.findOne({ email });
-    if (existingUser) {
-      throw new BadRequestException('Email already exists.');
-    }
-
-    // Hash password trước khi lưu vào DB
     const hashedPassword = await hashPasswordHelper(password);
-    // const findRole = await this.roleService.findByRoleName(role);
-    // if (!findRole) {
-    //   throw new BadRequestException(
-    //     'Role not found. Please check if the role exists.',
-    //   );
-    // }
-    const user = new this.userRepository({
+  
+    const newUser = {
       ...createUserDto,
       password: hashedPassword,
-      // role: findRole._id,
-    });
-
-    // Phân biệt giữa User và Employer
-    // if (role === 'EMPLOYER') {
-    //   if (!company_name || !website || !location) {
-    //     throw new BadRequestException(
-    //       'Missing employer details: company_name, website, and location are required.',
-    //     );
-    //   }
-    //   user.company_name = company_name;
-    //   user.website = website;
-    //   user.location = location;
-    //   user.description = description || '';
-    // }
-    if(createUserDto?.authProvider){
-      user.auth_providers.push(new Types.ObjectId(createUserDto?.authProvider+""));
-    }else {
+      auth_providers:[]
+    };
+  
+    if (authProvider) {
+      newUser.auth_providers.push(new Types.ObjectId(authProvider + ""));
+    } else {
       const authProviderLocal = await this.authProviderService.findDynamic({
-        provider_id:'local'
-      })
-      user.auth_providers.push(new Types.ObjectId(authProviderLocal?._id+""))
+        provider_id: 'local',
+      });
+      newUser.auth_providers.push(new Types.ObjectId(authProviderLocal?._id + ""));
     }
-
-    return user.save();
+    return this.userRepository.create(newUser);
   }
-
+  
   async findAll(query: string, current: number, pageSize: number) {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
@@ -237,7 +207,27 @@ export class UsersService {
         { _id: updateUserDto.id },  // Tìm người dùng theo ID
         { $set: updateUserDto },  // Cập nhật người dùng với dữ liệu mới
         { new: true },  // Trả về bản ghi mới đã được cập nhật
-      );
+      ).select(['-password', '-code_id', '-code_expired'])
+      .populate('role')
+      .populate('auth_providers')
+      .populate('account_type')
+      .populate('education_ids')
+      .populate('work_experience_ids')
+      .populate('organization')
+      .populate('skills')
+      .populate('certificates')
+      .populate('prizes')
+      .populate('projects')
+      .populate('courses')
+      .populate('city_id')
+      .populate('district_id')
+      .populate('ward_id')
+      .populate('social_links')
+      .populate('favorite_jobs')
+      .populate({
+        path:'cvs',
+        select:'-public_id -createdAt -updatedAt -user_id '
+      });
   
       if (!updatedUser) {
         throw new NotFoundException('User not found');
@@ -377,6 +367,7 @@ export class UsersService {
         user_id: newUser._id,
     };
   }
+
   async retryActive(email: string) {
     const user = await this.userRepository.findOne({ email });
 
