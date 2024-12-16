@@ -218,7 +218,7 @@ export class ApplicationService {
       .limit(limit)
       .sort(sort as any)
       .populate('job_id')
-      // .populate('save_candidates')
+      .populate('cv_id')
       .populate({
         path: 'employer_id',
         select: '_id name full_name phone address role',

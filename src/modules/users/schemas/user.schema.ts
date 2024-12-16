@@ -43,6 +43,8 @@ export class User extends Document {
   @Prop({ type: Number, enum: [0, 1, 2], default: 2 })
   gender: number;
   @Prop()
+  birthday: Date;
+  @Prop()
   port_folio: string;
   @Prop({ type: Types.ObjectId, ref: 'Role', default: null })
   role: Role; // Phân biệt người dùng qua role (ADMIN, USERS, EMPLOYER, ...)

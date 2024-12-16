@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -27,8 +28,12 @@ export class OrganizationController {
 
   @Get()
   @ResponseMessage('success')
-  async findAll() {
-    return await this.organizationService.findAll();
+  async findAll(
+    @Query('query') query,
+    @Query('current') current,
+    @Query('pageSize') pageSize,
+  ) {
+    return await this.organizationService.findAll(query, +current, +pageSize);
   }
 
   @Get('owner/:id')

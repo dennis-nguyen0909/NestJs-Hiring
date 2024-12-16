@@ -49,6 +49,9 @@ export class Education extends Document {
 
   @Prop()
   currently_studying: boolean;
+
+  @Prop()
+  description: string;
 }
 
 export const EducationSchema = SchemaFactory.createForClass(Education);

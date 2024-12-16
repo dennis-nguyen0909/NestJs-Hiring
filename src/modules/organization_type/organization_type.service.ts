@@ -30,6 +30,7 @@ export class OrganizationTypeService {
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
+    console.log("duydeptrai",filter);
     const totalItems = (await this.organizationTypeModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;

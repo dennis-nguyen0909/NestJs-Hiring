@@ -1,8 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateEducationDto {
   @IsString()
@@ -30,4 +26,6 @@ export class CreateEducationDto {
 
   @IsOptional()
   currently_studying: boolean;
+  @IsOptional()
+  description: string;
 }

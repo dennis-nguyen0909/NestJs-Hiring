@@ -10,6 +10,7 @@ import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { Organization } from './schema/organization.schema';
 import { User } from '../users/schemas/User.schema';
+import aqp from 'api-query-params';
 
 @Injectable()
 export class OrganizationService {
@@ -60,8 +61,30 @@ export class OrganizationService {
   }
 
   // Lấy tất cả tổ chức
-  async findAll() {
-    return this.organizationModel.find().exec();
+  async findAll(query:string,current:number,pageSize:number) {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    const totalItems = (await this.organizationModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+    const result = await this.organizationModel
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any);
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
   }
 
   // Lấy tổ chức theo ID
