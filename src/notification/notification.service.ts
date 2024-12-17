@@ -12,6 +12,7 @@ import {
   UpdateReadStatusDto,
 } from './dto/NotificationUpdateDto.dto';
 import * as dayjs from 'dayjs';
+import { Application } from 'src/modules/application/schema/Application.schema';
 
 @Injectable()
 export class NotificationService {
@@ -27,6 +28,7 @@ export class NotificationService {
     const existingNotification = await this.notificationModel.findOne({
       candidateId: candidate._id,
       employerId: employer._id,
+      type:'view_resume'
     });
 
     if (existingNotification) {
@@ -60,6 +62,104 @@ export class NotificationService {
       message,
     );
   }
+
+  async notificationWhenEmployerSaveCandidate(candidate: User, employer: User) {
+    const existingNotification = await this.notificationModel.findOne({
+      candidateId: candidate._id,
+      employerId: employer._id,
+      type:'save_profile'
+    });
+
+    if (existingNotification) {
+      console.log('Thông báo đã được gửi trước đó, không gửi lại');
+      return;
+    }
+    const message = `Nhà tuyển dụng ${employer.company_name} vừa lưu hồ sơ của bạn`;
+    const notification = new this.notificationModel({
+      candidateId: candidate?._id,
+      employerId: employer?._id,
+      message,
+      title: 'Lưu hồ sơ',
+      type: 'save_profile',
+    });
+    notification.save();
+    this.emailService.sendMail({
+      to: candidate.email,
+      subject: `Nhà tuyển dụng ${employer.company_name} vừa lưu hồ sơ của bạn`, // Chủ đề email
+      text: `Xin chào ${candidate.full_name}`, // Nội dung email dạng văn bản thuần túy
+      template: 'templateSaveCandidate', // Template HTML tiếng Việt để sử dụng
+      context: {
+        candidateName: candidate.full_name, // Tên ứng viên
+        recruiterCompany: employer.company_name, // Tên nhà tuyển dụng
+        recruiterEmail: employer.email, // Email của nhà tuyển dụng
+      },
+    });
+    
+
+    this.notificationGateway.sendNotificationToCandidate(
+      candidate?._id + '',
+      message,
+    );
+  }
+
+  async notificationWhenChangeStatusApplication(
+    candidate: User, 
+    employer: User, 
+    type: 'accepted' | 'rejected',
+    jobTitle:string,
+    appliedId:string
+  ) {
+    // Kiểm tra nếu thông báo đã tồn tại
+    const existingNotification = await this.notificationModel.findOne({
+      candidateId: candidate._id,
+      employerId: employer._id,
+      type: 'status_application',
+      status_type_application: type,
+      applicationId:appliedId
+    });
+  
+    // Nếu thông báo đã gửi trước đó, dừng lại và không gửi lại
+    if (existingNotification) {
+      console.log('Thông báo đã được gửi trước đó, không gửi lại');
+      return;
+    }
+  
+    // Tạo thông báo mới với message phù hợp
+    const message = `Nhà tuyển dụng ${employer.company_name} vừa ${type === 'accepted' ? 'chấp nhận' : 'từ chối'} hồ sơ của bạn`;
+    const notification = new this.notificationModel({
+      candidateId: candidate._id,
+      employerId: employer._id,
+      message,
+      title: 'Thay đổi trạng thái hồ sơ',
+      type: 'status_application',
+      status_type_application: type,
+      applicationId:appliedId || ''
+    });
+  
+    // Lưu thông báo
+    await notification.save();
+  
+    // Gửi email với template khác nhau tùy vào trạng thái (chấp nhận hoặc từ chối)
+    const emailTemplate = type === 'accepted' ? 'acceptedApplication' : 'rejectedApplication';
+    const emailSubject = `Nhà tuyển dụng ${employer.company_name} vừa ${type === 'accepted' ? 'chấp nhận' : 'từ chối'} hồ sơ của bạn`;
+    console.log("jobb",jobTitle)
+    await this.emailService.sendMail({
+      to: candidate.email,
+      subject: emailSubject, // Chủ đề email phù hợp
+      text: `Xin chào ${candidate.full_name}`, // Nội dung email thuần
+      template: emailTemplate, // Template HTML tùy thuộc vào trạng thái
+      context: {
+        candidateName: candidate.full_name, // Tên ứng viên
+        recruiterCompany: employer.company_name, // Tên nhà tuyển dụng
+        recruiterEmail: employer.email, // Email nhà tuyển dụng
+        jobTitle:jobTitle || ''
+      },
+    });
+  
+    // Gửi thông báo đến ứng viên qua Notification Gateway
+    this.notificationGateway.sendNotificationToCandidate(candidate._id + '', message);
+  }
+  
 
   async getAll(query: string, current: number, pageSize: number) {
     try {

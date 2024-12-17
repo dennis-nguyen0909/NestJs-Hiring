@@ -10,10 +10,10 @@ import { Application } from './schema/Application.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
 import { DeleteApplicationDto } from './dto/delete-application.dto';
-import { App } from 'supertest/types';
 import { SaveCandidate } from '../save_candidates/schema/SaveCandidates.schema';
 import { Job } from '../job/schema/Job.schema';
-import { Type } from 'class-transformer';
+import { NotificationService } from 'src/notification/notification.service';
+import { User } from '../users/schemas/User.schema';
 
 @Injectable()
 export class ApplicationService {
@@ -22,6 +22,8 @@ export class ApplicationService {
     private applicationRepository: Model<Application>,
     @InjectModel('SaveCandidate')
     private saveCandidateModel: Model<SaveCandidate>,
+    private notificationService: NotificationService,
+    @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel('Job') private jobModel: Model<Job>,
   ) {}
 
@@ -107,14 +109,33 @@ export class ApplicationService {
 
   async update(id: string, updateApplicationDto: UpdateApplicationDto) {
     try {
-      const applied = await this.applicationRepository.findByIdAndUpdate(
-        id,
-        updateApplicationDto,
-        {
+      const applied = await this.applicationRepository
+        .findByIdAndUpdate(id, updateApplicationDto, {
           new: true,
-        },
-      );
+        })
+        .populate('job_id');
       if (applied) {
+        const candidate = await this.userModel.findOne({
+          _id: applied.user_id,
+        });
+        const employer = await this.userModel.findOne({
+          _id: applied.employer_id,
+        });
+        const job = await this.jobModel.findOne({
+          _id: applied.job_id,
+        });
+        if (
+          (applied.status === 'rejected' || applied.status === 'accepted') &&
+          candidate.notification_when_employer_reject_cv
+        ) {
+          this.notificationService.notificationWhenChangeStatusApplication(
+            candidate,
+            employer,
+            applied.status,
+            job.title,
+            applied._id + '',
+          );
+        }
         return applied;
       }
     } catch (error) {
@@ -145,6 +166,18 @@ export class ApplicationService {
     } else {
       application.save_candidates.push(userIdObject);
       // thêm vào bảng save-candidate
+      const employer = await this.userModel.findOne({
+        _id: application.employer_id,
+      });
+      const candidate = await this.userModel.findOne({
+        _id: userIdObject,
+      });
+      if (candidate.notification_when_employer_save_profile) {
+        this.notificationService.notificationWhenEmployerSaveCandidate(
+          candidate,
+          employer,
+        );
+      }
       await this.saveCandidateModel.create({
         employer: application.employer_id,
         candidate: userIdObject,
@@ -280,7 +313,6 @@ export class ApplicationService {
 
   async getAppliedUserId(userId: string) {
     try {
-
       // Sử dụng countDocuments để đếm số lượng ứng tuyển của user_id
       const count = await this.applicationRepository.countDocuments({
         user_id: userId,

@@ -31,6 +31,8 @@ export class Notification extends Document {
       'view_resume',
       'cv_accepted',
       'cv_rejected',
+      'save_profile',
+      'status_application',
       'new_job_posted',
       'interview_scheduled',
       'interview_completed',
@@ -48,6 +50,8 @@ export class Notification extends Document {
     required: true,
   })
   type: string;
+  @Prop({ enum: ['accepted', 'rejected'] })
+  status_type_application: string;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
