@@ -18,6 +18,7 @@ import * as path from 'path';
 import { User } from '../users/schemas/User.schema';
 import { Project } from '../project/schema/project.schema';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { cloudinaryPublicIdRegex, cloudinaryPublicIdRegexNew } from 'src/helpers/util';
 @Injectable()
 export class CvService {
   constructor(
@@ -87,55 +88,93 @@ export class CvService {
     }
   }
 
-  async remove(data: DeleteCvDto,userId:string) {
+  async remove(data: DeleteCvDto, userId: string) {
     const { ids } = data;
-    const user:User = await this.userModel.findOne({_id:userId})
-    if(!user){
-      throw new BadRequestException('user not found')
+    
+    // Tìm người dùng
+    const user: User = await this.userModel.findOne({ _id: userId });
+    if (!user) {
+      throw new BadRequestException('User not found');
     }
+  
+    // Kiểm tra `ids` có phải là mảng không và có phần tử không
     if (!Array.isArray(ids)) {
-      throw new BadRequestException('Ids not is array');
+      throw new BadRequestException('Ids is not an array');
     }
-    if (ids.length < 0) {
-      throw new BadRequestException('Ids not found');
+    if (ids.length === 0) {
+      throw new BadRequestException('Ids array is empty');
     }
+  
     if (ids.length === 1) {
-      const res = await this.cvRepository.deleteOne({ _id: ids[0] });
-      if (res.deletedCount > 0) {
-        await this.userModel.updateOne(
-          { _id: ids[0] },
-          { $pull: { cvs: ids[0] } },
-        );
-        return {
-          message: 'Cv deleted successfully',
-          data: [],
-        };
+      const cv = await this.cvRepository.findOne({ _id: ids[0] });
+      if (cv) {
+        if (cv.cv_link) {
+          const url = cv.cv_link.match(cloudinaryPublicIdRegexNew);
+          if (url && url[1]) {
+            const publicId = url[1];
+            const res = await this.cloudinaryService.deleteFileResourceType(publicId,{resource_type:'raw'});
+            if(res.result !== 'ok'){
+              throw new BadRequestException('Deleted failed cloudinary');
+            }
+          }
+        }
+        const res = await this.cvRepository.deleteOne({ _id: ids[0] });
+        if (res.deletedCount > 0) {
+          await this.userModel.updateOne(
+            { _id: userId },
+            { $pull: { cvs: ids[0] } }
+          );
+          return {
+            message: 'CV deleted successfully',
+            data: [],
+          };
+        } else {
+          return {
+            message: 'CV not found',
+            data: [],
+          };
+        }
       } else {
-        return {
-          message: 'Cv not found',
-          data: [],
-        };
+        throw new BadRequestException('CV not found');
       }
     } else {
+      // Xử lý xóa nhiều CV
+      const cvs = await this.cvRepository.find({ _id: { $in: ids } }); // Tìm nhiều CV dựa trên danh sách `ids`
+      if (cvs && cvs.length > 0) {
+        for (const cv of cvs) {
+          if (cv.cv_link) {
+            const url = cv.cv_link.match(cloudinaryPublicIdRegexNew);
+            if (url && url[1]) {
+              const publicId = url[1];
+              const res = await this.cloudinaryService.deleteFileResourceType(publicId, { resource_type: 'raw' });
+              if (res.result !== 'ok') {
+                throw new BadRequestException('Deleted failed cloudinary');
+              }
+            }
+          }
+        }
+      }
+      
       const res = await this.cvRepository.deleteMany({ _id: { $in: ids } });
       if (res.deletedCount > 0) {
-        await this.userModel.updateMany(
-          { _id: { $in: ids } },
-          { $pull: { cvs: { $in: ids } } },
+        // Cập nhật người dùng để xóa nhiều `CV` trong danh sách
+        await this.userModel.updateOne(
+          { _id: userId },
+          { $pull: { cvs: { $in: ids } } }
         );
-        
         return {
-          message: 'Cv deleted successfully',
+          message: 'CVs deleted successfully',
           data: [],
         };
       } else {
         return {
-          message: 'Cv not found',
+          message: 'No CVs found for deletion',
           data: [],
         };
       }
     }
   }
+  
   async findCvByUserId(
     id: string,
     query: string,

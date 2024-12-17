@@ -6,6 +6,8 @@ import {
   UploadedFile,
   Delete,
   Param,
+  Get,
+  Body,
 } from '@nestjs/common';
 import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
@@ -44,5 +46,15 @@ export class CloudinaryController {
   @UseInterceptors(FileInterceptor('file'))
   uploadPDF(@UploadedFile() file: Express.Multer.File) {
     return this.cloudinaryService.uploadPDF(file);
+  }
+
+  @Get('folder')
+  @UseInterceptors(FileInterceptor('file'))
+  getFolder(
+    @Body('folder') folderName: string,
+    @Body('type') type: string,
+    @Body('resource_type') resourceType: string,
+  ) {
+    return this.cloudinaryService.getFolder(folderName, type, resourceType);
   }
 }

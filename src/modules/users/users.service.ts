@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/User.schema';
 import { Model, Types } from 'mongoose';
-import { comparePasswordHelper, emailRegex, hashPasswordHelper, passwordRegex } from 'src/helpers/util';
+import { cloudinaryPublicIdRegex, comparePasswordHelper, emailRegex, hashPasswordHelper, passwordRegex, publicIdRegexOwn } from 'src/helpers/util';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { RegisterAuthDto } from '../auth/dto/register-auth.dto';
@@ -20,13 +20,15 @@ import { RoleService } from '../role/role.service';
 import { Role } from '../role/schema/Role.schema';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthProviderService } from '../auth-provider/auth-provider.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userRepository: Model<User>,
     private mailService: MailerService,
     private roleService: RoleService,
-    private authProviderService:AuthProviderService
+    private authProviderService:AuthProviderService,
+    private cloudinaryService:CloudinaryService
   ) {}
 
   isEmailExists = async (email: string) => {
@@ -198,8 +200,41 @@ export class UsersService {
   
       // Kiểm tra số điện thoại đã tồn tại trong hệ thống, ngoại trừ chính người dùng hiện tại
       const existingUserByPhone = await this.userRepository.findOne({ phone: updateUserDto.phone });
+      const existUser = await this.userRepository.findOne({
+        _id:updateUserDto.id
+      })
       if (existingUserByPhone && existingUserByPhone._id+"" !== updateUserDto.id) {
         throw new BadRequestException('Phone number is already in use');
+      }
+      if(updateUserDto.avatar || updateUserDto.avatar_company || updateUserDto.banner_company || updateUserDto.background){
+        if(existUser?.avatar && updateUserDto.avatar){
+          const url = existUser.avatar.match(cloudinaryPublicIdRegex);
+          if(url && url[1]){
+            const publicId=url[1];
+            await this.cloudinaryService.deleteFile(publicId);
+          }
+        }
+        if(existUser?.avatar_company && updateUserDto.avatar_company){
+          const url = existUser.avatar_company.match(cloudinaryPublicIdRegex);
+          if(url && url[1]){
+            const publicId=url[1];
+            await this.cloudinaryService.deleteFile(publicId);
+          }
+        }
+        if(existUser?.banner_company && updateUserDto.banner_company){
+          const url = existUser.banner_company.match(cloudinaryPublicIdRegex);
+          if(url && url[1]){
+            const publicId=url[1];
+            await this.cloudinaryService.deleteFile(publicId);
+          }
+        }
+        if(existUser?.background && updateUserDto.background){
+          const url = existUser.background.match(cloudinaryPublicIdRegex);
+          if(url && url[1]){
+            const publicId=url[1];
+            await this.cloudinaryService.deleteFile(publicId);
+          }
+        }
       }
   
       // Kiểm tra ID người dùng và cập nhật
@@ -584,5 +619,53 @@ export class UsersService {
       })
       if(user) return user;
       return await this.create(facebookUser);
+    }
+    async removeAvatarEmployer(type:string,userId:string){
+      try {
+      
+          const user = await this.userRepository.findOne({ _id: userId });
+          if (type === 'avatar_company') {
+            if (user) {
+              if (user.avatar_company) {
+                const url = user.avatar_company.match(cloudinaryPublicIdRegex);
+                if (url && url[1]) {
+                  const publicId = url[1];
+                  const cloudinaryRes = await this.cloudinaryService.deleteFile(publicId);
+                  if (cloudinaryRes.result === 'ok') {
+                    // Cập nhật lại avatar_company trong cơ sở dữ liệu
+                    const updateRes = await this.userRepository.updateOne({ _id: userId }, {
+                      avatar_company: ''
+                    });
+                    console.log("Update response:", updateRes);
+                  }
+                }
+              }
+            }
+          }
+          if (type === 'banner_company') {
+            if (user) {
+              if (user.banner_company) {
+                const url = user.banner_company.match(cloudinaryPublicIdRegex) || user.banner_company.match(publicIdRegexOwn);
+                console.log("duydeptrai",user.banner_company)
+                if (url && url[1]) {
+                  const publicId = url[1];
+                  const cloudinaryRes = await this.cloudinaryService.deleteFile(publicId);
+                  if (cloudinaryRes.result === 'ok') {
+                    // Cập nhật lại banner_company trong cơ sở dữ liệu
+                    const updateRes = await this.userRepository.updateOne({ _id: userId }, {
+                      banner_company: ''
+                    });
+                    if (updateRes.modifiedCount > 0) {
+                      console.log("Update successful:", updateRes);
+                      return []; 
+                    }
+                  }
+                }
+              }
+            }
+          }
+      } catch (error) {
+        throw new BadRequestException(error)
+      }
     }
 }

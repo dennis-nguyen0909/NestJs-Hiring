@@ -20,9 +20,15 @@ export const comparePasswordHelper = async (
   }
 };
 
+export const passwordRegex =
+  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+export const cloudinaryPublicIdRegex =
+  /(?:image\/upload\/(?:v\d+\/)?)([\w-]+\/[\w-]+\/[\w-]+)/;
 
-export const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+export const cloudinaryPublicIdRegexNew =
+  /\/(?:image|video|raw)\/upload\/(?:v\d+\/)?([\w\/-]+)$/;
 
+export const publicIdRegexOwn = /\/v\d+\/([a-zA-Z0-9_-]+)/;
 // Biểu thức chính quy kiểm tra số điện thoại (chỉ cho phép số và tối thiểu 10 ký tự)
 export const phoneRegex = /^[0-9]{10}$/; // Chỉnh sửa theo định dạng số điện thoại của quốc gia của bạn
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

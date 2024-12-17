@@ -58,6 +58,10 @@ export class UsersController {
   async update(@Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.update(updateUserDto);
   }
+  @Delete('delete-avatar')
+  async deleteAvatarCompany(@Body("type") type:string,@Body('user_id') userId:string){
+    return await this.usersService.removeAvatarEmployer(type,userId);
+  }
 
   @Delete(':id')
   @ResponseMessage('Success')

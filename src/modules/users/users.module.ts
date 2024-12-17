@@ -5,12 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/User.schema';
 import { RoleModule } from '../role/role.module';
 import { AuthProviderModule } from '../auth-provider/auth-provider.module';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     RoleModule,
     AuthProviderModule,
+    CloudinaryModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],
