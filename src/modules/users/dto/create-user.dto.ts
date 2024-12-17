@@ -150,4 +150,6 @@ export class CreateUserDto {
   authProvider?: string;
   @IsOptional()
   birthday: string;
+  @IsOptional()
+  viewer: Types.ObjectId[];
 }

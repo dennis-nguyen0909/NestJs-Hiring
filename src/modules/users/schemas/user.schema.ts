@@ -19,7 +19,7 @@ import { SocialLink } from 'src/modules/social_link/schema/social_link.schema';
 export class User extends Document {
   @Prop({ required: true })
   email: string;
-
+  
   @Prop({ required: true })
   full_name: string;
 
@@ -51,6 +51,8 @@ export class User extends Document {
   @Prop({ type: Types.ObjectId, default: 'LOCAL', ref: AuthProvider.name })
   account_type: Types.ObjectId;
 
+  @Prop({ type: [Types.ObjectId], ref: User.name })
+  viewer: Types.ObjectId[];
   @Prop()
   token_expiry: Date;
 
@@ -155,7 +157,7 @@ export class User extends Document {
     sparse: true,
   })
   organization: Types.ObjectId;
-
+  
   @Prop({ type: [Types.ObjectId], ref: SocialLink.name })
   social_links: Types.ObjectId[];
 

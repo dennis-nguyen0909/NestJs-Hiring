@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,7 +19,6 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { query } from 'express';
 
 @Controller('users')
-@Public()
 @ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -90,5 +90,11 @@ export class UsersController {
   @Get('check-update-company/:user_id')
   async checkAndUpdateProgressSetupCompany(@Param('user_id') userId:string){
     return await this.usersService.checkAndUpdateProgressSetupCompany(userId);
+  }
+
+  @Get('profile/:id')
+  async getProfileCandidate(@Param('id') userId:string,@Req() req){
+    const employerId = req?.user?._id;
+    return await this.usersService.getProfileCandidate(userId,employerId);
   }
 }

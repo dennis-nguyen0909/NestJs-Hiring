@@ -162,7 +162,6 @@ export class CloudinaryService {
         prefix: folder, // Thư mục bạn muốn kiểm tra
         max_results: 500, // Giới hạn số lượng tài nguyên trả về (có thể thay đổi theo nhu cầu)
       });
-      console.log(result);
       return result;
     } catch (error) {
       console.error('Error fetching folder contents:', error);

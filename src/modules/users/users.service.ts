@@ -21,6 +21,7 @@ import { Role } from '../role/schema/Role.schema';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthProviderService } from '../auth-provider/auth-provider.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { NotificationService } from 'src/notification/notification.service';
 @Injectable()
 export class UsersService {
   constructor(
@@ -28,7 +29,8 @@ export class UsersService {
     private mailService: MailerService,
     private roleService: RoleService,
     private authProviderService:AuthProviderService,
-    private cloudinaryService:CloudinaryService
+    private cloudinaryService:CloudinaryService,
+    private notificationService: NotificationService
   ) {}
 
   isEmailExists = async (email: string) => {
@@ -646,7 +648,6 @@ export class UsersService {
             if (user) {
               if (user.banner_company) {
                 const url = user.banner_company.match(cloudinaryPublicIdRegex) || user.banner_company.match(publicIdRegexOwn);
-                console.log("duydeptrai",user.banner_company)
                 if (url && url[1]) {
                   const publicId = url[1];
                   const cloudinaryRes = await this.cloudinaryService.deleteFile(publicId);
@@ -656,7 +657,6 @@ export class UsersService {
                       banner_company: ''
                     });
                     if (updateRes.modifiedCount > 0) {
-                      console.log("Update successful:", updateRes);
                       return []; 
                     }
                   }
@@ -666,6 +666,29 @@ export class UsersService {
           }
       } catch (error) {
         throw new BadRequestException(error)
+      }
+    }
+    async getProfileCandidate (candidateId:string,employerId:string){
+      try {
+        const candidate =  await this.getDetailUser(candidateId);
+        const employer= await this.getDetailUser(employerId);
+        if(employer && candidate){
+           // Kiểm tra nếu nhà tuyển dụng chưa xem hồ sơ, thì thêm vào mảng
+            if (!candidate.items.viewer.includes(new Types.ObjectId(employerId))) {
+              candidate.items.viewer.push(new Types.ObjectId(employerId));
+            }
+              this.userRepository.updateOne(
+              { _id: candidateId },
+              {
+                viewer:candidate.items.viewer
+              }
+            );
+            
+          await this.notificationService.notifyCandidateAboutProfileView(candidate.items,employer.items);
+          return candidate;
+        }
+      } catch (error) {
+        throw new Error(error);
       }
     }
 }

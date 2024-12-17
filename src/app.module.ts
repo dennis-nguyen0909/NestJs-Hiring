@@ -15,7 +15,6 @@ import { ApplicationModule } from './modules/application/application.module';
 import { AuthProviderModule } from './modules/auth-provider/auth-provider.module';
 import { FollowModule } from './modules/follow/follow.module';
 import { LevelModule } from './modules/level/level.module';
-import { NotificationModule } from './modules/notification/notification.module';
 import { RoleModule } from './modules/role/role.module';
 import { SkillModule } from './modules/skill/skill.module';
 import { WorkExperienceModule } from './modules/work-experience/work-experience.module';
@@ -43,6 +42,8 @@ import { SocialLinkModule } from './modules/social_link/social_link.module';
 import { OrganizationTypeModule } from './modules/organization_type/organization_type.module';
 import { IndustryTypeModule } from './modules/industry_type/industry_type.module';
 import { TeamsizeModule } from './modules/teamsize/teamsize.module';
+import { NotificationGateway } from './notification/notification.gateway';
+import { NotificationModule } from './notification/notification.module';
 @Module({
   imports: [
     UsersModule,
@@ -124,6 +125,7 @@ import { TeamsizeModule } from './modules/teamsize/teamsize.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    NotificationGateway,
     // {
     //   provide: APP_INTERCEPTOR,
     //   useClass: TransformInterceptor,

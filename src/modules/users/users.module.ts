@@ -6,6 +6,7 @@ import { User, UserSchema } from './schemas/User.schema';
 import { RoleModule } from '../role/role.module';
 import { AuthProviderModule } from '../auth-provider/auth-provider.module';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
     RoleModule,
     AuthProviderModule,
     CloudinaryModule,
+    NotificationModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],
