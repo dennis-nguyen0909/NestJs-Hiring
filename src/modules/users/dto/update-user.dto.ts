@@ -54,4 +54,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsMongoId()
   ward_id?: string;
+
+  
 }

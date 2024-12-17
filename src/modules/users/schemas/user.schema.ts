@@ -157,7 +157,6 @@ export class User extends Document {
     sparse: true,
   })
   organization: Types.ObjectId;
-  
   @Prop({ type: [Types.ObjectId], ref: SocialLink.name })
   social_links: Types.ObjectId[];
 
@@ -185,6 +184,15 @@ export class User extends Document {
     social_info: boolean;
     contact: boolean;
   };
+
+  @Prop()
+  is_profile_privacy: boolean;
+  @Prop()
+  is_resume_privacy: boolean;
+  @Prop()
+  notification_when_employer_save_profile: boolean;
+  @Prop()
+  notification_when_employer_reject_cv: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

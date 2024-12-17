@@ -2,11 +2,11 @@ import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
 import { NotificationGateway } from './notification.gateway';
 import { NotificationService } from './notification.service';
 import { Public, ResponseMessage } from 'src/decorator/customize';
-import { UpdateAuthProviderDto } from 'src/modules/auth-provider/dto/update-auth-provider.dto';
 import {
   NotificationUpdateDto,
   UpdateReadStatusDto,
 } from './dto/NotificationUpdateDto.dto';
+import { Notification } from './schema/notification.schema';
 
 @Controller('notifications')
 @Public()
@@ -83,5 +83,47 @@ export class NotificationController {
     @Body() updateDto: NotificationUpdateDto,
   ) {
     return await this.notificationService.update(id, updateDto);
+  }
+
+  // Route để lấy thông báo theo tuần
+  @Get('week')
+  async getNotificationsInCurrentWeek(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ): Promise<Notification[]> {
+    return this.notificationService.getNotificationsInCurrentWeek(
+      query,
+      +current,
+      +pageSize,
+    );
+  }
+
+  // Route để lấy thông báo theo tháng cho một ứng viên cụ thể
+  @Get('month')
+  async getNotificationsInCurrentMonth(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ): Promise<Notification[]> {
+    return this.notificationService.getNotificationsInCurrentMonth(
+      query,
+      +current,
+      +pageSize,
+    );
+  }
+
+  // Route để lấy thông báo theo năm cho một ứng viên cụ thể
+  @Get('year')
+  async getNotificationsInCurrentYear(
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ): Promise<Notification[]> {
+    return this.notificationService.getNotificationsInCurrentYear(
+      query,
+      +current,
+      +pageSize,
+    );
   }
 }

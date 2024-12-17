@@ -26,6 +26,28 @@ export class Notification extends Document {
 
   @Prop()
   createdAt: Date;
+  @Prop({
+    enum: [
+      'view_resume',
+      'cv_accepted',
+      'cv_rejected',
+      'new_job_posted',
+      'interview_scheduled',
+      'interview_completed',
+      'application_withdrawn',
+      'job_application_updated',
+      'job_application_status_changed',
+      'job_deadline_approaching',
+      'job_filled',
+      'job_post_deleted',
+      'new_message',
+      'profile_updated',
+      'job_saved',
+      'application_shortlisted',
+    ],
+    required: true,
+  })
+  type: string;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);

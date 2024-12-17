@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { NotificationGateway } from './notification.gateway';
 import { Notification } from './schema/notification.schema';
@@ -6,7 +7,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { MailerService } from '@nestjs-modules/mailer';
 import { User } from 'src/modules/users/schemas/User.schema';
 import aqp from 'api-query-params';
-import { NotificationUpdateDto, UpdateReadStatusDto } from './dto/NotificationUpdateDto.dto';
+import {
+  NotificationUpdateDto,
+  UpdateReadStatusDto,
+} from './dto/NotificationUpdateDto.dto';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class NotificationService {
@@ -34,6 +39,7 @@ export class NotificationService {
       employerId: employer?._id,
       message,
       title: 'Xem hồ sơ',
+      type: 'view_resume',
     });
     notification.save();
     this.emailService.sendMail({
@@ -224,5 +230,186 @@ export class NotificationService {
     );
 
     return result;
+  }
+
+  // Lấy thông báo theo tuần cho một ứng viên cụ thể
+  async getNotificationsInCurrentWeek(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<any> {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+
+    // Lấy thời gian hiện tại và tính toán thời gian bắt đầu và kết thúc tuần
+    const now = new Date(); // Lấy thời gian hiện tại theo UTC
+    const startOfWeek = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - now.getDay(),
+      0,
+      0,
+      0,
+      0,
+    );
+    const endOfWeek = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - now.getDay() + 6,
+      23,
+      59,
+      59,
+      999,
+    );
+    if(filter.candidateId){
+      filter.candidateId = new Types.ObjectId(filter.candidateId);
+    }
+    if(filter.employerId){
+      filter.employerId = new Types.ObjectId(filter.employerId);
+    }
+    // Truy vấn MongoDB với filter, sort, và thời gian
+    const totalItems = await this.notificationModel.countDocuments({
+      createdAt: { $gte: startOfWeek, $lte: endOfWeek },
+      ...filter,
+    });
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+
+    const result = await this.notificationModel
+      .find({
+        createdAt: { $gte: startOfWeek, $lte: endOfWeek },
+        ...filter,
+      })
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any)
+      .exec();
+
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
+  }
+  // Lấy thông báo theo tháng cho một ứng viên cụ thể
+  async getNotificationsInCurrentMonth(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<any> {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    if(filter.candidateId){
+      filter.candidateId = new Types.ObjectId(filter.candidateId);
+    }
+    if(filter.employerId){
+      filter.employerId = new Types.ObjectId(filter.employerId);
+    }
+    // Lấy thời gian hiện tại và tính toán thời gian đầu tháng và cuối tháng
+    const now = new Date(); // Lấy thời gian hiện tại theo UTC
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    startOfMonth.setHours(0, 0, 0, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
+
+    // Truy vấn MongoDB với filter, sort và thời gian
+    const totalItems = await this.notificationModel.countDocuments({
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+      ...filter,
+    });
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+
+    const result = await this.notificationModel
+      .find({
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        ...filter,
+      })
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any)
+      .exec();
+
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
+  }
+
+  // Lấy thông báo theo năm cho một ứng viên cụ thể
+  async getNotificationsInCurrentYear(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<any> {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+
+    if(filter.candidateId){
+      filter.candidateId = new Types.ObjectId(filter.candidateId);
+    }
+    if(filter.employerId){
+      filter.employerId = new Types.ObjectId(filter.employerId);
+    }
+    // Lấy thời gian hiện tại và tính toán thời gian đầu năm và cuối năm
+    const now = new Date(); // Lấy thời gian hiện tại theo UTC
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const endOfYear = new Date(now.getFullYear(), 11, 31);
+    startOfYear.setHours(0, 0, 0, 0);
+    endOfYear.setHours(23, 59, 59, 999);
+
+    // Truy vấn MongoDB với filter, sort và thời gian
+    const totalItems = await this.notificationModel.countDocuments({
+      createdAt: { $gte: startOfYear, $lte: endOfYear },
+      ...filter,
+    });
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+
+    const result = await this.notificationModel
+      .find({
+        createdAt: { $gte: startOfYear, $lte: endOfYear },
+        ...filter,
+      })
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any)
+      .exec();
+
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
   }
 }

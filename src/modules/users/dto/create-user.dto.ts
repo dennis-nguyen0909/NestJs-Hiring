@@ -12,6 +12,7 @@ import {
 import { Types } from 'mongoose';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { Job } from '../../job/schema/Job.schema';
+import { Prop } from '@nestjs/mongoose';
 export class ProgressSetupDTO {
   @IsOptional()
   @IsBoolean()
@@ -152,4 +153,13 @@ export class CreateUserDto {
   birthday: string;
   @IsOptional()
   viewer: Types.ObjectId[];
+
+  @IsOptional()
+  is_profile_privacy: boolean;
+  @IsOptional()
+  is_resume_privacy: boolean;
+  @IsOptional()
+  notification_when_employer_save_profile: boolean;
+  @IsOptional()
+  notification_when_employer_reject_cv: boolean;
 }
