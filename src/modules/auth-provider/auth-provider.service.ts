@@ -10,14 +10,18 @@ import { Model } from 'mongoose';
 import { AuthProvider } from './schema/AuthProvider.schema';
 import aqp from 'api-query-params';
 import { DeleteAuthProviderDTO } from './dto/delete-auth-provider.dto';
+import { AuthProviderServiceInterface } from './auth-provider.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class AuthProviderService {
+export class AuthProviderService implements AuthProviderServiceInterface {
   constructor(
-    @InjectModel('AuthProvider')
+    @InjectModel(AuthProvider.name)
     private authProviderRepository: Model<AuthProvider>,
   ) {}
-  async create(createAuthProviderDto: CreateAuthProviderDto) {
+  async create(
+    createAuthProviderDto: CreateAuthProviderDto,
+  ): Promise<AuthProvider> {
     const { provider_name, provider_id } = createAuthProviderDto;
     const findAP = await this.authProviderRepository.findOne({
       provider_name,
@@ -35,7 +39,14 @@ export class AuthProviderService {
     return newAuthProvider;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{
+    items: AuthProvider[];
+    meta: Meta;
+  }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -61,7 +72,7 @@ export class AuthProviderService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<AuthProvider> {
     const result = await this.authProviderRepository.findOne({ _id: id });
     if (!result) {
       throw new BadRequestException('AuthProvider not found');
@@ -69,7 +80,7 @@ export class AuthProviderService {
     return result;
   }
 
-  async findDynamic(filter: Record<string, any>) {
+  async findDynamic(filter: Record<string, any>): Promise<AuthProvider> {
     const result = await this.authProviderRepository.findOne(filter);
     if (!result) {
       throw new BadRequestException('AuthProvider not found');
@@ -77,7 +88,10 @@ export class AuthProviderService {
     return result;
   }
 
-  async update(id: string, updateAuthProviderDto: UpdateAuthProviderDto) {
+  async update(
+    id: string,
+    updateAuthProviderDto: UpdateAuthProviderDto,
+  ): Promise<UpdateAuthProviderDto> {
     const result = await this.authProviderRepository.updateOne(
       { _id: id },
       updateAuthProviderDto,
@@ -88,7 +102,7 @@ export class AuthProviderService {
     return updateAuthProviderDto;
   }
 
-  async remove(data: DeleteAuthProviderDTO) {
+  async remove(data: DeleteAuthProviderDTO): Promise<[]> {
     const { ids } = data;
     try {
       if (!Array.isArray(ids)) {

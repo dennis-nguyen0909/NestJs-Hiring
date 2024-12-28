@@ -14,6 +14,8 @@ import { UpdateAuthProviderDto } from './dto/update-auth-provider.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { DeleteAuthProviderDTO } from './dto/delete-auth-provider.dto';
+import { AuthProvider } from './schema/AuthProvider.schema';
+import { Meta } from '../types';
 
 @Controller('auth-providers')
 @ApiTags('AuthProvider')
@@ -23,7 +25,9 @@ export class AuthProviderController {
 
   @Post()
   @ResponseMessage('Success')
-  async create(@Body() createAuthProviderDto: CreateAuthProviderDto) {
+  async create(
+    @Body() createAuthProviderDto: CreateAuthProviderDto,
+  ): Promise<AuthProvider> {
     return await this.authProviderService.create(createAuthProviderDto);
   }
 
@@ -33,13 +37,16 @@ export class AuthProviderController {
     @Query() query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{
+    items: AuthProvider[];
+    meta: Meta;
+  }> {
     return await this.authProviderService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<AuthProvider> {
     return await this.authProviderService.findOne(id);
   }
 
@@ -48,13 +55,13 @@ export class AuthProviderController {
   async update(
     @Param('id') id: string,
     @Body() updateAuthProviderDto: UpdateAuthProviderDto,
-  ) {
+  ): Promise<UpdateAuthProviderDto> {
     return await this.authProviderService.update(id, updateAuthProviderDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  async remove(@Body() data: DeleteAuthProviderDTO) {
+  async remove(@Body() data: DeleteAuthProviderDTO): Promise<[]> {
     return await this.authProviderService.remove(data);
   }
 }
