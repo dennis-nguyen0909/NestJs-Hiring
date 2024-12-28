@@ -67,7 +67,7 @@ export class JobContractTypeService {
     id: string,
     updateLevelDto: UpdateJobContractTypeDto,
   ): Promise<JobContractType> {
-    const job = await this.jobContractType.findByIdAndUpdate(
+    const job: JobContractType = await this.jobContractType.findByIdAndUpdate(
       id,
       updateLevelDto,
       {
