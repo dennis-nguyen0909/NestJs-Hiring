@@ -8,6 +8,7 @@ import aqp from 'api-query-params';
 import { create } from 'domain';
 import { User } from '../users/schemas/User.schema';
 import { UsersService } from '../users/users.service';
+import { Meta } from '../types';
 
 @Injectable()
 export class EducationService {
@@ -17,7 +18,9 @@ export class EducationService {
     private readonly userService: UsersService,
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
-  async addEducation(createEducationDto: CreateEducationDto): Promise<any> {
+  async addEducation(
+    createEducationDto: CreateEducationDto,
+  ): Promise<Education> {
     try {
       // Kiểm tra xem người dùng đã có trường học này chưa
       const existingEducation = await this.educationModel.findOne({
@@ -61,7 +64,7 @@ export class EducationService {
     query: string,
     current: number,
     pageSize: number,
-  ): Promise<any> {
+  ): Promise<{ items: Education[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -99,7 +102,7 @@ export class EducationService {
     id: string,
     updateEducationDto: UpdateEducationDto,
     userId: string,
-  ): Promise<any> {
+  ): Promise<Education> {
     const education = await this.educationModel.findById({ _id: id });
     if (education.user_id + '' !== userId) {
       throw new BadRequestException('Không có quyền cập nhật');
@@ -116,7 +119,7 @@ export class EducationService {
     return updatedEducation;
   }
 
-  async deleteByUserId(id: string, userId: string): Promise<any> {
+  async deleteByUserId(id: string, userId: string): Promise<[]> {
     const education = await this.educationModel.findById({
       _id: id,
     });

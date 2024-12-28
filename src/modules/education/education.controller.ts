@@ -17,6 +17,7 @@ import { Education } from './schema/Education.schema';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth-guard';
 import { CreateEducationDto } from './dto/create-education.dto';
+import { Meta } from '../types';
 @Controller('educations')
 @ApiTags('Education')
 export class EducationController {
@@ -44,7 +45,7 @@ export class EducationController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ): Promise<any> {
+  ): Promise<{ items: Education[]; meta: Meta }> {
     return await this.educationService.findAll(query, +current, +pageSize);
   }
 
@@ -66,7 +67,7 @@ export class EducationController {
   @Delete(':id')
   @ResponseMessage('Success')
   @UseGuards(JwtAuthGuard)
-  async deleteByUserId(@Param('id') id: string, @Request() req) {
+  async deleteByUserId(@Param('id') id: string, @Request() req): Promise<[]> {
     return await this.educationService.deleteByUserId(id, req.user._id);
   }
 
