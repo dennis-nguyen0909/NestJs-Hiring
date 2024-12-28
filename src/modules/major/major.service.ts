@@ -5,32 +5,26 @@ import aqp from 'api-query-params';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Major } from './schema/Major.schema';
+import { IMajorService } from './major.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class MajorService {
-  constructor(@InjectModel('Major') private majorModel: Model<Major>) {}
-  async create(createMajorDto: CreateMajorDto) {
-    const major = await this.majorModel.create(createMajorDto);
-    if (major) {
-      return {
-        data: {
-          items: major,
-          message: ['Major created successfully'],
-          error_code: 200,
-        },
-      };
-    } else {
-      return {
-        data: {
-          items: [],
-          message: ['Major not created'],
-          error_code: 400,
-        },
-      };
+export class MajorService implements IMajorService {
+  constructor(@InjectModel(Major.name) private majorModel: Model<Major>) {}
+  async create(createMajorDto: CreateMajorDto): Promise<Major> {
+    try {
+      const major = await this.majorModel.create(createMajorDto);
+      return major;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Major[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -46,28 +40,35 @@ export class MajorService {
       .skip(skip)
       .sort(sort as any);
     return {
-      data: {
-        items: result,
-        meta: {
-          count: result.length,
-          current_page: current,
-          per_page: pageSize,
-          total: totalItems,
-          total_pages: totalPages,
-        },
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
       },
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} major`;
+  async findOne(id: string): Promise<Major> {
+    return await this.majorModel.findById(id);
   }
 
-  update(id: number, updateMajorDto: UpdateMajorDto) {
-    return `This action updates a #${id} major`;
+  async update(id: string, updateMajorDto: UpdateMajorDto): Promise<Major> {
+    try {
+      const res = await this.majorModel.findByIdAndUpdate(id, updateMajorDto, {
+        new: true,
+      });
+      return res;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
-  async remove(deleteDto: DeleteMarjorDto) {
+  async remove(
+    deleteDto: DeleteMarjorDto,
+  ): Promise<{ message: string; data: [] }> {
     const { ids } = deleteDto;
     if (!Array.isArray(ids)) {
       throw new BadRequestException('Ids not is array');
