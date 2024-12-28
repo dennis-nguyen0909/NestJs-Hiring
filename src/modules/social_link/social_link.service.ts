@@ -11,16 +11,18 @@ import { CreateSocialLinkDto } from './dto/create-social_link.dto';
 import { DeleteSocialLink } from './dto/delete-skill.dto';
 import { UpdateSocialLinkDto } from './dto/update-social_link.dto';
 import { User } from '../users/schemas/User.schema';
+import { ISocialLinkService } from './social_link.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class SocialLinkService {
+export class SocialLinkService implements ISocialLinkService {
   constructor(
     @InjectModel(SocialLink.name)
     private socialLinkModel: Model<SocialLink>,
     @InjectModel(User.name)
     private userModel: Model<User>,
   ) {}
-  async create(data: CreateSocialLinkDto) {
+  async create(data: CreateSocialLinkDto): Promise<SocialLink> {
     try {
       const user = await this.userModel.findById(data?.user_id);
       if (!user) {
@@ -42,7 +44,11 @@ export class SocialLinkService {
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: SocialLink[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -70,7 +76,7 @@ export class SocialLinkService {
     };
   }
 
-  findOne(id: string) {
+  findOne(id: string): Promise<SocialLink> {
     const skill = this.socialLinkModel.findOne({ _id: id });
     if (!skill) {
       throw new NotFoundException();
@@ -78,15 +84,17 @@ export class SocialLinkService {
     return skill;
   }
 
-  update(id: string, update: UpdateSocialLinkDto) {
-    const skill = this.socialLinkModel.updateOne({ _id: id }, update);
+  update(id: string, update: UpdateSocialLinkDto): Promise<SocialLink> {
+    const skill = this.socialLinkModel.findByIdAndUpdate(id, update, {
+      new: true,
+    });
     if (!skill) {
       throw new NotFoundException();
     }
     return skill;
   }
 
-  async remove(data: DeleteSocialLink) {
+  async remove(data: DeleteSocialLink): Promise<[]> {
     const { ids } = data;
     try {
       if (!Array.isArray(ids) || ids.length < 0) {
@@ -126,12 +134,12 @@ export class SocialLinkService {
       throw new BadRequestException(error);
     }
   }
-  async getSkillsByUserId(
+  async getSocialLinkByUserId(
     userId: string,
     current: number,
     pageSize: number,
     query: string,
-  ) {
+  ): Promise<{ items: SocialLink[]; meta: Meta }> {
     try {
       // Xử lý bộ lọc và sắp xếp từ query
       const { filter, sort } = aqp(query);
