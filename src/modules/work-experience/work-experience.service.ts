@@ -7,16 +7,18 @@ import { Model, Types } from 'mongoose';
 import { WorkExperience } from './schema/WorkExperience.schema';
 import aqp from 'api-query-params';
 import { User } from '../users/schemas/User.schema';
+import { IWorkExperienceService } from './work-exxperience.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class WorkExperienceService {
+export class WorkExperienceService implements IWorkExperienceService{
   constructor(
-    @InjectModel('WorkExperience')
+    @InjectModel(WorkExperience.name)
     private workExperienceModel: Model<WorkExperience>,
-    @InjectModel('User')
+    @InjectModel(User.name)
     private userModel: Model<User>,
   ) {}
-  async create(createWorkExperienceDto: CreateWorkExperienceDto) {
+  async create(createWorkExperienceDto: CreateWorkExperienceDto):Promise<WorkExperience> {
     try {
       const workExperience = await this.workExperienceModel.create(
         createWorkExperienceDto,
@@ -42,7 +44,7 @@ export class WorkExperienceService {
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(query: string, current: number, pageSize: number):Promise<{items:WorkExperience[],meta:Meta}>  {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -68,7 +70,7 @@ export class WorkExperienceService {
     };
   }
 
-  async getWorkExperienceByUserId(userId: string) {
+  async getWorkExperienceByUserId(userId: string):Promise<WorkExperience[]>  {
     const res = await this.workExperienceModel.find({ user_id: userId });
     if (!res) {
       throw new BadGatewayException('WorkExperience not found');
@@ -76,7 +78,7 @@ export class WorkExperienceService {
     return res;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string):Promise<WorkExperience>  {
     const res = await this.workExperienceModel.findById(id);
     if (!res) {
       throw new BadGatewayException('WorkExperience not found');
@@ -84,7 +86,7 @@ export class WorkExperienceService {
     return res;
   }
 
-  async update(id: string, updateWorkExperienceDto: UpdateWorkExperienceDto) {
+  async update(id: string, updateWorkExperienceDto: UpdateWorkExperienceDto):Promise<WorkExperience>  {
     try {
       const work = await this.workExperienceModel.findById(id);
       if (!work) {
@@ -105,7 +107,7 @@ export class WorkExperienceService {
     }
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>):Promise<[]>  {
     if (!Array.isArray(ids)) {
       throw new BadRequestException('Ids not is array');
     }
@@ -153,7 +155,7 @@ export class WorkExperienceService {
             { $pull: { work_experience_ids: { $in: ids } } }
           );
     
-          return { message: 'Work experiences deleted and user updated successfully' };
+          return [];
         } else {
           throw new NotFoundException('Failed to delete work experiences');
         }

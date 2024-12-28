@@ -15,6 +15,7 @@ import { UpdateWorkExperienceDto } from './dto/update-work-experience.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorator/customize';
 import { WorkExperience } from './schema/WorkExperience.schema';
+import { Meta } from '../types';
 
 @Controller('work-experiences')
 @ApiTags('WorkExperience')
@@ -23,7 +24,9 @@ export class WorkExperienceController {
 
   @Post()
   @ResponseMessage('Success')
-  create(@Body() createWorkExperienceDto: CreateWorkExperienceDto) {
+  create(
+    @Body() createWorkExperienceDto: CreateWorkExperienceDto,
+  ): Promise<WorkExperience> {
     return this.workExperienceService.create(createWorkExperienceDto);
   }
 
@@ -33,7 +36,7 @@ export class WorkExperienceController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: WorkExperience[]; meta: Meta }> {
     return this.workExperienceService.findAll(query, +current, +pageSize);
   }
 
@@ -44,7 +47,7 @@ export class WorkExperienceController {
   }
   @Get(':id')
   @ResponseMessage('Success')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<WorkExperience> {
     return this.workExperienceService.findOne(id);
   }
 
@@ -53,13 +56,13 @@ export class WorkExperienceController {
   update(
     @Param('id') id: string,
     @Body() updateWorkExperienceDto: UpdateWorkExperienceDto,
-  ) {
+  ): Promise<WorkExperience> {
     return this.workExperienceService.update(id, updateWorkExperienceDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  remove(@Body('ids') ids: Array<string>) {
+  remove(@Body('ids') ids: Array<string>): Promise<[]> {
     return this.workExperienceService.remove(ids);
   }
 }
