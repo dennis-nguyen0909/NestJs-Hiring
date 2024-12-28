@@ -13,9 +13,10 @@ import { Certificate } from './schema/certificate.schema';
 import { User } from '../users/schemas/User.schema';
 import aqp from 'api-query-params';
 import { Meta } from '../types';
+import { ICertificateServiceInterface } from './certificate.interface';
 
 @Injectable()
-export class CertificateService {
+export class CertificateService implements ICertificateServiceInterface {
   constructor(
     @InjectModel(Certificate.name) private certificateModel: Model<Certificate>,
     @InjectModel(User.name) private userModel: Model<User>,
