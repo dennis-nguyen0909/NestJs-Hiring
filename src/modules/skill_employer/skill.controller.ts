@@ -15,6 +15,8 @@ import { UpdateSkillEmployerDto } from './dto/update-skill.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorator/customize';
 import { DeleteSkillEmployerDto } from './dto/delete-skill.dto';
+import { SkillEmployer } from './schema/EmployerSkill.schema';
+import { Meta } from '../types';
 
 @Controller('employer/skills')
 @ApiTags('Employer Skills')
@@ -23,7 +25,9 @@ export class SkillEmployerController {
 
   @Post()
   @ResponseMessage('Success')
-  async create(@Body() CreateSkillEmployerDto: CreateSkillEmployerDto) {
+  async create(
+    @Body() CreateSkillEmployerDto: CreateSkillEmployerDto,
+  ): Promise<SkillEmployer> {
     return await this.skillService.create(CreateSkillEmployerDto);
   }
 
@@ -33,7 +37,7 @@ export class SkillEmployerController {
     @Query() query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: SkillEmployer[]; meta: Meta }> {
     return await this.skillService.findAll(query, +current, +pageSize);
   }
 
@@ -44,7 +48,7 @@ export class SkillEmployerController {
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
     @Query('query') query: string,
-  ) {
+  ): Promise<{ items: SkillEmployer[]; meta: Meta }> {
     return await this.skillService.getSkillsByUserId(
       req.user._id,
       +current,
@@ -55,7 +59,7 @@ export class SkillEmployerController {
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<SkillEmployer> {
     return await this.skillService.findOne(id);
   }
 
@@ -64,13 +68,13 @@ export class SkillEmployerController {
   async update(
     @Param('id') id: string,
     @Body() UpdateSkillEmployerDto: UpdateSkillEmployerDto,
-  ) {
+  ): Promise<SkillEmployer> {
     return await this.skillService.update(id, UpdateSkillEmployerDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  async remove(@Body() data: DeleteSkillEmployerDto) {
+  async remove(@Body() data: DeleteSkillEmployerDto): Promise<[]> {
     return await this.skillService.remove(data);
   }
 }

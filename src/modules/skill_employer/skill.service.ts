@@ -10,14 +10,18 @@ import { Model } from 'mongoose';
 import aqp from 'api-query-params';
 import { DeleteSkillEmployerDto } from './dto/delete-skill.dto';
 import { SkillEmployer } from './schema/EmployerSkill.schema';
+import { ISkillEmployerService } from './skill_employer.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class SkillEmployerServices {
+export class SkillEmployerServices implements ISkillEmployerService {
   constructor(
     @InjectModel(SkillEmployer.name)
     private skillEmployerModel: Model<SkillEmployer>,
   ) {}
-  async create(CreateSkillEmployerDto: CreateSkillEmployerDto) {
+  async create(
+    CreateSkillEmployerDto: CreateSkillEmployerDto,
+  ): Promise<SkillEmployer> {
     try {
       const skill = await this.skillEmployerModel.create(
         CreateSkillEmployerDto,
@@ -28,7 +32,11 @@ export class SkillEmployerServices {
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: SkillEmployer[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -56,7 +64,7 @@ export class SkillEmployerServices {
     };
   }
 
-  findOne(id: string) {
+  findOne(id: string): Promise<SkillEmployer> {
     const skill = this.skillEmployerModel.findOne({ _id: id });
     if (!skill) {
       throw new NotFoundException();
@@ -64,18 +72,22 @@ export class SkillEmployerServices {
     return skill;
   }
 
-  update(id: string, UpdateSkillEmployerDto: UpdateSkillEmployerDto) {
-    const skill = this.skillEmployerModel.updateOne(
+  async update(
+    id: string,
+    updateSkillEmployerDto: UpdateSkillEmployerDto,
+  ): Promise<SkillEmployer> {
+    const skill = await this.skillEmployerModel.findOneAndUpdate(
       { _id: id },
-      UpdateSkillEmployerDto,
+      updateSkillEmployerDto,
+      { new: true }, // Thêm tùy chọn này để trả về đối tượng sau khi cập nhật
     );
     if (!skill) {
-      throw new NotFoundException();
+      throw new NotFoundException(`SkillEmployer with id ${id} not found`);
     }
-    return skill;
+    return skill; // Trả về đối tượng SkillEmployer đã được cập nhật
   }
 
-  async remove(data: DeleteSkillEmployerDto) {
+  async remove(data: DeleteSkillEmployerDto): Promise<[]> {
     const { ids } = data;
     try {
       if (!Array.isArray(ids) || ids.length < 0) {
@@ -120,7 +132,7 @@ export class SkillEmployerServices {
     current: number,
     pageSize: number,
     query: string,
-  ) {
+  ): Promise<{ items: SkillEmployer[]; meta: Meta }> {
     try {
       // Xử lý bộ lọc và sắp xếp từ query
       const { filter, sort } = aqp(query);
