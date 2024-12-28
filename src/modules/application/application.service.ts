@@ -14,9 +14,11 @@ import { SaveCandidate } from '../save_candidates/schema/SaveCandidates.schema';
 import { Job } from '../job/schema/Job.schema';
 import { NotificationService } from 'src/notification/notification.service';
 import { User } from '../users/schemas/User.schema';
+import { IApplicationService } from './application.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class ApplicationService {
+export class ApplicationService implements IApplicationService {
   constructor(
     @InjectModel('Application')
     private applicationRepository: Model<Application>,
@@ -27,7 +29,9 @@ export class ApplicationService {
     @InjectModel('Job') private jobModel: Model<Job>,
   ) {}
 
-  async create(createApplicationDto: CreateApplicationDto) {
+  async create(
+    createApplicationDto: CreateApplicationDto,
+  ): Promise<Application> {
     try {
       // Kiểm tra xem Job có tồn tại, còn hạn và đang hoạt động không
       const job = await this.jobModel.findOne({
@@ -68,7 +72,11 @@ export class ApplicationService {
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Application[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -94,7 +102,7 @@ export class ApplicationService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Application> {
     try {
       const applied = await this.applicationRepository.findById(id);
       if (applied) {
@@ -107,7 +115,10 @@ export class ApplicationService {
     }
   }
 
-  async update(id: string, updateApplicationDto: UpdateApplicationDto) {
+  async update(
+    id: string,
+    updateApplicationDto: UpdateApplicationDto,
+  ): Promise<Application> {
     try {
       const applied = await this.applicationRepository
         .findByIdAndUpdate(id, updateApplicationDto, {
@@ -188,7 +199,7 @@ export class ApplicationService {
     return application.save(); // Lưu lại thay đổi vào database
   }
 
-  async remove(data: DeleteApplicationDto) {
+  async remove(data: DeleteApplicationDto): Promise<[]> {
     const { ids } = data;
     if (!Array.isArray(ids)) {
       throw new BadRequestException('Ids not is array');
@@ -229,7 +240,7 @@ export class ApplicationService {
     query: string,
     current: number,
     pageSize: number,
-  ) {
+  ): Promise<{ items: Application[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
 
     if (filter.current) delete filter.current;
@@ -285,7 +296,11 @@ export class ApplicationService {
       },
     };
   }
-  async cancelApplication(applicationId: string, userId: string) {
+  async cancelApplication(
+    applicationId: string,
+    userId: string,
+    // eslint-disable-next-line prettier/prettier
+  ): Promise<{message:string}> {
     try {
       const application = await this.applicationRepository.findOne({
         _id: applicationId,
@@ -297,21 +312,24 @@ export class ApplicationService {
       }
 
       // Xóa bản ghi ứng tuyển
-      await this.applicationRepository.deleteOne({ _id: applicationId });
+      const deleted = await this.applicationRepository.deleteOne({
+        _id: applicationId,
+      });
 
+      if (deleted.deletedCount > 0) {
+        return { message: 'Application cancelled successfully' };
+      }
       // Xóa user_id khỏi mảng candidate_ids trong Job
       await this.jobModel.updateOne(
         { _id: application.job_id },
         { $pull: { candidate_ids: userId } }, // Xóa user_id khỏi danh sách candidate_ids
       );
-
-      return { message: 'Application cancelled successfully' };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async getAppliedUserId(userId: string) {
+  async getAppliedUserId(userId: string): Promise<number> {
     try {
       // Sử dụng countDocuments để đếm số lượng ứng tuyển của user_id
       const count = await this.applicationRepository.countDocuments({
@@ -327,7 +345,10 @@ export class ApplicationService {
     }
   }
 
-  async getRecentlyApplied(candidateId: string, limit: number) {
+  async getRecentlyApplied(
+    candidateId: string,
+    limit: number,
+  ): Promise<Application[]> {
     try {
       const res = await this.applicationRepository
         .find({ user_id: candidateId })

@@ -13,8 +13,10 @@ import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Public, ResponseMessage } from 'src/decorator/customize';
+import { ResponseMessage } from 'src/decorator/customize';
 import { DeleteApplicationDto } from './dto/delete-application.dto';
+import { Application } from './schema/Application.schema';
+import { Meta } from '../types';
 
 @Controller('applications')
 @ApiTags('Application')
@@ -24,7 +26,9 @@ export class ApplicationController {
   @Post()
   @ResponseMessage('Success')
   @ApiBody({ type: CreateApplicationDto })
-  async create(@Body() createApplicationDto: CreateApplicationDto) {
+  async create(
+    @Body() createApplicationDto: CreateApplicationDto,
+  ): Promise<Application> {
     return await this.applicationService.create(createApplicationDto);
   }
 
@@ -46,7 +50,7 @@ export class ApplicationController {
   async cancelApplication(
     @Param('id') applicationId: string,
     @Body('user_id') userId: string,
-  ) {
+  ): Promise<{ message: string }> {
     return await this.applicationService.cancelApplication(
       applicationId,
       userId,
@@ -60,7 +64,7 @@ export class ApplicationController {
     @Query('query') query,
     @Query('current') current,
     @Query('pageSize') pageSize,
-  ) {
+  ): Promise<{ items: Application[]; meta: Meta }> {
     return await this.applicationService.getApplicationByJobId(
       id,
       query,
@@ -95,13 +99,13 @@ export class ApplicationController {
     @Query('query') query,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: Application[]; meta: Meta }> {
     return await this.applicationService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<Application> {
     return await this.applicationService.findOne(id);
   }
 
@@ -111,7 +115,7 @@ export class ApplicationController {
   async update(
     @Param('id') id: string,
     @Body() updateApplicationDto: UpdateApplicationDto,
-  ) {
+  ): Promise<Application> {
     return await this.applicationService.update(id, updateApplicationDto);
   }
 
@@ -124,7 +128,7 @@ export class ApplicationController {
     type: 'object',
     example: { ids: ['id1', 'id2'] },
   })
-  async remove(@Body() data: DeleteApplicationDto) {
+  async remove(@Body() data: DeleteApplicationDto): Promise<[]> {
     return await this.applicationService.remove(data);
   }
 
@@ -133,13 +137,13 @@ export class ApplicationController {
   async toggleSaveCandidate(
     @Param('applicationId') applicationId: string,
     @Param('userId') userId: string,
-  ) {
+  ): Promise<Application> {
     return this.applicationService.toggleSaveCandidate(applicationId, userId);
   }
 
   @ResponseMessage('Success')
   @Get('applied/:userId')
-  async getAppliedUserId(@Param('userId') userId: string) {
+  async getAppliedUserId(@Param('userId') userId: string): Promise<number> {
     return await this.applicationService.getAppliedUserId(userId);
   }
 
@@ -152,7 +156,7 @@ export class ApplicationController {
   async getRecentlyApplied(
     @Param('candidate_id') candidate_id: string,
     @Query('limit') limit: string,
-  ) {
+  ): Promise<Application[]> {
     return await this.applicationService.getRecentlyApplied(
       candidate_id,
       +limit,
