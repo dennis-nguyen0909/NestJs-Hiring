@@ -311,7 +311,7 @@ export class UsersService implements IUserRepository{
     return id;
   }
 
-  async handleRegister(registerDto: RegisterAuthDto) {
+  async handleRegister(registerDto: RegisterAuthDto):Promise<{user_id:string}> {
     const {
       email,
       password,
@@ -403,7 +403,7 @@ export class UsersService implements IUserRepository{
 
 
     return {
-        user_id: newUser._id,
+        user_id: newUser._id.toString(),
     };
   }
 

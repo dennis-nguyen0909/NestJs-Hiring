@@ -17,9 +17,10 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ApiTags } from '@nestjs/swagger';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
-import { Request as RequestExpress, Response } from 'express';
+import { Response } from 'express';
 import { GoogleAuthGuard } from './passport/google-auth/google-auth-guard';
 import { FacebookAuthGuard } from './passport/facebook-auth/facebook-auth-guard';
+import { User } from '../users/schemas/User.schema';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -32,7 +33,18 @@ export class AuthController {
   @Public()
   @ResponseMessage('Success')
   @UseGuards(LocalAuthGuard)
-  async signIn(@Request() req, @Res({ passthrough: true }) response: Response) {
+  async signIn(
+    @Request() req,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{
+    user: {
+      email: string;
+      user_id: string;
+      name: string;
+      access_token: string;
+      refresh_token: string;
+    };
+  }> {
     const { user } = await this.authService.signIn(req.user);
     response.cookie('refresh_token', user.refresh_token, {
       httpOnly: true, // Chỉ server mới có thể truy cập cookie này, bảo vệ khỏi XSS
@@ -46,21 +58,23 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   @ResponseMessage('Success')
-  async getProfile(@Request() req) {
+  async getProfile(@Request() req): Promise<any> {
     return await req.user;
   }
 
   @Public()
   @Post('register')
   @ResponseMessage('Success')
-  async register(@Body() registerDto: RegisterAuthDto) {
+  async register(
+    @Body() registerDto: RegisterAuthDto,
+  ): Promise<{ user_id: string }> {
     return await this.authService.register(registerDto);
   }
 
   @Get('email')
   @Public()
   @ResponseMessage('Success')
-  async testMail() {
+  async testMail(): Promise<string> {
     await this.mailService.sendMail({
       to: 'dennis.nguyen0909@gmail.com', // list of receivers
       subject: 'Testing Nest MailerModule ✔', // Subject line
@@ -76,7 +90,7 @@ export class AuthController {
   @Get('check-token')
   @Public()
   @ResponseMessage('Success')
-  async checkToken(@Request() req) {
+  async checkToken(@Request() req): Promise<{ valid: boolean; user: User }> {
     const token = req.cookies.token; // Lấy token từ cookie
     if (!token) {
       throw new UnauthorizedException('Token không được cung cấp');
@@ -88,7 +102,9 @@ export class AuthController {
   @Post('verify')
   @Public()
   @ResponseMessage('Success')
-  async verify(@Body() verifyDto: VerifyAuthDto) {
+  async verify(
+    @Body() verifyDto: VerifyAuthDto,
+  ): Promise<{ access_token: string; refresh_token: string; user_id: string }> {
     return await this.authService.verify(verifyDto);
   }
 
@@ -103,14 +119,22 @@ export class AuthController {
 
   @Post('refresh-token')
   @Public()
-  async refreshToken(@Body('refresh_token') refreshToken: string) {
+  async refreshToken(@Body('refresh_token') refreshToken: string): Promise<{
+    user: {
+      email: string;
+      user_id: string;
+      name: string;
+      access_token: string;
+      refresh_token: string;
+    };
+  }> {
     return await this.authService.refreshToken(refreshToken);
   }
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @ResponseMessage('Success')
-  async logout(@Request() req) {
+  async logout(@Request() req): Promise<boolean> {
     return await this.authService.logout(req.user);
   }
 

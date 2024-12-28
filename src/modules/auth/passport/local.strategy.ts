@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { UserNotActiveException } from 'src/exceptions';
+import { User } from 'src/modules/users/schemas/User.schema';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -14,13 +15,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validate(username: string, password: string): Promise<any> {
+  async validate(username: string, password: string): Promise<User> {
     const user = await this.authService.validateUser(username, password);
     if (!user) {
       throw new BadRequestException('Username or password is incorrect');
     }
     if (user?.is_active === false) {
-      throw new UserNotActiveException(user._id);
+      throw new UserNotActiveException(user._id + '');
     }
     return user;
   }

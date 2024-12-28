@@ -10,14 +10,24 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
+import { IAuthService } from './auth.interface';
+import { User } from '../users/schemas/User.schema';
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
-  async signIn(user: any): Promise<any> {
+  async signIn(user: any): Promise<{
+    user: {
+      email: string;
+      user_id: string;
+      name: string;
+      access_token: string;
+      refresh_token: string;
+    };
+  }> {
     const payload = { sub: user._id, username: user.email, role: user.role };
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
@@ -39,7 +49,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(username: string, password: string): Promise<any> {
+  async validateUser(username: string, password: string): Promise<User> {
     const user = await this.userService.findByEmail(username);
     if (!user) {
       throw new BadRequestException('User not found');
@@ -55,11 +65,11 @@ export class AuthService {
     return user;
   }
 
-  async register(registerDto: RegisterAuthDto): Promise<any> {
+  async register(registerDto: RegisterAuthDto): Promise<{ user_id: string }> {
     return this.userService.handleRegister(registerDto);
   }
 
-  async validateToken(token: string): Promise<any> {
+  async validateToken(token: string): Promise<User> {
     try {
       if (!token) {
         return null;
@@ -72,7 +82,9 @@ export class AuthService {
     }
   }
 
-  async verify(verifyDto: VerifyAuthDto): Promise<any> {
+  async verify(
+    verifyDto: VerifyAuthDto,
+  ): Promise<{ access_token: string; refresh_token: string; user_id: string }> {
     try {
       const { id, code_id } = verifyDto;
       const findUser = await this.userService.findOneFilter(id);
@@ -108,10 +120,18 @@ export class AuthService {
     return this.userService.retryActive(email);
   }
 
-  async logout(user: any) {
+  async logout(user: any): Promise<boolean> {
     return true;
   }
-  async refreshToken(refreshToken: string) {
+  async refreshToken(refreshToken: string): Promise<{
+    user: {
+      email: string;
+      user_id: string;
+      name: string;
+      access_token: string;
+      refresh_token: string;
+    };
+  }> {
     let payload: any;
     try {
       payload = await this.jwtService.verifyAsync(refreshToken);
@@ -143,7 +163,7 @@ export class AuthService {
     return {
       user: {
         email: user.email,
-        user_id: user._id,
+        user_id: user._id.toString(),
         name: user.full_name,
         access_token: newAccessToken,
         refresh_token: newRefreshToken, // Include new refresh token if applicable
