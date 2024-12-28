@@ -9,14 +9,17 @@ import aqp from 'api-query-params';
 import { IndustryType } from './schema/industry_type.schema';
 import { CreateIndustryTypeDto } from './dto/create-industry_type.dto';
 import { UpdateIndustryTypeDto } from './dto/update-industry_type.dto';
+import { IIndustryTypeService } from './industry_type.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class IndustryTypeService {
+// eslint-disable-next-line prettier/prettier
+export class IndustryTypeService implements IIndustryTypeService{
   constructor(
     @InjectModel(IndustryType.name)
     private readonly industryTypeModel: Model<IndustryType>,
   ) {}
-  async create(createDto: CreateIndustryTypeDto) {
+  async create(createDto: CreateIndustryTypeDto): Promise<IndustryType> {
     const response = await this.industryTypeModel.create(createDto);
     if (!response) {
       throw new BadRequestException('Failed');
@@ -24,7 +27,11 @@ export class IndustryTypeService {
     return response;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: IndustryType[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -50,7 +57,7 @@ export class IndustryTypeService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<IndustryType> {
     const response = await this.industryTypeModel.findOne({ _id: id });
     if (!response) {
       throw new NotFoundException();
@@ -58,7 +65,10 @@ export class IndustryTypeService {
     return response;
   }
 
-  async update(id: string, updateDto: UpdateIndustryTypeDto) {
+  async update(
+    id: string,
+    updateDto: UpdateIndustryTypeDto,
+  ): Promise<IndustryType> {
     const response = await this.industryTypeModel.findByIdAndUpdate(
       id,
       updateDto,
@@ -73,7 +83,7 @@ export class IndustryTypeService {
     return response;
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length < 0) {
         throw new BadRequestException('Ids not found');
