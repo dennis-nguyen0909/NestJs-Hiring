@@ -13,16 +13,17 @@ import { CreatePrizeDto } from './dto/create-prize.dto';
 import { UpdatePrizeDto } from './dto/update-prize.dto';
 import { Meta } from '../types';
 import aqp from 'api-query-params';
+import { IPrizeService } from './prize.interface';
 
 @Injectable()
-export class PrizeService {
+export class PrizeService implements IPrizeService {
   constructor(
     @InjectModel(Prize.name)
     private prizeModel: Model<Prize>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
-  async create(createPrizeDto:CreatePrizeDto) {
+  async create(createPrizeDto:CreatePrizeDto):Promise<Prize> {
     const newPrize =
     await this.prizeModel.create(createPrizeDto);
   if (!newPrize) {
@@ -74,7 +75,7 @@ export class PrizeService {
       };
     }
 
-  async findOne(id: string) {
+  async findOne(id: string):Promise<Prize> {
     const prize = await this.prizeModel.findById(id).exec();
     if (!prize) {
       throw new NotFoundException(`prize with ID ${id} not found`);
@@ -82,7 +83,7 @@ export class PrizeService {
     return prize;
   }
 
-  async update(id: string, updatePrizeDto: UpdatePrizeDto) {
+  async update(id: string, updatePrizeDto: UpdatePrizeDto):Promise<Prize> {
     const updatePrizes = await this.prizeModel.findByIdAndUpdate(
       id,
       updatePrizeDto,
@@ -94,7 +95,7 @@ export class PrizeService {
     return updatePrizes;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, userId: string):Promise<void> {
     const prize = await this.prizeModel.findById(id).exec();
     if (!prize) {
       throw new NotFoundException(`Prize #${id} not found`);
@@ -118,7 +119,7 @@ export class PrizeService {
     );
   }
 
-  async findByOwner(ownerId: string) {
+  async findByOwner(ownerId: string):Promise<Prize[]> {
     return this.prizeModel
       .find({ owner: ownerId })
       .populate('owner')
