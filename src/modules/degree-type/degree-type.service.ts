@@ -9,14 +9,16 @@ import aqp from 'api-query-params';
 import { DegreeType } from './schema/degree-type.schema';
 import { CreateDegreeTypeDto } from './dto/create-degree-type.dto';
 import { UpdateDegreeTypeDto } from './dto/update-degree-type.dto';
+import { IDegreeTypeService } from './degree-type.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class DegreeTypeService {
+export class DegreeTypeService implements IDegreeTypeService {
   constructor(
     @InjectModel(DegreeType.name)
     private readonly degreeTypeModel: Model<DegreeType>,
   ) {}
-  async create(data: CreateDegreeTypeDto) {
+  async create(data: CreateDegreeTypeDto): Promise<DegreeType> {
     const response = await this.degreeTypeModel.create(data);
     if (!response) {
       throw new BadRequestException('Failed');
@@ -24,7 +26,11 @@ export class DegreeTypeService {
     return response;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: DegreeType[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -50,7 +56,7 @@ export class DegreeTypeService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<DegreeType> {
     const job = await this.degreeTypeModel.findOne({ _id: id });
     if (!job) {
       throw new NotFoundException();
@@ -58,7 +64,10 @@ export class DegreeTypeService {
     return job;
   }
 
-  async update(id: string, updateLevelDto: UpdateDegreeTypeDto) {
+  async update(
+    id: string,
+    updateLevelDto: UpdateDegreeTypeDto,
+  ): Promise<DegreeType> {
     const job = await this.degreeTypeModel.findByIdAndUpdate(
       id,
       updateLevelDto,
@@ -73,7 +82,7 @@ export class DegreeTypeService {
     return job;
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length < 0) {
         throw new BadRequestException('Ids not found');
