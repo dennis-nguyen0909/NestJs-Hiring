@@ -4,15 +4,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SaveCandidate } from './schema/SaveCandidates.schema';
 import aqp from 'api-query-params';
+import { ISaveCandidatesService } from './save_candidates.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class SaveCandidatesService {
+export class SaveCandidatesService implements ISaveCandidatesService {
   constructor(
-    @InjectModel('SaveCandidate')
+    @InjectModel(SaveCandidate.name)
     private modelSaveCandidate: Model<SaveCandidate>,
   ) {}
 
-  async saveCandidate(data: CreateSaveCandidateDto) {
+  async saveCandidate(data: CreateSaveCandidateDto): Promise<SaveCandidate> {
     try {
       const res = await this.modelSaveCandidate.create(data);
       if (!res) {
@@ -23,7 +25,11 @@ export class SaveCandidatesService {
       throw new BadRequestException(error);
     }
   }
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: SaveCandidate[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -40,15 +46,13 @@ export class SaveCandidatesService {
       .skip(skip)
       .sort(sortOption as any);
     return {
-      data: {
-        items: result,
-        meta: {
-          count: result.length,
-          current_page: current,
-          per_page: pageSize,
-          total: totalItems,
-          total_pages: totalPages,
-        },
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
       },
     };
   }
@@ -58,7 +62,7 @@ export class SaveCandidatesService {
     query: string,
     current: number,
     pageSize: number,
-  ) {
+  ): Promise<{ items: SaveCandidate[]; meta: Meta }> {
     try {
       const { filter, sort } = aqp(query);
       if (filter.current) delete filter.current;

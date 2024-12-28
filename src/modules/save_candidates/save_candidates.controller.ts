@@ -2,6 +2,8 @@ import { Controller, Post, Body, Get, Query, Param } from '@nestjs/common';
 import { SaveCandidatesService } from './save_candidates.service';
 import { CreateSaveCandidateDto } from './dto/create-save_candidate.dto';
 import { ResponseMessage } from 'src/decorator/customize';
+import { SaveCandidate } from './schema/SaveCandidates.schema';
+import { Meta } from '../types';
 
 @Controller('save-candidates')
 export class SaveCandidatesController {
@@ -9,7 +11,9 @@ export class SaveCandidatesController {
 
   @Post()
   @ResponseMessage('SUCCESS')
-  async saveCandidate(@Body() data: CreateSaveCandidateDto) {
+  async saveCandidate(
+    @Body() data: CreateSaveCandidateDto,
+  ): Promise<SaveCandidate> {
     return await this.saveCandidatesService.saveCandidate(data);
   }
   @Get('employer/:id')
@@ -19,7 +23,7 @@ export class SaveCandidatesController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: SaveCandidate[]; meta: Meta }> {
     return await this.saveCandidatesService.findAllByEmployer(
       id,
       query,
@@ -31,10 +35,10 @@ export class SaveCandidatesController {
   @Get()
   @ResponseMessage('SUCCESS')
   async findAll(
-    @Body() query: string,
-    @Body() current: number,
-    @Body() pageSize: number,
-  ) {
+    @Query('query') query: string,
+    @Query('current') current: number,
+    @Query('pageSize') pageSize: number,
+  ): Promise<{ items: SaveCandidate[]; meta: Meta }> {
     return await this.saveCandidatesService.findAll(query, current, pageSize);
   }
 }
