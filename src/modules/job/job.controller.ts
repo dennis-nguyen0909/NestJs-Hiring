@@ -14,6 +14,8 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { DeleteJobDto, ToggleLikeDTO } from './dto/delete-job.dto';
+import { Job } from './schema/Job.schema';
+import { Meta } from '../types';
 
 @Controller('jobs')
 @ApiTags('Job')
@@ -23,7 +25,7 @@ export class JobController {
 
   @Post()
   @ResponseMessage('Success')
-  async create(@Body() createJobDto: CreateJobDto) {
+  async create(@Body() createJobDto: CreateJobDto): Promise<Job> {
     return await this.jobService.create(createJobDto);
   }
   @Get('test')
@@ -31,7 +33,7 @@ export class JobController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<Job[] | []> {
     return this.jobService.testSearch(query, +current, +pageSize);
   }
 
@@ -41,7 +43,7 @@ export class JobController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: Job[]; meta: Meta }> {
     return await this.jobService.findJobsByCompanyName(
       query,
       +current,
@@ -49,8 +51,8 @@ export class JobController {
     );
   }
   @Get('district/:id')
-  async getJobByDistrict(@Param('id') id: string) {
-    return await 'ok';
+  async getJobByDistrict(@Param('id') id: string): Promise<string> {
+    return 'ok';
   }
 
   @Get('employer')
@@ -60,7 +62,7 @@ export class JobController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: Job[]; meta: Meta }> {
     return await this.jobService.getJobByEmployer(
       user_id,
       query,
@@ -75,13 +77,15 @@ export class JobController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: Job[]; meta: Meta }> {
     return await this.jobService.findRecentJobs(query, +current, +pageSize);
   }
 
   @Get('active/:userId')
   @ResponseMessage('Success')
-  async countActiveJobsByUser(@Param('userId') userId: string) {
+  async countActiveJobsByUser(
+    @Param('userId') userId: string,
+  ): Promise<number> {
     return await this.jobService.countActiveJobsByUser(userId);
   }
 
@@ -91,31 +95,34 @@ export class JobController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: Job[]; meta: Meta }> {
     return await this.jobService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<Job> {
     return await this.jobService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateJobDto: UpdateJobDto,
+  ): Promise<Job> {
     return await this.jobService.update(id, updateJobDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  async remove(@Body() data: DeleteJobDto) {
+  async remove(@Body() data: DeleteJobDto): Promise<[]> {
     return await this.jobService.remove(data);
   }
 
   @Post('toggle-like')
   @ResponseMessage('Success')
-  async toggleLikeJob(@Body() data: ToggleLikeDTO) {
+  async toggleLikeJob(@Body() data: ToggleLikeDTO): Promise<void> {
     return await this.jobService.toggleLikeJob(data.user_id, data.job_id);
   }
 }

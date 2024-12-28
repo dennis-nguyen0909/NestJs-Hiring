@@ -20,5 +20,6 @@ import { UsersModule } from '../users/users.module';
   ],
   controllers: [ApplicationController],
   providers: [ApplicationService],
+  exports: [MongooseModule],
 })
 export class ApplicationModule {}

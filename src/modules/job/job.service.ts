@@ -19,9 +19,11 @@ import { SkillEmployer } from '../skill_employer/schema/EmployerSkill.schema';
 import { User } from '../users/schemas/User.schema';
 import { Cities } from '../cities/schema/Cities.schema';
 import { Level } from '../level/schema/Level.schema';
+import { IJobService } from './job.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class JobService {
+export class JobService implements IJobService {
   constructor(
     @InjectModel('Job') private jobRepository: Model<Job>,
     @InjectModel('User') private userModel: Model<User>,
@@ -29,9 +31,14 @@ export class JobService {
     @InjectModel(Level.name) private levelModel: Model<Cities>,
     @InjectModel(SkillEmployer.name) private employerModel: Model<SkillEmployer>,
     private userService: UsersService,
-    private citiesService: CitiesService,
   ) {}
-  async create(createJobDto: CreateJobDto) {
+  validateExpiryDate(expireDate: string): void {
+    throw new Error('Method not implemented.');
+  }
+  validateSalaryRange(salaryRange: { min: number; max: number; }): void {
+    throw new Error('Method not implemented.');
+  }
+  async create(createJobDto: CreateJobDto):Promise<Job> {
     const { user_id, expire_date, salary_range, age_range } = createJobDto;
 
     // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
@@ -77,7 +84,7 @@ export class JobService {
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(query: string, current: number, pageSize: number):Promise<{items:Job[],meta:Meta}> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -164,7 +171,7 @@ export class JobService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string):Promise<Job>{
     const job = await this.jobRepository
       .findOne({ _id: id })
       .populate({
@@ -191,7 +198,7 @@ export class JobService {
     return job;
   }
 
-  async update(id: string, updateJobDto: UpdateJobDto) {
+  async update(id: string, updateJobDto: UpdateJobDto):Promise<Job> {
     try {
       const { expire_date, salary_range, age_range, is_negotiable } =
         updateJobDto;
@@ -234,7 +241,7 @@ export class JobService {
       throw new NotFoundException(error);
     }
   }
-  async remove(data: DeleteJobDto) {
+  async remove(data: DeleteJobDto):Promise<[]> {
     const { user_id, ids } = data;
     try {
       if (ids.length < 0) {
@@ -294,7 +301,7 @@ export class JobService {
     query: string,
     current: number,
     pageSize: number,
-  ) {
+  ):Promise<{items:Job[],meta:Meta}>  {
     // Sử dụng aqp (Advanced Query Parsing) để phân tích cú pháp `query` thành filter và sort
     const { filter, sort } = aqp(query);
 
@@ -360,7 +367,7 @@ export class JobService {
     current: number,
     pageSize: number,
     query: string,
-  ) {
+  ):Promise<Job[]>  {
     const { filter, sort } = aqp(query);
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
@@ -381,7 +388,7 @@ export class JobService {
     return res;
   }
 
-  async findRecentJobs(query: string, current: number, pageSize: number) {
+  async findRecentJobs(query: string, current: number, pageSize: number):Promise<{items:Job[],meta:Meta}>  {
     const { filter, sort } = aqp(query); // Sử dụng `aqp` để phân tích query string thành bộ lọc
     if (filter.current) delete filter.current; // Xóa các tham số phân trang không cần thiết từ filter
     if (filter.pageSize) delete filter.pageSize;
@@ -448,7 +455,7 @@ export class JobService {
     });
   }
 
-  async toggleLikeJob(user_id: string, job_id: string) {
+  async toggleLikeJob(user_id: string, job_id: string) :Promise<void> {
     try {
       const user = await this.userService.findOne(user_id);
       const job = await this.jobRepository.findById(job_id);
@@ -471,7 +478,7 @@ export class JobService {
     }
   }
 
-  async findJobsByCompanyName(query: any,current:number,pageSize:number) {
+  async findJobsByCompanyName(query: any,current:number,pageSize:number):Promise<{items:Job[],meta:Meta}> {
     try {
       const { filter, sort } = aqp(query);
       if (filter.current) delete filter.current;
@@ -561,7 +568,7 @@ export class JobService {
     }
   }
 
-  async testSearch(query: any, current: number, pageSize: number) {
+  async testSearch(query: any, current: number, pageSize: number):Promise<Job[]|[]> {
     const { filter, sort } = aqp(query);
   
     if (filter.current) delete filter.current;

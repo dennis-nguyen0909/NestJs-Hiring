@@ -7,6 +7,7 @@ import { UsersModule } from '../users/users.module';
 import { CitiesModule } from '../cities/cities.module';
 import { LevelModule } from '../level/level.module';
 import { SkillEmployerModule } from '../skill_employer/skill.module';
+import { ApplicationModule } from '../application/application.module';
 
 @Module({
   imports: [
