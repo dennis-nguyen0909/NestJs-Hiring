@@ -9,14 +9,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Follow } from './schema/Follow.schema';
 import { Model, Types } from 'mongoose';
 import { UsersService } from '../users/users.service';
+import { IFollowService } from './follow.interface';
 
 @Injectable()
-export class FollowService {
+export class FollowService implements IFollowService {
   constructor(
     @InjectModel(Follow.name) private readonly followModel: Model<Follow>,
     private readonly userService: UsersService,
   ) {}
-  async followUser(createFollowDto: CreateFollowDto) {
+  async followUser(
+    createFollowDto: CreateFollowDto,
+  ): Promise<{ message: string; status: string }> {
     const { follower_id, following_id } = createFollowDto;
     const follower = await this.userService.findByObjectId(follower_id + '');
     const following = await this.userService.findByObjectId(following_id + '');
@@ -54,7 +57,10 @@ export class FollowService {
     if (existingFollow) {
       const res = await this.followModel.deleteOne({ _id: existingFollow._id });
       if (res.deletedCount > 0) {
-        return 'Unfollowed successfully';
+        return {
+          message: 'Unfollowed successfully',
+          status: 'ok',
+        };
       }
     } else {
       const follow = new this.followModel({
@@ -62,14 +68,20 @@ export class FollowService {
         following_id: following_id,
       });
       await follow.save();
-      return 'Followed successfully';
+      return {
+        message: 'Followed successfully',
+        status: 'ok',
+      };
     }
   }
-  async getFollowByUserId(id: string) {
+  async getFollowByUserId(id: string): Promise<Follow[]> {
     return await this.followModel.find({ follower_id: id });
   }
   // Phương thức kiểm tra xem user có đang follow nhà tuyển dụng hay không
-  async checkIfFollowing(followerId: string, employerId: string) {
+  async checkIfFollowing(
+    followerId: string,
+    employerId: string,
+  ): Promise<{ isFollowing: boolean }> {
     // Tìm thông tin người theo dõi
     const follower = await this.userService.findByObjectId(followerId + '');
     const employer = await this.userService.findByObjectId(employerId + '');
