@@ -42,7 +42,7 @@ export class NotificationGateway
   @SubscribeMessage('joinRoom')
   handleJoinRoom(client: Socket, data: { userId: number }) {
     // Client join vào "room" riêng của họ (phòng theo ID của ứng viên)
-    client.join(data.userId.toString());
+    client.join(data.userId + '');
     console.log(`Client ${client.id} joined room: ${data.userId}`);
   }
 }

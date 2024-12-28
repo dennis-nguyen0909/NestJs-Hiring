@@ -1,25 +1,21 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Cities } from './schema/Cities.schema';
+import { ICitiesService } from './cities.interface';
 
 @Injectable()
-export class CitiesService {
+export class CitiesService implements ICitiesService {
   constructor(@InjectModel('Cities') private citiesModel: Model<Cities>) {}
 
-  // Tạo mới city
-  create(createCityDto: CreateCityDto) {
+  create(createCityDto: CreateCityDto): Promise<Cities> {
     const newCity = new this.citiesModel(createCityDto);
     return newCity.save();
   }
 
-  async findAll(depth: number): Promise<any[]> {
+  async findAll(depth: number): Promise<Cities[]> {
     if (+depth === 1) {
       const res = await this.citiesModel.find().lean().exec();
       return res.map((city) => ({
@@ -62,7 +58,7 @@ export class CitiesService {
   }
 
   // Tìm thành phố theo code
-  async findByCode(code: number): Promise<any> {
+  async findByCode(code: number): Promise<Cities> {
     const city = await this.citiesModel
       .findOne({ code })
       .populate({
@@ -86,11 +82,11 @@ export class CitiesService {
     return city;
   }
 
-  async findOne(query: any): Promise<any | null> {
+  async findOne(query: any): Promise<Cities | null> {
     return await this.citiesModel.findOne(query).exec();
   }
 
-  async update(id: string, updateCityDto: UpdateCityDto): Promise<any> {
+  async update(id: string, updateCityDto: UpdateCityDto): Promise<Cities> {
     const updatedCity = await this.citiesModel
       .findByIdAndUpdate(id, updateCityDto, {
         new: true,
@@ -102,14 +98,14 @@ export class CitiesService {
     return updatedCity;
   }
 
-  async remove(id: string): Promise<any> {
+  async remove(id: string): Promise<{ message: string }> {
     const result = await this.citiesModel.findByIdAndDelete(id).exec();
     if (!result) {
       throw new NotFoundException(`City with ID ${id} not found`);
     }
     return { message: 'City successfully deleted' };
   }
-  async findDistrictsByCityId(cityId: string): Promise<any> {
+  async findDistrictsByCityId(cityId: string): Promise<Cities> {
     const city = await this.citiesModel
       .findOne({ _id: cityId })
       .populate({
