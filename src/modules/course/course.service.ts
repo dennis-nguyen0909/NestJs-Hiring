@@ -12,14 +12,16 @@ import { Model, Types } from 'mongoose';
 import { User } from '../users/schemas/User.schema';
 import { Meta } from '../types';
 import aqp from 'api-query-params';
+import { ICourseService } from './course.interface';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
-export class CourseService {
+export class CourseService implements ICourseService {
   constructor(
     @InjectModel(Course.name) private courseModel: Model<Course>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
-  async create(createCourseDto: CreateCourseDto) {
+  async create(createCourseDto: CreateCourseDto): Promise<Course> {
     const course = await this.courseModel.create(createCourseDto);
     if (!course) {
       throw new BadRequestException('Create course failed');
@@ -39,7 +41,7 @@ export class CourseService {
     current: number,
     pageSize: number,
   ): Promise<{ items: Course[]; meta: Meta }> {
-   const { filter, sort } = aqp(query);
+    const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
 
@@ -65,7 +67,7 @@ export class CourseService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Course> {
     const course = await this.courseModel
       .findOne({ _id: id })
       // .populate('user_id')
@@ -76,7 +78,7 @@ export class CourseService {
     return course;
   }
 
-  async update(id: string, updateCourseDto: UpdateCourseDto) {
+  async update(id: string, updateCourseDto: UpdateCourseDto): Promise<Course> {
     const course = await this.courseModel.findByIdAndUpdate(
       id,
       updateCourseDto,
@@ -88,7 +90,7 @@ export class CourseService {
     return course;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, userId: string): Promise<void> {
     const course = await this.courseModel.findById(id).exec();
     if (!course) {
       throw new NotFoundException(`Course #${id} not found`);

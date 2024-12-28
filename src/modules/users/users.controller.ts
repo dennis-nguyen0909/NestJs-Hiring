@@ -50,7 +50,7 @@ export class UsersController {
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string): Promise<{ items: User }> {
+  async getDetailUser(@Param('id') id: string): Promise<{ items: User }> {
     return await this.usersService.getDetailUser(id);
   }
 

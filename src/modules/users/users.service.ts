@@ -120,21 +120,6 @@ export class UsersService implements IUserRepository{
     }
   }
 
-  async findOne(id: string):Promise<User> {
-    try {
-      const user = await this.userRepository
-        .findOne({ _id: id })
-        .select('-password -code_id -code_expired ')
-        .populate('social_links')
-        // .populate('education_ids')
-      if (user) {
-        return user;
-      }
-      return null;
-    } catch (error) {
-      throw new NotFoundException();
-    }
-  }
   async findByObjectId(id:string){
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Invalid ID format');
@@ -693,5 +678,14 @@ export class UsersService implements IUserRepository{
       } catch (error) {
         throw new Error(error);
       }
+    }
+    async findOne(condition: any): Promise<User> {
+      const user = await this.userRepository.findOne({ where: condition });
+  
+      if (!user) {
+        throw new NotFoundException('User not found'); // Lỗi nếu không tìm thấy người dùng
+      }
+  
+      return user;
     }
 }
