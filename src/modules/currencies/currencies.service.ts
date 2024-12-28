@@ -9,14 +9,16 @@ import aqp from 'api-query-params';
 import { Currency } from './schema/currencies.schema';
 import { CreateCurrencyDto } from './dto/create-currency.dto';
 import { UpdateCurrencyDto } from './dto/update-currency.dto';
+import { ICurrenciesService } from './currentcies.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class CurrenciesService {
+export class CurrenciesService implements ICurrenciesService {
   constructor(
     @InjectModel(Currency.name)
     private readonly currencyModel: Model<Currency>,
   ) {}
-  async create(data: CreateCurrencyDto) {
+  async create(data: CreateCurrencyDto): Promise<Currency> {
     const response = await this.currencyModel.create(data);
     if (!response) {
       throw new BadRequestException('Failed');
@@ -24,7 +26,11 @@ export class CurrenciesService {
     return response;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Currency[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -50,7 +56,7 @@ export class CurrenciesService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Currency> {
     const job = await this.currencyModel.findOne({ _id: id });
     if (!job) {
       throw new NotFoundException();
@@ -58,7 +64,10 @@ export class CurrenciesService {
     return job;
   }
 
-  async update(id: string, updateLevelDto: UpdateCurrencyDto) {
+  async update(
+    id: string,
+    updateLevelDto: UpdateCurrencyDto,
+  ): Promise<Currency> {
     const job = await this.currencyModel.findByIdAndUpdate(id, updateLevelDto, {
       new: true,
       runValidators: true,
@@ -69,7 +78,7 @@ export class CurrenciesService {
     return job;
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length < 0) {
         throw new BadRequestException('Ids not found');
