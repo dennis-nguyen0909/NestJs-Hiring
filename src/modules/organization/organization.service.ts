@@ -1,9 +1,4 @@
-/* eslint-disable prettier/prettier */
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -11,57 +6,65 @@ import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { Organization } from './schema/organization.schema';
 import { User } from '../users/schemas/User.schema';
 import aqp from 'api-query-params';
+import { IOrganizationService } from './organization.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class OrganizationService {
+export class OrganizationService implements IOrganizationService {
   constructor(
     @InjectModel(Organization.name)
     private organizationModel: Model<Organization>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
-  // Tạo tổ chức mới
-  async create(createOrganizationDto: CreateOrganizationDto, userId: string) {
-    // Kiểm tra xem người dùng có tồn tại không
+  async create(
+    createOrganizationDto: CreateOrganizationDto,
+    userId: string,
+  ): Promise<Organization> {
     const user = await this.userModel.findById(createOrganizationDto.owner);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    // Kiểm tra xem user đã có tổ chức chưa
     const existingOrganization = await this.organizationModel.findOne({
       owner: createOrganizationDto.owner,
     });
 
     if (existingOrganization) {
       // Nếu đã có tổ chức, không cho phép tạo tổ chức mới
-     const updateOrgan = await this.update(
+      const updateOrgan = await this.update(
         existingOrganization._id.toString(),
         createOrganizationDto,
       );
-      return updateOrgan
-    }else{
+      return updateOrgan;
+    } else {
       // Nếu chưa có tổ chức, tạo tổ chức mới
       const createdOrganization = await this.organizationModel.create(
         createOrganizationDto,
       );
-  
+
       // Cập nhật user với tổ chức mới mà không cần gọi save()
       await this.userModel.updateOne(
         { _id: createOrganizationDto.owner },
         {
           $set: {
-            organization: new Types.ObjectId(createdOrganization._id.toString()),
+            organization: new Types.ObjectId(
+              createdOrganization._id.toString(),
+            ),
           },
         },
       );
-  
+
       return createdOrganization;
     }
   }
 
   // Lấy tất cả tổ chức
-  async findAll(query:string,current:number,pageSize:number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Organization[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -88,7 +91,7 @@ export class OrganizationService {
   }
 
   // Lấy tổ chức theo ID
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Organization> {
     const organization = await this.organizationModel.findById(id).exec();
     if (!organization) {
       throw new NotFoundException(`Organization with ID ${id} not found`);
@@ -97,7 +100,10 @@ export class OrganizationService {
   }
 
   // Cập nhật tổ chức
-  async update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
+  async update(
+    id: string,
+    updateOrganizationDto: UpdateOrganizationDto,
+  ): Promise<Organization> {
     // Kiểm tra tổ chức có tồn tại không
     const organization = await this.organizationModel.findById(id).exec();
     if (!organization) {
@@ -110,7 +116,7 @@ export class OrganizationService {
   }
 
   // Xóa tổ chức
-  async remove(id: string) {
+  async remove(id: string): Promise<Organization> {
     const organization = await this.organizationModel.findById(id).exec();
     if (!organization) {
       throw new NotFoundException(`Organization with ID ${id} not found`);
@@ -119,7 +125,7 @@ export class OrganizationService {
     return this.organizationModel.findByIdAndDelete(id).exec();
   }
 
-  async findByOwner(ownerId: string) {
+  async findByOwner(ownerId: string): Promise<Organization[]> {
     return this.organizationModel
       .find({ owner: ownerId })
       .populate('owner')
