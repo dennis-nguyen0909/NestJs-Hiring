@@ -1,0 +1,45 @@
+[
+    {
+      "name": "Full-time",
+      "key": "full-time",
+      "description": "Permanent, full-time employment contract.",
+      "user_id": "60f7c96a33e9b34d6c8b4567"
+    },
+    {
+      "name": "Part-time",
+      "key": "part-time",
+      "description": "Part-time employment contract.",
+      "user_id": "60f7c96a33e9b34d6c8b4568"
+    },
+    {
+      "name": "Freelance",
+      "key": "freelance",
+      "description": "Contract for freelancers or independent contractors.",
+      "user_id": "60f7c96a33e9b34d6c8b4569"
+    },
+    {
+      "name": "Internship",
+      "key": "internship",
+      "description": "Contract for interns or trainees.",
+      "user_id": "60f7c96a33e9b34d6c8b4570"
+    },
+    {
+      "name": "Temporary",
+      "key": "temporary",
+      "description": "Short-term employment contract.",
+      "user_id": "60f7c96a33e9b34d6c8b4571"
+    },
+    {
+      "name": "Seasonal",
+      "key": "seasonal",
+      "description": "Employment for seasonal work.",
+      "user_id": "60f7c96a33e9b34d6c8b4572"
+    },
+    {
+      "name": "Consultant",
+      "key": "consultant",
+      "description": "Consultancy-based contract for specialists.",
+      "user_id": "60f7c96a33e9b34d6c8b4573"
+    }
+  ]
+  

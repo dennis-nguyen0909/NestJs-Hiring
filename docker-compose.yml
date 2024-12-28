@@ -1,13 +1,24 @@
+version: '3.8'
+
 services:
   mongodb:
     image: mongo
+    container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 123456
+      MONGO_INITDB_DATABASE: hiring_db
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
-      - mongodb_data_container:/data/db
+      - mongodb_data:/data/db  # Tên volume cần khớp
+    networks:
+      - app-network
 
 volumes:
-  mongodb_data_container:
+  mongodb_data:  # Tên volume cũng phải là mongodb_data
+    external: false
+
+networks:
+  app-network:
+    driver: bridge

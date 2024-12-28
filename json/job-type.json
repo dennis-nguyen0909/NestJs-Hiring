@@ -1,0 +1,39 @@
+[
+    {
+      "name": "Office-based",
+      "key": "office-based",
+      "description": "Work performed primarily in an office environment.",
+      "user_id": "60f7c96a33e9b34d6c8b4581"
+    },
+    {
+      "name": "Remote",
+      "key": "remote",
+      "description": "Work performed entirely from a remote location, typically from home.",
+      "user_id": "60f7c96a33e9b34d6c8b4582"
+    },
+    {
+      "name": "Hybrid",
+      "key": "hybrid",
+      "description": "Work performed both in the office and remotely, often on a flexible schedule.",
+      "user_id": "60f7c96a33e9b34d6c8b4583"
+    },
+    {
+      "name": "On-site",
+      "key": "on-site",
+      "description": "Work that requires presence at a specific physical location or site.",
+      "user_id": "60f7c96a33e9b34d6c8b4584"
+    },
+    {
+      "name": "Flexible",
+      "key": "flexible",
+      "description": "Work that allows employees to choose their working hours and location, offering maximum flexibility.",
+      "user_id": "60f7c96a33e9b34d6c8b4585"
+    },
+    {
+      "name": "Shift work",
+      "key": "shift-work",
+      "description": "Work where employees are scheduled in shifts, often for 24-hour operations.",
+      "user_id": "60f7c96a33e9b34d6c8b4586"
+    }
+  ]
+  

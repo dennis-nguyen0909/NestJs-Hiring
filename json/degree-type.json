@@ -1,0 +1,33 @@
+[
+    {
+      "name": "Cử nhân",
+      "key": "cu-nhan",
+      "description": "Bằng đại học được cấp sau khi hoàn thành khóa học kéo dài từ 3 đến 4 năm.",
+      "user_id": "60f7c96a33e9b34d6c8b4581"
+    },
+    {
+      "name": "Thạc sĩ",
+      "key": "thac-si",
+      "description": "Bằng cấp cao hơn sau khi hoàn thành bằng cử nhân, thường yêu cầu học từ 1-2 năm.",
+      "user_id": "60f7c96a33e9b34d6c8b4582"
+    },
+    {
+      "name": "Tiến sĩ",
+      "key": "tien-si",
+      "description": "Bằng cấp cao nhất trong hệ thống học vấn, thường yêu cầu nghiên cứu và học tập trong nhiều năm.",
+      "user_id": "60f7c96a33e9b34d6c8b4583"
+    },
+    {
+      "name": "Cử nhân liên thông",
+      "key": "cu-nhan-lien-thong",
+      "description": "Bằng cử nhân được cấp cho những người đã có bằng trung cấp hoặc cao đẳng và học thêm để nâng cao bằng cấp.",
+      "user_id": "60f7c96a33e9b34d6c8b4584"
+    },
+    {
+      "name": "Chứng chỉ",
+      "key": "chung-chi",
+      "description": "Bằng cấp hoặc chứng nhận cấp cho người tham gia các khóa học ngắn hạn, thường tập trung vào các kỹ năng nghề nghiệp.",
+      "user_id": "60f7c96a33e9b34d6c8b4585"
+    }
+  ]
+  

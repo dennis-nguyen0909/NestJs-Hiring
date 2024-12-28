@@ -1,0 +1,57 @@
+[
+    {
+      "name": "Fresher (Mới ra trường)",
+      "key": "fresher",
+      "description": "Vị trí dành cho những người mới tốt nghiệp, chưa có kinh nghiệm thực tế trong công việc.",
+      "user_id": "60f7c96a33e9b34d6c8b4581"
+    },
+    {
+      "name": "Junior (Mới vào nghề)",
+      "key": "junior",
+      "description": "Vị trí dành cho những người có ít kinh nghiệm hoặc mới bắt đầu trong lĩnh vực công việc.",
+      "user_id": "60f7c96a33e9b34d6c8b4582"
+    },
+    {
+      "name": "Mid-level (Cấp độ trung gian)",
+      "key": "mid-level",
+      "description": "Vị trí yêu cầu ít nhất vài năm kinh nghiệm trong ngành và khả năng làm việc độc lập.",
+      "user_id": "60f7c96a33e9b34d6c8b4583"
+    },
+    {
+      "name": "Senior (Cấp cao)",
+      "key": "senior",
+      "description": "Vị trí yêu cầu nhiều năm kinh nghiệm và khả năng lãnh đạo, hướng dẫn đội nhóm.",
+      "user_id": "60f7c96a33e9b34d6c8b4584"
+    },
+    {
+      "name": "Lead (Trưởng nhóm)",
+      "key": "lead",
+      "description": "Vị trí dẫn dắt nhóm, có trách nhiệm quản lý và đưa ra quyết định chiến lược cho dự án hoặc bộ phận.",
+      "user_id": "60f7c96a33e9b34d6c8b4585"
+    },
+    {
+      "name": "Manager (Quản lý)",
+      "key": "manager",
+      "description": "Vị trí quản lý nhóm hoặc bộ phận, chịu trách nhiệm về các dự án, ngân sách và nhân sự.",
+      "user_id": "60f7c96a33e9b34d6c8b4586"
+    },
+    {
+      "name": "Director (Giám đốc)",
+      "key": "director",
+      "description": "Vị trí cấp cao, điều hành các bộ phận hoặc chiến lược toàn công ty, chịu trách nhiệm quyết định các mục tiêu dài hạn.",
+      "user_id": "60f7c96a33e9b34d6c8b4587"
+    },
+    {
+      "name": "VP (Phó giám đốc)",
+      "key": "vp",
+      "description": "Vị trí lãnh đạo cấp cao trong công ty, hỗ trợ giám đốc điều hành trong việc thực hiện các chiến lược công ty.",
+      "user_id": "60f7c96a33e9b34d6c8b4588"
+    },
+    {
+      "name": "C-suite (Giám đốc điều hành, Giám đốc tài chính, Giám đốc công nghệ)",
+      "key": "c-suite",
+      "description": "Cấp độ lãnh đạo cao nhất trong công ty, bao gồm các vị trí như CEO, CFO, CTO, chịu trách nhiệm điều hành và định hướng công ty.",
+      "user_id": "60f7c96a33e9b34d6c8b4589"
+    }
+  ]
+  

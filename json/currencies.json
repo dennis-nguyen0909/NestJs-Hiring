@@ -1,0 +1,94 @@
+[
+    {
+      "name": "US Dollar",
+      "code": "USD",
+      "symbol": "$",
+      "key": "usd-key-001",
+      "user_id": "60f7c96a33e9b34d6c8b4567"
+    },
+    {
+      "name": "Euro",
+      "code": "EUR",
+      "symbol": "€",
+      "key": "eur-key-002",
+      "user_id": "60f7c96a33e9b34d6c8b4568"
+    },
+    {
+      "name": "Japanese Yen",
+      "code": "JPY",
+      "symbol": "¥",
+      "key": "jpy-key-003",
+      "user_id": "60f7c96a33e9b34d6c8b4569"
+    },
+    {
+      "name": "British Pound",
+      "code": "GBP",
+      "symbol": "£",
+      "key": "gbp-key-004",
+      "user_id": "60f7c96a33e9b34d6c8b456a"
+    },
+    {
+      "name": "Vietnamese Dong",
+      "code": "VND",
+      "symbol": "₫",
+      "key": "vnd-key-005",
+      "user_id": "60f7c96a33e9b34d6c8b456b"
+    },
+    {
+      "name": "Canadian Dollar",
+      "code": "CAD",
+      "symbol": "C$",
+      "key": "cad-key-006",
+      "user_id": "60f7c96a33e9b34d6c8b456c"
+    },
+    {
+      "name": "Australian Dollar",
+      "code": "AUD",
+      "symbol": "A$",
+      "key": "aud-key-007",
+      "user_id": "60f7c96a33e9b34d6c8b456d"
+    },
+    {
+      "name": "Swiss Franc",
+      "code": "CHF",
+      "symbol": "CHF",
+      "key": "chf-key-008",
+      "user_id": "60f7c96a33e9b34d6c8b456e"
+    },
+    {
+      "name": "Chinese Yuan",
+      "code": "CNY",
+      "symbol": "¥",
+      "key": "cny-key-009",
+      "user_id": "60f7c96a33e9b34d6c8b456f"
+    },
+    {
+      "name": "Singapore Dollar",
+      "code": "SGD",
+      "symbol": "S$",
+      "key": "sgd-key-010",
+      "user_id": "60f7c96a33e9b34d6c8b4570"
+    },
+    {
+      "name": "Indian Rupee",
+      "code": "INR",
+      "symbol": "₹",
+      "key": "inr-key-011",
+      "user_id": "60f7c96a33e9b34d6c8b4571"
+    },
+    {
+      "name": "Russian Ruble",
+      "code": "RUB",
+      "symbol": "₽",
+      "key": "rub-key-012",
+      "user_id": "60f7c96a33e9b34d6c8b4572"
+    },
+    {
+      "name": "Brazilian Real",
+      "code": "BRL",
+      "symbol": "R$",
+      "key": "brl-key-013",
+      "user_id": "60f7c96a33e9b34d6c8b4573"
+    }
+  ]
+  
