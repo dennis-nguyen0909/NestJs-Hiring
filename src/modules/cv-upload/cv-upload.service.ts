@@ -6,15 +6,17 @@ import { UsersService } from '../users/users.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import aqp from 'api-query-params';
+import { ICvUploadService } from './cv-upload.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class CvUploadService {
+export class CvUploadService implements ICvUploadService {
   constructor(
-    @InjectModel('CVUploads') private uploadCvModel: Model<CVUploads>,
+    @InjectModel(CVUploads.name) private uploadCvModel: Model<CVUploads>,
     private readonly cloudinaryService: CloudinaryService,
     private readonly userService: UsersService,
   ) {}
-  async create(file: Express.Multer.File, userId: string) {
+  async create(file: Express.Multer.File, userId: string): Promise<CVUploads> {
     const findUser = await this.userService.findOne(userId);
     if (!findUser) {
       throw new BadRequestException('User not found');
@@ -37,7 +39,7 @@ export class CvUploadService {
     return result;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<CVUploads> {
     const res = await this.uploadCvModel.findById(id);
     if (!res) {
       throw new BadRequestException('Cv not found');
@@ -45,7 +47,7 @@ export class CvUploadService {
       return res;
     }
   }
-  async findByUserId(id: string) {
+  async findByUserId(id: string): Promise<any> {
     let objectId;
     try {
       objectId = new Types.ObjectId(id);
@@ -60,7 +62,11 @@ export class CvUploadService {
       return res;
     }
   }
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: CVUploads[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -85,7 +91,7 @@ export class CvUploadService {
       },
     };
   }
-  async removeByUserId(cvId: string, userId: string) {
+  async removeByUserId(cvId: string, userId: string): Promise<[]> {
     // Convert the user ID and CV ID to ObjectId
     // Validate cvId and userId
     if (!Types.ObjectId.isValid(cvId)) {
@@ -132,7 +138,7 @@ export class CvUploadService {
     }
   }
 
-  async removeMany(ids: Array<string>) {
+  async removeMany(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length === 1) {
         const res = await this.uploadCvModel.deleteOne({ _id: ids[0] });

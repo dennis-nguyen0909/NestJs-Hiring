@@ -13,6 +13,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CvUploadService } from './cv-upload.service';
 import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorator/customize';
+import { CVUploads } from './schema/CvUploads.schema';
+import { Meta } from '../types';
 @Controller('upload-cvs')
 @ApiTags('UploadCv')
 export class CvUploadController {
@@ -39,18 +41,18 @@ export class CvUploadController {
   async create(
     @UploadedFile() file: Express.Multer.File,
     @Body('user_id') userId: string,
-  ) {
+  ): Promise<CVUploads> {
     return await this.cvUploadService.create(file, userId);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<CVUploads> {
     return await this.cvUploadService.findOne(id);
   }
   @Get('user/:id')
   @ResponseMessage('Success')
-  async findByUserId(@Param('id') id: string) {
+  async findByUserId(@Param('id') id: string): Promise<any> {
     return await this.cvUploadService.findByUserId(id);
   }
 
@@ -60,7 +62,7 @@ export class CvUploadController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: CVUploads[]; meta: Meta }>  {
     return await this.cvUploadService.findAll(query, +current, +pageSize);
   }
 
@@ -69,13 +71,13 @@ export class CvUploadController {
   async removeByUserId(
     @Param('id') cvId: string,
     @Body('userId') userId: string,
-  ) {
+  ): Promise<[]> {
     return await this.cvUploadService.removeByUserId(cvId, userId);
   }
 
   @Delete('')
   @ResponseMessage('Success')
-  async removeMany(@Body('ids') ids: Array<string>) {
+  async removeMany(@Body('ids') ids: Array<string>): Promise<[]> {
     return await this.cvUploadService.removeMany(ids);
   }
 }
