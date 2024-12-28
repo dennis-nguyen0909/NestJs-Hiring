@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -10,13 +9,15 @@ import aqp from 'api-query-params';
 import { JobType } from './schema/JobType.schema';
 import { CreateJobTypeDto } from './dto/create-job-type.dto';
 import { UpdateJobTypeDto } from './dto/update-job-type.dto';
+import { IJobTypeService } from './job-type.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class JobTypeService {
+export class JobTypeService implements IJobTypeService {
   constructor(
     @InjectModel('JobType') private readonly jobTypeModel: Model<JobType>,
   ) {}
-  async create(createJobType: CreateJobTypeDto) {
+  async create(createJobType: CreateJobTypeDto): Promise<JobType> {
     const jobType = await this.jobTypeModel.create(createJobType);
     if (!jobType) {
       throw new BadRequestException('Failed');
@@ -24,7 +25,11 @@ export class JobTypeService {
     return jobType;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: JobType[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -50,7 +55,7 @@ export class JobTypeService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<JobType> {
     const job = await this.jobTypeModel.findOne({ _id: id });
     if (!job) {
       throw new NotFoundException();
@@ -58,7 +63,7 @@ export class JobTypeService {
     return job;
   }
 
-  async update(id: string, updateLevelDto: UpdateJobTypeDto) {
+  async update(id: string, updateLevelDto: UpdateJobTypeDto): Promise<JobType> {
     const job = await this.jobTypeModel.findByIdAndUpdate(id, updateLevelDto, {
       new: true,
       runValidators: true,
@@ -69,7 +74,7 @@ export class JobTypeService {
     return job;
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length < 0) {
         throw new BadRequestException('Ids not found');

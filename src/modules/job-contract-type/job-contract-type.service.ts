@@ -10,9 +10,10 @@ import { JobContractType } from './schema/job-contract-type.schema';
 import { CreateJobContractTypeDto } from './dto/create-job-contract-type.dto';
 import { UpdateJobContractTypeDto } from './dto/update-job-contract-type.dto';
 import { Meta } from '../types';
+import { IJobContractTypeService } from './job-contract-type.interface';
 
 @Injectable()
-export class JobContractTypeService {
+export class JobContractTypeService implements IJobContractTypeService {
   constructor(
     @InjectModel(JobContractType.name)
     private readonly jobContractType: Model<JobContractType>,
