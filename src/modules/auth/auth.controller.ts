@@ -95,7 +95,9 @@ export class AuthController {
   @Post('retry-active')
   @Public()
   @ResponseMessage('Success')
-  async retryActive(@Body('email') email: string) {
+  async retryActive(
+    @Body('email') email: string,
+  ): Promise<{ user_id: string }> {
     return await this.authService.retryActive(email);
   }
 

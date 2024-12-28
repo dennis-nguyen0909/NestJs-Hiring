@@ -41,7 +41,7 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(username);
-    if(!user){
+    if (!user) {
       throw new BadRequestException('User not found');
     }
     const isValidPassword = await comparePasswordHelper(
@@ -104,7 +104,7 @@ export class AuthService {
     }
   }
 
-  async retryActive(email: string): Promise<any> {
+  async retryActive(email: string): Promise<{ user_id: string }> {
     return this.userService.retryActive(email);
   }
 

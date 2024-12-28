@@ -36,7 +36,7 @@ export class UsersController {
     @Query() query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: User[]; meta: Meta }> {
     return await this.usersService.findAll(query, +current, +pageSize);
   }
   @Get('/company')
@@ -50,18 +50,21 @@ export class UsersController {
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<{ items: User }> {
     return await this.usersService.getDetailUser(id);
   }
 
   @Patch()
   @ResponseMessage('Success')
-  async update(@Body() updateUserDto: UpdateUserDto) {
+  async update(@Body() updateUserDto: UpdateUserDto): Promise<Partial<User>> {
     return await this.usersService.update(updateUserDto);
   }
   @Delete('delete-avatar')
-  async deleteAvatarCompany(@Body("type") type:string,@Body('user_id') userId:string){
-    return await this.usersService.removeAvatarEmployer(type,userId);
+  async deleteAvatarCompany(
+    @Body('type') type: string,
+    @Body('user_id') userId: string,
+  ): Promise<[]> {
+    return await this.usersService.removeAvatarEmployer(type, userId);
   }
 
   @Delete(':id')
@@ -89,13 +92,16 @@ export class UsersController {
   }
 
   @Get('check-update-company/:user_id')
-  async checkAndUpdateProgressSetupCompany(@Param('user_id') userId:string){
+  async checkAndUpdateProgressSetupCompany(@Param('user_id') userId: string) {
     return await this.usersService.checkAndUpdateProgressSetupCompany(userId);
   }
 
   @Get('profile/:id')
-  async getProfileCandidate(@Param('id') userId:string,@Req() req){
+  async getProfileCandidate(
+    @Param('id') userId: string,
+    @Req() req,
+  ): Promise<{ items: User }> {
     const employerId = req?.user?._id;
-    return await this.usersService.getProfileCandidate(userId,employerId);
+    return await this.usersService.getProfileCandidate(userId, employerId);
   }
 }

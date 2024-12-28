@@ -23,8 +23,9 @@ import { AuthProviderService } from '../auth-provider/auth-provider.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { Meta } from '../types';
+import { IUserRepository } from './user.interface';
 @Injectable()
-export class UsersService {
+export class UsersService implements IUserRepository{
   constructor(
     @InjectModel(User.name) private readonly userRepository: Model<User>,
     private mailService: MailerService,
@@ -34,7 +35,7 @@ export class UsersService {
     private notificationService: NotificationService
   ) {}
 
-  isEmailExists = async (email: string) => {
+  isEmailExists = async (email: string): Promise<boolean> => {
     const user = await this.userRepository.exists({ email });
     if (user) {
       return true;
@@ -67,7 +68,7 @@ export class UsersService {
     return this.userRepository.create(newUser);
   }
   
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(query: string, current: number, pageSize: number):Promise<{items:User[],meta:Meta}> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -101,11 +102,11 @@ export class UsersService {
     };
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(email: string):Promise<User> {
     const user = await this.userRepository.findOne({ email });
     return user;
   }
-  async findOneFilter(id:string){
+  async findOneFilter(id:string):Promise<User>{
     try {
       const user = await this.userRepository
         .findOne({ _id: id })
@@ -119,7 +120,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string):Promise<User> {
     try {
       const user = await this.userRepository
         .findOne({ _id: id })
@@ -155,7 +156,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
   }
-  async getDetailUser(id: string) {
+  async getDetailUser(id: string):Promise<{items:User}> {
     try {
       const user = await this.userRepository
       .findOne({ _id: id })
@@ -193,7 +194,7 @@ export class UsersService {
     }
   }
 
-  async update(updateUserDto: UpdateUserDto) {
+  async update(updateUserDto: UpdateUserDto): Promise<Partial<User>>{
     try {
       // Kiểm tra định dạng và độ dài số điện thoại
       const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g; // Kiểm tra số điện thoại chỉ chứa các chữ số và không quá 10 ký tự
@@ -292,7 +293,7 @@ export class UsersService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string):Promise<string> {
     // Kiểm tra xem id có phải là ObjectId hợp lệ không
     if (!mongoose.isValidObjectId(id)) {
       throw new BadRequestException('Id không đúng định dạng');
@@ -406,12 +407,13 @@ export class UsersService {
     };
   }
 
-  async retryActive(email: string) {
-    const user = await this.userRepository.findOne({ email });
+  async retryActive(email: string): Promise<{ user_id: string }>  {
+    const user:User | null = await this.userRepository.findOne({ email });
 
-    if(!user){
-      throw new BadRequestException('User not found');
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
     }
+    
     if(user.is_active){
       throw new BadRequestException('User is active');
     }
@@ -435,7 +437,7 @@ export class UsersService {
     });
 
     return {
-        user_id: user._id,
+        user_id: user._id.toString(),
     };
   }
 
@@ -623,7 +625,7 @@ export class UsersService {
       if(user) return user;
       return await this.create(facebookUser);
     }
-    async removeAvatarEmployer(type:string,userId:string){
+    async removeAvatarEmployer(type:string,userId:string):Promise<[]>{
       try {
       
           const user = await this.userRepository.findOne({ _id: userId });
@@ -669,7 +671,7 @@ export class UsersService {
         throw new BadRequestException(error)
       }
     }
-    async getProfileCandidate (candidateId:string,employerId:string){
+    async getProfileCandidate (candidateId:string,employerId:string):Promise<{items:User}>{
       try {
         const candidate =  await this.getDetailUser(candidateId);
         const employer= await this.getDetailUser(employerId);
