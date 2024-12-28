@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class CV extends Document {
-  @Prop({ type: Types.ObjectId, ref: 'Use' })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   user_id: Types.ObjectId;
 
   @Prop()

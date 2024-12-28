@@ -13,20 +13,20 @@ import { CV } from './schema/CV.schema';
 import aqp from 'api-query-params';
 import { DeleteCvDto } from './dto/delete-cv.dto';
 import * as PDFDocument from 'pdfkit';
-import * as fs from 'fs';
-import * as path from 'path';
 import { User } from '../users/schemas/User.schema';
 import { Project } from '../project/schema/project.schema';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { cloudinaryPublicIdRegex, cloudinaryPublicIdRegexNew } from 'src/helpers/util';
+import { cloudinaryPublicIdRegexNew } from 'src/helpers/util';
+import { ICvService } from './cv.interface';
+import { Meta } from '../types';
 @Injectable()
-export class CvService {
+export class CvService implements ICvService {
   constructor(
     @InjectModel('CV') private cvRepository: Model<CV>,
     @InjectModel(User.name) private userModel: Model<User>,
    private cloudinaryService:CloudinaryService
   ) {}
-  async create(createCvDto: CreateCvDto) {
+  async create(createCvDto: CreateCvDto):Promise<CV> {
    const cv:CV = await this.cvRepository.create(createCvDto);
    const user:User = await this.userModel.findOne({_id:createCvDto.user_id})
    if(!user){
@@ -40,7 +40,7 @@ export class CvService {
     return cv
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(query: string, current: number, pageSize: number):Promise<{items:CV[],meta: Meta}> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -68,11 +68,11 @@ export class CvService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string):Promise<CV> {
     return await this.cvRepository.findById(id);
   }
 
-  async update(id: string, updateCvDto: UpdateCvDto) {
+  async update(id: string, updateCvDto: UpdateCvDto):Promise<{message:string,data:CV}> {
     try {
       const cv = await this.cvRepository.findByIdAndUpdate(id, updateCvDto, {
         new: true,
@@ -88,7 +88,7 @@ export class CvService {
     }
   }
 
-  async remove(data: DeleteCvDto, userId: string) {
+  async remove(data: DeleteCvDto, userId: string):Promise<{ message: string; data: any[] }>{
     const { ids } = data;
     
     // Tìm người dùng
@@ -180,7 +180,7 @@ export class CvService {
     query: string,
     current: number,
     pageSize: number,
-  ) {
+  ): Promise<{data:{items:CV[],meta:Meta}}> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -367,11 +367,11 @@ export class CvService {
     return pdfBuffer;
   }
 
-  async downloadPFD(){
+  async downloadPFD(): Promise<any>{
 
   }
 
-  async delete(id: string, userId: string) {
+  async delete(id: string, userId: string):Promise<void> {
     const cv = await this.cvRepository.findById(id).exec();
     if (!cv) {
       throw new NotFoundException(`cv #${id} not found`);

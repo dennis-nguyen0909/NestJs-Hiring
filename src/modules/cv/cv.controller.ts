@@ -16,6 +16,8 @@ import { UpdateCvDto } from './dto/update-cv.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorator/customize';
 import { DeleteCvDto } from './dto/delete-cv.dto';
+import { CV } from './schema/CV.schema';
+import { Meta } from '../types';
 
 @Controller('cvs')
 @ApiTags('CV')
@@ -24,7 +26,7 @@ export class CvController {
 
   @Post()
   @ResponseMessage('success')
-  async create(@Body() createCvDto: CreateCvDto) {
+  async create(@Body() createCvDto: CreateCvDto): Promise<CV> {
     return await this.cvService.create(createCvDto);
   }
 
@@ -35,7 +37,7 @@ export class CvController {
     @Res() res,
   ): Promise<void> {
     // Gọi phương thức từ service để lấy đường dẫn file CV
-    const buffer = await await this.cvService.generalPDF(userId);
+    const buffer = await this.cvService.generalPDF(userId);
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename=CV.pdf',
@@ -50,31 +52,37 @@ export class CvController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: CV[]; meta: Meta }> {
     return await this.cvService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<CV> {
     return await this.cvService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('success')
-  async update(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCvDto: UpdateCvDto,
+  ): Promise<{ message: string; data: CV }> {
     return await this.cvService.update(id, updateCvDto);
   }
 
   @Delete()
   @ResponseMessage('success')
-  async remove(@Body() data: DeleteCvDto, @Req() req) {
+  async remove(
+    @Body() data: DeleteCvDto,
+    @Req() req,
+  ): Promise<{ message: string; data: any[] }> {
     const userId = req.user._id;
     return await this.cvService.remove(data, userId);
   }
   @Delete(':id')
   @ResponseMessage('success')
-  async delete(@Param('id') id: string, @Req() req) {
+  async delete(@Param('id') id: string, @Req() req): Promise<void> {
     const userId = req.user._id;
     return await this.cvService.delete(id, userId);
   }
@@ -86,7 +94,7 @@ export class CvController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ data: { items: CV[]; meta: Meta } }> {
     return await this.cvService.findCvByUserId(id, query, +current, +pageSize);
   }
 }
