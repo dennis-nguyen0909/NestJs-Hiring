@@ -19,6 +19,8 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { Public, ResponseMessage } from 'src/decorator/customize';
+import { Role } from './schema/Role.schema';
+import { Meta } from '../types';
 
 @Controller('role')
 @ApiTags('Role')
@@ -30,13 +32,13 @@ export class RoleController {
   @ApiOperation({ summary: 'Tạo role mới' })
   @ApiResponse({ status: 201, description: 'Role được tạo thành công.' })
   @ApiResponse({ status: 400, description: 'Dữ liệu không hợp lệ.' })
-  async create(@Body() createRoleDto: CreateRoleDto) {
+  async create(@Body() createRoleDto: CreateRoleDto): Promise<Role> {
     return await this.roleService.create(createRoleDto);
   }
 
   @Get('employer')
   @ResponseMessage('Success')
-  async getRoleEmployer() {
+  async getRoleEmployer(): Promise<Role> {
     return await this.roleService.getRoleEmployer();
   }
 
@@ -66,7 +68,7 @@ export class RoleController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: Role[]; meta: Meta }> {
     return await this.roleService.findAll(query, +current, +pageSize);
   }
 
@@ -75,7 +77,7 @@ export class RoleController {
   @ApiParam({ name: 'id', description: 'ID của role', type: String })
   @ApiResponse({ status: 200, description: 'Thông tin role.' })
   @ApiResponse({ status: 404, description: 'Role không tồn tại.' })
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<Role> {
     return await this.roleService.findOne(id);
   }
 
@@ -88,7 +90,10 @@ export class RoleController {
   })
   @ApiResponse({ status: 200, description: 'Role được cập nhật thành công.' })
   @ApiResponse({ status: 404, description: 'Role không tồn tại.' })
-  async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateRoleDto: UpdateRoleDto,
+  ): Promise<Role> {
     return await this.roleService.update(id, updateRoleDto);
   }
 
@@ -97,7 +102,7 @@ export class RoleController {
   @ApiParam({ name: 'id', description: 'ID của role cần xóa', type: String })
   @ApiResponse({ status: 200, description: 'Role đã được xóa.' })
   @ApiResponse({ status: 404, description: 'Role không tồn tại.' })
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<{ message: string }> {
     return await this.roleService.remove(id);
   }
 }

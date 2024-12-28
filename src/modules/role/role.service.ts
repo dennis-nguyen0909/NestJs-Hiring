@@ -5,12 +5,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Role } from './schema/Role.schema';
 import aqp from 'api-query-params';
+import { IRoleService } from './role.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class RoleService {
-  constructor(@InjectModel('Role') private roleRepository: Model<Role>) {}
+export class RoleService implements IRoleService {
+  constructor(@InjectModel(Role.name) private roleRepository: Model<Role>) {}
 
-  async create(createRoleDto: CreateRoleDto) {
+  async create(createRoleDto: CreateRoleDto): Promise<Role> {
     const { role_name, role_permission } = createRoleDto;
     const uppercasedRoleName = role_name.toUpperCase().trim();
 
@@ -28,7 +30,11 @@ export class RoleService {
     return newRole;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Role[]; meta: Meta }> {
     try {
       const { filter, sort } = aqp(query);
       if (filter.current) delete filter.current;
@@ -60,7 +66,7 @@ export class RoleService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Role> {
     const role = await this.roleRepository.findById(id);
     if (!role) {
       throw new BadRequestException('Role not found');
@@ -68,7 +74,7 @@ export class RoleService {
     return role;
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto) {
+  async update(id: string, updateRoleDto: UpdateRoleDto): Promise<Role> {
     const updatedRole = await this.roleRepository.findByIdAndUpdate(
       id,
       updateRoleDto,
@@ -80,7 +86,7 @@ export class RoleService {
     return updatedRole;
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<{ message: string }> {
     const result = await this.roleRepository.deleteOne({ _id: id });
     if (result.deletedCount === 0) {
       throw new BadRequestException('Role not found');
@@ -88,12 +94,12 @@ export class RoleService {
     return { message: 'Role deleted successfully' }; // Provide meaningful response
   }
 
-  async findByRoleName(role_name: string) {
+  async findByRoleName(role_name: string): Promise<Role> {
     const role = await this.roleRepository.findOne({ role_name });
     return role;
   }
 
-  async getRoleEmployer() {
+  async getRoleEmployer(): Promise<Role> {
     return this.roleRepository.findOne({ role_name: 'EMPLOYER' });
   }
 }
