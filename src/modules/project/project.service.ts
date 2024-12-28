@@ -12,14 +12,15 @@ import { Model, Types } from 'mongoose';
 import { User } from '../users/schemas/User.schema';
 import { Meta } from '../types';
 import aqp from 'api-query-params';
+import { IProjectService } from './project.interface';
 
 @Injectable()
-export class ProjectService {
+export class ProjectService implements IProjectService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<Project>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
-  async create(createProjectDto: CreateProjectDto) {
+  async create(createProjectDto: CreateProjectDto): Promise<Project> {
     const project = await this.projectModel.create(createProjectDto);
     if (!project) {
       throw new BadRequestException('Create project failed');
@@ -71,11 +72,14 @@ export class ProjectService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Project> {
     return this.projectModel.findById({ _id: id });
   }
 
-  async update(id: string, updateProjectDto: UpdateProjectDto) {
+  async update(
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
     const updateProject = await this.projectModel.findByIdAndUpdate(
       id,
       updateProjectDto,
@@ -87,7 +91,7 @@ export class ProjectService {
     return updateProject;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, userId: string): Promise<void> {
     const project = await this.projectModel.findById(id).exec();
     if (!project) {
       throw new NotFoundException(`Prize #${id} not found`);
