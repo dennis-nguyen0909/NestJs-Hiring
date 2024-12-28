@@ -9,14 +9,16 @@ import aqp from 'api-query-params';
 import { TeamSize } from './schema/team_size.schema';
 import { CreateTeamsizeDto } from './dto/create-teamsize.dto';
 import { UpdateTeamsizeDto } from './dto/update-teamsize.dto';
+import { ITeamsizeService } from './teamsize.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class TeamsizeService {
+export class TeamsizeService implements ITeamsizeService {
   constructor(
     @InjectModel(TeamSize.name)
     private readonly teamSizeModel: Model<TeamSize>,
   ) {}
-  async create(createDto: CreateTeamsizeDto) {
+  async create(createDto: CreateTeamsizeDto): Promise<TeamSize> {
     const response = await this.teamSizeModel.create(createDto);
     if (!response) {
       throw new BadRequestException('Failed');
@@ -24,7 +26,11 @@ export class TeamsizeService {
     return response;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: TeamSize[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -50,7 +56,7 @@ export class TeamsizeService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<TeamSize> {
     const response = await this.teamSizeModel.findOne({ _id: id });
     if (!response) {
       throw new NotFoundException();
@@ -58,7 +64,7 @@ export class TeamsizeService {
     return response;
   }
 
-  async update(id: string, updateDto: UpdateTeamsizeDto) {
+  async update(id: string, updateDto: UpdateTeamsizeDto): Promise<TeamSize> {
     const response = await this.teamSizeModel.findByIdAndUpdate(id, updateDto, {
       new: true,
       runValidators: true,
@@ -69,7 +75,7 @@ export class TeamsizeService {
     return response;
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length < 0) {
         throw new BadRequestException('Ids not found');

@@ -44,7 +44,7 @@ export class SocialLinkController {
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
     @Query('query') query: string,
-  ): Promise<{ items: SocialLink[]; meta: Meta }>  {
+  ): Promise<{ items: SocialLink[]; meta: Meta }> {
     return await this.socialLinkService.getSocialLinkByUserId(
       req.user._id,
       +current,
