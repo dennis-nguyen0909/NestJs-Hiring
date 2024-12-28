@@ -9,6 +9,7 @@ import aqp from 'api-query-params';
 import { JobContractType } from './schema/job-contract-type.schema';
 import { CreateJobContractTypeDto } from './dto/create-job-contract-type.dto';
 import { UpdateJobContractTypeDto } from './dto/update-job-contract-type.dto';
+import { Meta } from '../types';
 
 @Injectable()
 export class JobContractTypeService {
@@ -16,7 +17,7 @@ export class JobContractTypeService {
     @InjectModel(JobContractType.name)
     private readonly jobContractType: Model<JobContractType>,
   ) {}
-  async create(data: CreateJobContractTypeDto) {
+  async create(data: CreateJobContractTypeDto): Promise<JobContractType> {
     const response = await this.jobContractType.create(data);
     if (!response) {
       throw new BadRequestException('Failed');
@@ -24,7 +25,11 @@ export class JobContractTypeService {
     return response;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: JobContractType[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -50,7 +55,7 @@ export class JobContractTypeService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<JobContractType> {
     const job = await this.jobContractType.findOne({ _id: id });
     if (!job) {
       throw new NotFoundException();
@@ -58,7 +63,10 @@ export class JobContractTypeService {
     return job;
   }
 
-  async update(id: string, updateLevelDto: UpdateJobContractTypeDto) {
+  async update(
+    id: string,
+    updateLevelDto: UpdateJobContractTypeDto,
+  ): Promise<JobContractType> {
     const job = await this.jobContractType.findByIdAndUpdate(
       id,
       updateLevelDto,
@@ -73,7 +81,7 @@ export class JobContractTypeService {
     return job;
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length < 0) {
         throw new BadRequestException('Ids not found');

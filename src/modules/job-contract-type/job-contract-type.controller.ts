@@ -13,6 +13,8 @@ import { ResponseMessage } from 'src/decorator/customize';
 import { JobContractTypeService } from './job-contract-type.service';
 import { CreateJobContractTypeDto } from './dto/create-job-contract-type.dto';
 import { UpdateJobContractTypeDto } from './dto/update-job-contract-type.dto';
+import { JobContractType } from './schema/job-contract-type.schema';
+import { Meta } from '../types';
 @Controller('job-contracts')
 @ApiTags('JobTypes')
 export class JobContractTypeController {
@@ -22,7 +24,9 @@ export class JobContractTypeController {
 
   @Post()
   @ResponseMessage('Success')
-  async create(@Body() createJobType: CreateJobContractTypeDto) {
+  async create(
+    @Body() createJobType: CreateJobContractTypeDto,
+  ): Promise<JobContractType> {
     return await this.jobContractTypeService.create(createJobType);
   }
 
@@ -32,7 +36,7 @@ export class JobContractTypeController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: JobContractType[]; meta: Meta }> {
     return await this.jobContractTypeService.findAll(
       query,
       +current,
@@ -42,7 +46,7 @@ export class JobContractTypeController {
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<JobContractType> {
     return await this.jobContractTypeService.findOne(id);
   }
 
@@ -51,13 +55,13 @@ export class JobContractTypeController {
   async update(
     @Param('id') id: string,
     @Body() updateLevelDto: UpdateJobContractTypeDto,
-  ) {
+  ): Promise<JobContractType> {
     return await this.jobContractTypeService.update(id, updateLevelDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  async remove(@Body('ids') ids: Array<string>) {
+  async remove(@Body('ids') ids: Array<string>): Promise<[]> {
     return await this.jobContractTypeService.remove(ids);
   }
 }
