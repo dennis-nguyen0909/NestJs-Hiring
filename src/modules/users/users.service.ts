@@ -22,6 +22,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthProviderService } from '../auth-provider/auth-provider.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { NotificationService } from 'src/notification/notification.service';
+import { Meta } from '../types';
 @Injectable()
 export class UsersService {
   constructor(
@@ -41,7 +42,7 @@ export class UsersService {
     return false;
   };
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto):Promise<User> {
     const {
       password,
       authProvider,
@@ -517,7 +518,7 @@ export class UsersService {
     return completion;
   }
 
- async getAllCompany(query:string,current:number,pageSize:number){
+ async getAllCompany(query:string,current:number,pageSize:number):Promise<{items:User[],meta:Meta}> {
     const {filter,sort}=aqp(query);
     if(filter.current) delete filter.current;
     if(filter.pageSize) delete filter.pageSize;
@@ -583,7 +584,7 @@ export class UsersService {
     }
 
     // Kiểm tra và cập nhật company_info
-    if (user.company_name && user.description && user.avatar_company && user.banner_company) {
+    if (user.company_name && user.avatar_company && user.banner_company) {
       user.progress_setup.company_info = true;
     }
 

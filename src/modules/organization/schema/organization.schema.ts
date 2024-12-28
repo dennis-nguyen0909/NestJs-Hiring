@@ -22,7 +22,7 @@ export class Organization extends Document {
   @Prop({ required: true, type: String })
   company_website: string; // Website của tổ chức
 
-  @Prop({ required: true, type: String })
+  @Prop({ required: false, type: String })
   company_vision: string; // Tầm nhìn của công ty
 
   @Prop({ required: false, type: String })

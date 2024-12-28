@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -13,10 +12,11 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Public, ResponseMessage } from 'src/decorator/customize';
+import { ResponseMessage } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { query } from 'express';
+import { User } from './schemas/User.schema';
+import { Meta } from '../types';
 
 @Controller('users')
 @ApiTags('Users')
@@ -25,7 +25,8 @@ export class UsersController {
 
   @Post('create')
   @ResponseMessage('Create user successfully')
-  async create(@Body() createUserDto: CreateUserDto) {
+  // eslint-disable-next-line prettier/prettier
+  async create(@Body() createUserDto: CreateUserDto): Promise<User>  {
     return await this.usersService.create(createUserDto);
   }
 
@@ -43,7 +44,7 @@ export class UsersController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: User[]; meta: Meta }> {
     return this.usersService.getAllCompany(query, +current, +pageSize);
   }
 
