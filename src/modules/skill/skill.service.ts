@@ -11,14 +11,16 @@ import { Skill } from './schema/Skill.schema';
 import aqp from 'api-query-params';
 import { DeleteSkillDto } from './dto/delete-skill.dto';
 import { User } from '../users/schemas/User.schema';
+import { ISkillService } from './skill.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class SkillService {
+export class SkillService implements ISkillService {
   constructor(
-    @InjectModel('Skill') private skillRepository: Model<Skill>,
+    @InjectModel(Skill.name) private skillRepository: Model<Skill>,
     @InjectModel(User.name) private readonly userRepository: Model<User>,
   ) {}
-  async create(createSkillDto: CreateSkillDto) {
+  async create(createSkillDto: CreateSkillDto): Promise<Skill> {
     try {
       const skill = await this.skillRepository.create(createSkillDto);
 
@@ -33,7 +35,11 @@ export class SkillService {
       throw new BadRequestException(error);
     }
   }
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Skill[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -61,23 +67,29 @@ export class SkillService {
     };
   }
 
-  findOne(id: string) {
-    const skill = this.skillRepository.findOne({ _id: id });
+  async findOne(id: string): Promise<Skill> {
+    const skill = await this.skillRepository.findOne({ _id: id });
     if (!skill) {
       throw new NotFoundException();
     }
     return skill;
   }
 
-  update(id: string, updateSkillDto: UpdateSkillDto) {
-    const skill = this.skillRepository.updateOne({ _id: id }, updateSkillDto);
+  async update(id: string, updateSkillDto: UpdateSkillDto): Promise<Skill> {
+    const skill = await this.skillRepository.findOneAndUpdate(
+      { _id: id }, // Điều kiện tìm kiếm
+      updateSkillDto, // Dữ liệu cập nhật
+      { new: true }, // Trả về đối tượng đã được cập nhật
+    );
+
     if (!skill) {
-      throw new NotFoundException();
+      throw new NotFoundException(`Skill with id ${id} not found`);
     }
-    return skill;
+
+    return skill; // Trả về đối tượng skill đã được cập nhật
   }
 
-  async remove(data: DeleteSkillDto) {
+  async remove(data: DeleteSkillDto): Promise<[]> {
     const { ids } = data;
     try {
       if (!Array.isArray(ids) || ids.length === 0) {
@@ -110,7 +122,7 @@ export class SkillService {
     }
   }
 
-  async getSkillsByUserId(userId: string) {
+  async getSkillsByUserId(userId: string): Promise<Skill[]> {
     try {
       const res = await this.skillRepository.find({ user_id: userId }).exec();
       if (!res) {
