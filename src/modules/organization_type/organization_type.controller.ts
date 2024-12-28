@@ -13,6 +13,8 @@ import { Public, ResponseMessage } from 'src/decorator/customize';
 import { OrganizationTypeService } from './organization_type.service';
 import { CreateOrganizationTypeDto } from './dto/create-organization_type.dto';
 import { UpdateOrganizationTypeDto } from './dto/update-organization_type.dto';
+import { OrganizationType } from './schema/organization_type.schema';
+import { Meta } from '../types';
 @Controller('organization-types')
 @ApiTags('OrganizationTypes')
 export class OrganizationTypeController {
@@ -22,7 +24,9 @@ export class OrganizationTypeController {
 
   @Post()
   @ResponseMessage('Success')
-  async create(@Body() createJobType: CreateOrganizationTypeDto) {
+  async create(
+    @Body() createJobType: CreateOrganizationTypeDto,
+  ): Promise<OrganizationType> {
     return await this.organizationTypeService.create(createJobType);
   }
 
@@ -32,7 +36,7 @@ export class OrganizationTypeController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: OrganizationType[]; meta: Meta }> {
     return await this.organizationTypeService.findAll(
       query,
       +current,
@@ -42,7 +46,7 @@ export class OrganizationTypeController {
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<OrganizationType> {
     return await this.organizationTypeService.findOne(id);
   }
 
@@ -51,13 +55,13 @@ export class OrganizationTypeController {
   async update(
     @Param('id') id: string,
     @Body() updateDto: UpdateOrganizationTypeDto,
-  ) {
+  ): Promise<OrganizationType> {
     return await this.organizationTypeService.update(id, updateDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  async remove(@Body('ids') ids: Array<string>) {
+  async remove(@Body('ids') ids: Array<string>): Promise<[]> {
     return await this.organizationTypeService.remove(ids);
   }
 }

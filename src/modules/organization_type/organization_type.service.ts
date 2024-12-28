@@ -9,14 +9,18 @@ import aqp from 'api-query-params';
 import { OrganizationType } from './schema/organization_type.schema';
 import { CreateOrganizationTypeDto } from './dto/create-organization_type.dto';
 import { UpdateOrganizationTypeDto } from './dto/update-organization_type.dto';
+import { IOrganizationTypeService } from './organization_type.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class OrganizationTypeService {
+export class OrganizationTypeService implements IOrganizationTypeService {
   constructor(
     @InjectModel(OrganizationType.name)
     private readonly organizationTypeModel: Model<OrganizationType>,
   ) {}
-  async create(createJobType: CreateOrganizationTypeDto) {
+  async create(
+    createJobType: CreateOrganizationTypeDto,
+  ): Promise<OrganizationType> {
     const response = await this.organizationTypeModel.create(createJobType);
     if (!response) {
       throw new BadRequestException('Failed');
@@ -24,7 +28,11 @@ export class OrganizationTypeService {
     return response;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: OrganizationType[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -50,7 +58,7 @@ export class OrganizationTypeService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<OrganizationType> {
     const response = await this.organizationTypeModel.findOne({ _id: id });
     if (!response) {
       throw new NotFoundException();
@@ -58,7 +66,10 @@ export class OrganizationTypeService {
     return response;
   }
 
-  async update(id: string, updateDto: UpdateOrganizationTypeDto) {
+  async update(
+    id: string,
+    updateDto: UpdateOrganizationTypeDto,
+  ): Promise<OrganizationType> {
     const response = await this.organizationTypeModel.findByIdAndUpdate(
       id,
       updateDto,
@@ -73,7 +84,7 @@ export class OrganizationTypeService {
     return response;
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length < 0) {
         throw new BadRequestException('Ids not found');
