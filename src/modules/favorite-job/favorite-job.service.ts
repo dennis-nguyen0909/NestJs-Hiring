@@ -9,16 +9,19 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FavoriteJob } from './schema/favorite-job.schema';
 import { Model } from 'mongoose';
 import { User } from '../users/schemas/User.schema';
-import { Job } from '../job/schema/Job.schema';
 import aqp from 'api-query-params';
+import { IFavoriteJobService } from './favorite-job.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class FavoriteJobService {
+export class FavoriteJobService implements IFavoriteJobService {
   constructor(
     @InjectModel(FavoriteJob.name) private favoriteJobModel: Model<FavoriteJob>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
-  async create(createFavoriteJobDto: CreateFavoriteJobDto) {
+  async create(
+    createFavoriteJobDto: CreateFavoriteJobDto,
+  ): Promise<FavoriteJob | []> {
     try {
       const favorite = await this.favoriteJobModel.findOne({
         job_id: createFavoriteJobDto.job_id,
@@ -48,7 +51,9 @@ export class FavoriteJobService {
     }
   }
 
-  async getFavoriteJobDetailByUserId(data: CreateFavoriteJobDto) {
+  async getFavoriteJobDetailByUserId(
+    data: CreateFavoriteJobDto,
+  ): Promise<FavoriteJob> {
     try {
       const res = await this.favoriteJobModel.findOne({
         user_id: data.user_id,
@@ -58,10 +63,16 @@ export class FavoriteJobService {
         throw new NotFoundException('Not found');
       }
       return res;
-    } catch (error) {}
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: FavoriteJob[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -109,15 +120,50 @@ export class FavoriteJobService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} favoriteJob`;
+  async findOne(id: number): Promise<FavoriteJob> {
+    return await this.favoriteJobModel.findOne({ _id: id });
   }
 
-  update(id: number, updateFavoriteJobDto: UpdateFavoriteJobDto) {
-    return `This action updates a #${id} favoriteJob`;
+  async update(
+    id: string,
+    updateFavoriteJobDto: UpdateFavoriteJobDto,
+  ): Promise<FavoriteJob> {
+    try {
+      // Use findByIdAndUpdate to update the document and return the updated version
+      const updatedFavoriteJob = await this.favoriteJobModel.findByIdAndUpdate(
+        id,
+        updateFavoriteJobDto,
+        { new: true }, // Ensures the updated document is returned
+      );
+
+      if (!updatedFavoriteJob) {
+        throw new NotFoundException('Favorite job not found');
+      }
+
+      return updatedFavoriteJob;
+    } catch (error) {
+      throw new BadRequestException(
+        'An error occurred while updating the favorite job',
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} favoriteJob`;
+  async remove(id: string): Promise<[]> {
+    try {
+      const favoriteJob = await this.favoriteJobModel.findById(id);
+
+      if (!favoriteJob) {
+        throw new NotFoundException('Favorite job not found');
+      }
+
+      // Remove the favorite job
+      await this.favoriteJobModel.deleteOne({ _id: id });
+
+      return [];
+    } catch (error) {
+      throw new BadRequestException(
+        'An error occurred while removing the favorite job',
+      );
+    }
   }
 }

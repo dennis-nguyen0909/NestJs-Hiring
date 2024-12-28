@@ -12,6 +12,8 @@ import { FavoriteJobService } from './favorite-job.service';
 import { CreateFavoriteJobDto } from './dto/create-favorite-job.dto';
 import { UpdateFavoriteJobDto } from './dto/update-favorite-job.dto';
 import { ResponseMessage } from 'src/decorator/customize';
+import { FavoriteJob } from './schema/favorite-job.schema';
+import { Meta } from '../types';
 
 @Controller('favorite-jobs')
 export class FavoriteJobController {
@@ -19,7 +21,9 @@ export class FavoriteJobController {
 
   @Post()
   @ResponseMessage('Success')
-  async create(@Body() createFavoriteJobDto: CreateFavoriteJobDto) {
+  async create(
+    @Body() createFavoriteJobDto: CreateFavoriteJobDto,
+  ): Promise<FavoriteJob | []> {
     return await this.favoriteJobService.create(createFavoriteJobDto);
   }
 
@@ -28,7 +32,7 @@ export class FavoriteJobController {
   async getFavoriteJobDetailByUserId(
     @Query('user_id') user_id: any,
     @Query('job_id') job_id: any,
-  ) {
+  ): Promise<FavoriteJob> {
     const data: CreateFavoriteJobDto = {
       user_id,
       job_id,
@@ -41,12 +45,12 @@ export class FavoriteJobController {
     @Query('query') query: string,
     @Query('current') current,
     @Query('pageSize') pageSize,
-  ) {
+  ): Promise<{ items: FavoriteJob[]; meta: Meta }> {
     return await this.favoriteJobService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<FavoriteJob> {
     return await this.favoriteJobService.findOne(+id);
   }
 
@@ -54,12 +58,12 @@ export class FavoriteJobController {
   async update(
     @Param('id') id: string,
     @Body() updateFavoriteJobDto: UpdateFavoriteJobDto,
-  ) {
-    return await this.favoriteJobService.update(+id, updateFavoriteJobDto);
+  ): Promise<FavoriteJob> {
+    return await this.favoriteJobService.update(id, updateFavoriteJobDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.favoriteJobService.remove(+id);
+  async remove(@Param('id') id: string): Promise<[]> {
+    return await this.favoriteJobService.remove(id);
   }
 }
