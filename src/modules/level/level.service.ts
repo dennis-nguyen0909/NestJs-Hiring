@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
@@ -10,13 +9,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Level } from './schema/Level.schema';
 import aqp from 'api-query-params';
+import { ILevelService } from './level.interface';
+import { Meta } from '../types';
 
 @Injectable()
-export class LevelService {
+export class LevelService implements ILevelService {
   constructor(
-    @InjectModel('Level') private readonly levelModel: Model<Level>,
+    @InjectModel(Level.name) private readonly levelModel: Model<Level>,
   ) {}
-  async create(createLevelDto: CreateLevelDto) {
+  async create(createLevelDto: CreateLevelDto): Promise<Level> {
     const level = await this.levelModel.create(createLevelDto);
     if (!level) {
       throw new BadRequestException('Failed');
@@ -24,7 +25,11 @@ export class LevelService {
     return level;
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Level[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -50,7 +55,7 @@ export class LevelService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Level> {
     const job = await this.levelModel.findOne({ _id: id });
     if (!job) {
       throw new NotFoundException();
@@ -58,7 +63,7 @@ export class LevelService {
     return job;
   }
 
-  async update(id: string, updateLevelDto: UpdateLevelDto) {
+  async update(id: string, updateLevelDto: UpdateLevelDto): Promise<Level> {
     const job = await this.levelModel.findByIdAndUpdate(id, updateLevelDto, {
       new: true,
       runValidators: true,
@@ -69,7 +74,7 @@ export class LevelService {
     return job;
   }
 
-  async remove(ids: Array<string>) {
+  async remove(ids: Array<string>): Promise<[]> {
     try {
       if (ids.length < 0) {
         throw new BadRequestException('Ids not found');

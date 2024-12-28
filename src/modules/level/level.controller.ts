@@ -13,6 +13,8 @@ import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorator/customize';
+import { Level } from './schema/Level.schema';
+import { Meta } from '../types';
 @Controller('levels')
 @ApiTags('Levels')
 export class LevelController {
@@ -20,7 +22,7 @@ export class LevelController {
 
   @Post()
   @ResponseMessage('Success')
-  async create(@Body() createLevelDto: CreateLevelDto) {
+  async create(@Body() createLevelDto: CreateLevelDto): Promise<Level> {
     return await this.levelService.create(createLevelDto);
   }
 
@@ -30,25 +32,28 @@ export class LevelController {
     @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
-  ) {
+  ): Promise<{ items: Level[]; meta: Meta }> {
     return await this.levelService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<Level> {
     return await this.levelService.findOne(id);
   }
 
   @Patch(':id')
   @ResponseMessage('Success')
-  async update(@Param('id') id: string, @Body() updateLevelDto: UpdateLevelDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateLevelDto: UpdateLevelDto,
+  ): Promise<Level> {
     return await this.levelService.update(id, updateLevelDto);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  async remove(@Body('ids') ids: Array<string>) {
+  async remove(@Body('ids') ids: Array<string>): Promise<[]> {
     return await this.levelService.remove(ids);
   }
 }
