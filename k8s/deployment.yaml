@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nest-hiring
+  labels:
+    app: nest-hiring
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nest-hiring
+  template:
+    metadata:
+      labels:
+        app: nest-hiring
+    spec:
+      containers:
+        - name: nest-hiring
+          image: minhduyyy/nest-hiring:latest  # Đổi với tên image của bạn
+          ports:
+            - containerPort: 8080
+            - containerPort: 8082
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://root:123456@mongodb:27017/hiring_db?authSource=admin"  # Thay đổi URI MongoDB của bạn

@@ -1,7 +1,8 @@
 const { MongoClient } = require('mongodb');
 
 // URL kết nối MongoDB (chỉnh sửa nếu cần thiết)
-const url = 'mongodb://root:123456@localhost:27017';
+// const url = 'mongodb://root:123456@localhost:27017';
+const url = 'mongodb://10.108.144.9:27017';
 const dbName = 'hiring_db'; // Thay 'your_database_name' bằng tên database của bạn
 
 // Kết nối tới MongoDB và chèn dữ liệu vào collection 'role'

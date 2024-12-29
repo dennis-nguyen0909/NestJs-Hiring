@@ -75,7 +75,7 @@ export class AuthService implements IAuthService {
         return null;
       }
       const payload = await this.jwtService.verifyAsync(token);
-      const user = await this.userService.findOne(payload.sub); // Lấy thông tin người dùng từ DB bằng ID trong payload
+      const user = await this.userService.findByObjectId(payload.sub); // Lấy thông tin người dùng từ DB bằng ID trong payload
       return user; // Trả về thông tin người dùng
     } catch (error) {
       throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn');

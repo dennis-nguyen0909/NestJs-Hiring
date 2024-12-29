@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nest-hiring-service
+spec:
+  selector:
+    app: nest-hiring
+  ports:
+    - name: http-8080
+      protocol: TCP
+      port: 8080       # Port expose bên ngoài cho service
+      targetPort: 8080  # Port trong container
+    - name: http-8082
+      protocol: TCP
+      port: 8082       # Port expose bên ngoài cho service
+      targetPort: 8082  # Port trong container
+  type: NodePort  # Nếu bạn muốn service có 
+  # type: LoadBalancer  # Nếu bạn muốn service có 
