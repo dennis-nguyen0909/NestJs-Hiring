@@ -9,7 +9,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Project } from './schema/project.schema';
 import { Model, Types } from 'mongoose';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { Meta } from '../types';
 import aqp from 'api-query-params';
 import { IProjectService } from './project.interface';

@@ -16,7 +16,7 @@ import aqp from 'api-query-params';
 import { DeleteJobDto } from './dto/delete-job.dto';
 import { CitiesService } from '../cities/cities.service';
 import { SkillEmployer } from '../skill_employer/schema/EmployerSkill.schema';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { Cities } from '../cities/schema/Cities.schema';
 import { Level } from '../level/schema/Level.schema';
 import { IJobService } from './job.interface';
@@ -42,7 +42,7 @@ export class JobService implements IJobService {
     const { user_id, expire_date, salary_range, age_range } = createJobDto;
 
     // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
-    const isUserExist = await this.userService.findOne(user_id);
+    const isUserExist = await this.userService.findByObjectId(user_id);
     if (!isUserExist) {
       throw new BadRequestException('User not found');
     }
@@ -457,7 +457,7 @@ export class JobService implements IJobService {
 
   async toggleLikeJob(user_id: string, job_id: string) :Promise<void> {
     try {
-      const user = await this.userService.findOne(user_id);
+      const user = await this.userService.findByObjectId(user_id);
       const job = await this.jobRepository.findById(job_id);
       const jobId = new Types.ObjectId(job._id + '');
       if (user.favorite_jobs.includes(jobId)) {

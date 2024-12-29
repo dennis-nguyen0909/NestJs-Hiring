@@ -13,7 +13,7 @@ import { DeleteApplicationDto } from './dto/delete-application.dto';
 import { SaveCandidate } from '../save_candidates/schema/SaveCandidates.schema';
 import { Job } from '../job/schema/Job.schema';
 import { NotificationService } from 'src/notification/notification.service';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { IApplicationService } from './application.interface';
 import { Meta } from '../types';
 

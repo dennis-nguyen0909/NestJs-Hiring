@@ -1,7 +1,7 @@
 import { CreateJobDto } from './dto/create-job.dto';
 import { DeleteJobDto } from './dto/delete-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { Job } from './schema/job.schema';
+import { Job } from './schema/Job.schema';
 
 export interface IJobService {
   create(createJobDto: CreateJobDto): Promise<Job>;

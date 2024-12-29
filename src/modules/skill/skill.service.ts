@@ -10,7 +10,7 @@ import { Model, Types } from 'mongoose';
 import { Skill } from './schema/Skill.schema';
 import aqp from 'api-query-params';
 import { DeleteSkillDto } from './dto/delete-skill.dto';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { ISkillService } from './skill.interface';
 import { Meta } from '../types';
 

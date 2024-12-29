@@ -20,7 +20,7 @@ import { VerifyAuthDto } from './dto/verify-auth.dto';
 import { Response } from 'express';
 import { GoogleAuthGuard } from './passport/google-auth/google-auth-guard';
 import { FacebookAuthGuard } from './passport/facebook-auth/facebook-auth-guard';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {

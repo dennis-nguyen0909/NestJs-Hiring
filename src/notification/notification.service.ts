@@ -5,7 +5,7 @@ import { Notification } from './schema/notification.schema';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { MailerService } from '@nestjs-modules/mailer';
-import { User } from 'src/modules/users/schemas/User.schema';
+import { User } from 'src/modules/users/schemas/user.schema';
 import aqp from 'api-query-params';
 import {
   NotificationUpdateDto,

@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { User } from '../../users/schemas/User.schema';
+import { User } from '../../users/schemas/user.schema';
 import { Job } from '../../job/schema/Job.schema';
 import { CV } from '../../cv/schema/CV.schema';
 import { ApiProperty } from '@nestjs/swagger';

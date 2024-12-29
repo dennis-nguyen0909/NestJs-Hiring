@@ -17,7 +17,7 @@ export class CvUploadService implements ICvUploadService {
     private readonly userService: UsersService,
   ) {}
   async create(file: Express.Multer.File, userId: string): Promise<CVUploads> {
-    const findUser = await this.userService.findOne(userId);
+    const findUser = await this.userService.findByObjectId(userId);
     if (!findUser) {
       throw new BadRequestException('User not found');
     }

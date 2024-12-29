@@ -1,7 +1,7 @@
 import { Meta } from '../types';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './schemas/User.schema';
+import { User } from './schemas/user.schema';
 
 export interface IUserRepository {
   // Tạo mới một người dùng

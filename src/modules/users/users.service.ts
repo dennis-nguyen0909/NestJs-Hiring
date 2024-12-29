@@ -7,7 +7,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/User.schema';
+import { User } from './schemas/user.schema';
 import { Model, Types } from 'mongoose';
 import { cloudinaryPublicIdRegex, comparePasswordHelper, emailRegex, hashPasswordHelper, passwordRegex, publicIdRegexOwn } from 'src/helpers/util';
 import aqp from 'api-query-params';

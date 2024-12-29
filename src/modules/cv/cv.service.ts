@@ -13,7 +13,7 @@ import { CV } from './schema/CV.schema';
 import aqp from 'api-query-params';
 import { DeleteCvDto } from './dto/delete-cv.dto';
 import * as PDFDocument from 'pdfkit';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { Project } from '../project/schema/project.schema';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { cloudinaryPublicIdRegexNew } from 'src/helpers/util';
@@ -208,7 +208,7 @@ export class CvService implements ICvService {
       },
     };
   }
-  async generalPDF(id: string): Promise<Buffer> {
+  async generalPDF(id: string): Promise<any> {
     // Populate the 'projects' field when querying the user
     const user = await this.userModel
       .findById(id)

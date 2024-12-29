@@ -8,7 +8,7 @@ import { UpdateFavoriteJobDto } from './dto/update-favorite-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { FavoriteJob } from './schema/favorite-job.schema';
 import { Model } from 'mongoose';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import aqp from 'api-query-params';
 import { IFavoriteJobService } from './favorite-job.interface';
 import { Meta } from '../types';

@@ -32,7 +32,7 @@ export class CitiesController {
 
   @Get()
   @ResponseMessage('success')
-  async findAll(@Query('depth') depth: number = 3): Promise<Cities[]> {
+  async findAll(@Query('depth') depth: number = 3): Promise<any> {
     return await this.citiesService.findAll(+depth);
   }
 

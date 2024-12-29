@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { Organization } from './schema/organization.schema';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import aqp from 'api-query-params';
 import { IOrganizationService } from './organization.interface';
 import { Meta } from '../types';

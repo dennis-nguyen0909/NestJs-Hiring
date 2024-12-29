@@ -11,7 +11,7 @@ import { VerifyAuthDto } from './dto/verify-auth.dto';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { IAuthService } from './auth.interface';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
@@ -138,8 +138,8 @@ export class AuthService implements IAuthService {
     } catch (error) {
       throw new BadRequestException('Invalid refresh token');
     }
-
-    const user = await this.userService.findOne(payload.sub);
+    console.log("payload",payload)
+    const user = await this.userService.findByObjectId(payload.sub);
     if (!user) {
       throw new BadRequestException('User not found');
     }

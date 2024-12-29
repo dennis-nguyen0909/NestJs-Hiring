@@ -15,7 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseMessage } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { User } from './schemas/User.schema';
+import { User } from './schemas/user.schema';
 import { Meta } from '../types';
 
 @Controller('users')

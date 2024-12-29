@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { CV } from '../../cv/schema/CV.schema';
-import { User } from 'src/modules/users/schemas/User.schema';
+import { User } from 'src/modules/users/schemas/user.schema';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Education')

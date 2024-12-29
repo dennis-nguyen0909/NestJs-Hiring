@@ -10,7 +10,7 @@ import { Model, Types } from 'mongoose';
 import { CreateCertificateDto } from './dto/create-certificate.dto';
 import { UpdateCertificateDto } from './dto/update-certificate.dto';
 import { Certificate } from './schema/certificate.schema';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import aqp from 'api-query-params';
 import { Meta } from '../types';
 import { ICertificateServiceInterface } from './certificate.interface';

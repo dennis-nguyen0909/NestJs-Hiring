@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { UserNotActiveException } from 'src/exceptions';
-import { User } from 'src/modules/users/schemas/User.schema';
+import { User } from 'src/modules/users/schemas/user.schema';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

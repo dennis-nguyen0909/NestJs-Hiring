@@ -6,7 +6,7 @@ import { Education } from './schema/Education.schema';
 import { Model, Types } from 'mongoose';
 import aqp from 'api-query-params';
 import { create } from 'domain';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { UsersService } from '../users/users.service';
 import { Meta } from '../types';
 

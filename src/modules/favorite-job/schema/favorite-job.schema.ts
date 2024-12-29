@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { Job } from 'src/modules/job/schema/Job.schema';
-import { User } from 'src/modules/users/schemas/User.schema';
+import { User } from 'src/modules/users/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class FavoriteJob {

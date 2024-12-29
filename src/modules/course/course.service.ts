@@ -9,7 +9,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Course } from './schema/course.schema';
 import { Model, Types } from 'mongoose';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { Meta } from '../types';
 import aqp from 'api-query-params';
 import { ICourseService } from './course.interface';

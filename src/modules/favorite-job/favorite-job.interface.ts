@@ -1,7 +1,7 @@
 import { CreateFavoriteJobDto } from './dto/create-favorite-job.dto';
 import { UpdateFavoriteJobDto } from './dto/update-favorite-job.dto';
 import { FavoriteJob } from './schema/favorite-job.schema';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { Meta } from '../types';
 
 export interface IFavoriteJobService {

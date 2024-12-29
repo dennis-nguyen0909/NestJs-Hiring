@@ -15,7 +15,7 @@ export class CitiesService implements ICitiesService {
     return newCity.save();
   }
 
-  async findAll(depth: number): Promise<Cities[]> {
+  async findAll(depth: number): Promise<any> {
     if (+depth === 1) {
       const res = await this.citiesModel.find().lean().exec();
       return res.map((city) => ({

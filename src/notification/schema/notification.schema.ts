@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Application } from 'src/modules/application/schema/Application.schema';
 import { Job } from 'src/modules/job/schema/Job.schema';
-import { User } from 'src/modules/users/schemas/User.schema';
+import { User } from 'src/modules/users/schemas/user.schema';
 @Schema({ timestamps: true })
 export class Notification extends Document {
   @Prop({ type: Types.ObjectId, ref: User.name })

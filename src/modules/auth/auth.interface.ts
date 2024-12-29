@@ -1,6 +1,6 @@
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 
 export interface IAuthService {
   signIn(user: any): Promise<{

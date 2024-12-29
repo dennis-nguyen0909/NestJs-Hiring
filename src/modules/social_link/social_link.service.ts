@@ -10,7 +10,7 @@ import { SocialLink } from './schema/social_link.schema';
 import { CreateSocialLinkDto } from './dto/create-social_link.dto';
 import { DeleteSocialLink } from './dto/delete-skill.dto';
 import { UpdateSocialLinkDto } from './dto/update-social_link.dto';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { ISocialLinkService } from './social_link.interface';
 import { Meta } from '../types';
 

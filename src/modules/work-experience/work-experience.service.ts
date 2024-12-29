@@ -6,7 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { WorkExperience } from './schema/WorkExperience.schema';
 import aqp from 'api-query-params';
-import { User } from '../users/schemas/User.schema';
+import { User } from '../users/schemas/user.schema';
 import { IWorkExperienceService } from './work-exxperience.interface';
 import { Meta } from '../types';
 
