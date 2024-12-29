@@ -11,7 +11,7 @@ async function bootstrap() {
   const port = configService.get('PORT') || 8081;
   const reflector = app.get(Reflector);
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Địa chỉ của frontend
+    origin: [`${configService.get<string>('CLIENT_ORIGIN')}`], // Địa chỉ của frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Phương thức cho phép
     credentials: true, // Cho phép cookies
   });
