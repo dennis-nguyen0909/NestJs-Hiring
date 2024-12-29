@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -7,9 +8,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-@WebSocketGateway(8080, {
+@WebSocketGateway({
   cors: {
-    origin: 'http://localhost:5137', // Địa chỉ client ReactJS
+    origin: '*',
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -19,8 +20,15 @@ export class NotificationGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server: Server;
+
+  constructor(private configService: ConfigService) {}
   // Hàm này chạy khi WebSocket server được khởi tạo
   afterInit(server: Server) {
+    const websocketPort = this.configService.get<number>(
+      'WEBSOCKET_PORT',
+      8080,
+    ); // Lấy biến môi trường với giá trị mặc định là 8080
+    console.log('WebSocket server initialized on port:', websocketPort);
     console.log('WebSocket initialized');
   }
 

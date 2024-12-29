@@ -21,12 +21,14 @@ import { Response } from 'express';
 import { GoogleAuthGuard } from './passport/google-auth/google-auth-guard';
 import { FacebookAuthGuard } from './passport/facebook-auth/facebook-auth-guard';
 import { User } from '../users/schemas/user.schema';
+import { ConfigService } from '@nestjs/config';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private mailService: MailerService,
+    private configService: ConfigService,
   ) {}
 
   @Post('login')
@@ -150,7 +152,7 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res) {
     const response = await this.authService.signIn(req.user);
     res.redirect(
-      `http://localhost:5173?access_token=${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
+      `${this.configService.get<string>('CLIENT_ORIGIN')}?access_token=${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
     );
   }
 
@@ -166,7 +168,7 @@ export class AuthController {
   async facebookAuthRedirect(@Req() req, @Res() res) {
     const response = await this.authService.signIn(req.user);
     res.redirect(
-      `http://localhost:5173?access_token=${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
+      `${this.configService.get<string>('CLIENT_ORIGIN')}?access_token=${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
     );
   }
 }
