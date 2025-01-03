@@ -11,9 +11,22 @@ async function bootstrap() {
   const port = configService.get('PORT') || 8081;
   const reflector = app.get(Reflector);
   app.enableCors({
-    origin: ['*'], // Địa chỉ của frontend
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Phương thức cho phép
-    credentials: true, // Cho phép cookies
+    origin: (origin, callback) => {
+      // Log giá trị 'Origin' khi nhận request
+      console.log('CORS Origin:', origin);
+
+      // Nếu origin hợp lệ, tiếp tục xử lý
+      if (
+        !origin ||
+        origin === 'https://frontend-hiring-minhduys-projects.vercel.app'
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
   });
   //config api
   app.setGlobalPrefix('/api/v1', { exclude: [''] });
@@ -46,7 +59,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(configService.get('SWAGGER_PATH'), app, document);
   await app.listen(port);
-  console.log("Server running on port: " + port);
-  console.log(`Swagger running on port: ${port}/${configService.get('SWAGGER_PATH')}`);
+  console.log('Server running on port: ' + port);
+  console.log(
+    `Swagger running on port: ${port}/${configService.get('SWAGGER_PATH')}`,
+  );
 }
 bootstrap();
