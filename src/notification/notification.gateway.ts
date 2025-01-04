@@ -10,7 +10,10 @@ import {
 import { Server, Socket } from 'socket.io';
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: [
+      'http://localhost:5137',
+      'https://frontend-hiring-minhduys-projects.vercel.app/',
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
   },

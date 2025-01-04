@@ -1,7 +1,9 @@
 const { MongoClient } = require('mongodb');
 
 // URL kết nối MongoDB, thay đổi nếu MongoDB của bạn không chạy trên localhost
-const uri = 'mongodb://root:123456@localhost:27017'; // Bao gồm thông tin đăng nhập (tên người dùng và mật khẩu)
+// const uri = 'mongodb://root:123456@localhost:27017'; // Bao gồm thông tin đăng nhập (tên người dùng và mật khẩu)
+const uri =
+  'mongodb+srv://duyxitrum000:ODlurcxpQevUeDZC@cluster0.y78kn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'; // Bao gồm thông tin đăng nhập (tên người dùng và mật khẩu)
 const dbName = 'hiring_db'; // Tên database mà bạn muốn lưu dữ liệu
 const collectionName = 'cities'; // Tên collection nơi bạn sẽ chèn dữ liệu sau
 

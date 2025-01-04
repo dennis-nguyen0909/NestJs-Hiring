@@ -10,24 +10,30 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('PORT') || 8081;
   const reflector = app.get(Reflector);
+  // app.enableCors({
+  //   origin: [
+  //     'https://frontend-hiring-minhduys-projects.vercel.app',
+  //     'http://localhost:5173',
+  //   ],
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   credentials: true,
+  //   preflightContinue: true,
+  //   optionsSuccessStatus: 200,
+  //   allowedHeaders: ['Content-Type', 'Authorization'],
+  //   exposedHeaders: ['X-My-Header'],
+  // });
   app.enableCors({
-    origin: (origin, callback) => {
-      // Log giá trị 'Origin' khi nhận request
-      console.log('CORS Origin:', origin);
-
-      // Nếu origin hợp lệ, tiếp tục xử lý
-      if (
-        !origin ||
-        origin === 'https://frontend-hiring-minhduys-projects.vercel.app'
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: [
+      'http://localhost:5173',
+      'https://frontend-hiring-minhduys-projects.vercel.app',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
+    credentials: true, // Cho phép gửi cookies
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['X-My-Header'],
   });
+  // 
+
   //config api
   app.setGlobalPrefix('/api/v1', { exclude: [''] });
   //config validator

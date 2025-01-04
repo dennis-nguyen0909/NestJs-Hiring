@@ -328,6 +328,8 @@ export class UsersService implements IUserRepository{
 
     const hashPassword = await hashPasswordHelper(password);
     const findRole = await this.roleService.findByRoleName(role);
+    const roles = await this.roleService.findAll('',1,15);
+    console.log("roles",roles)
     if (!findRole) {
       throw new BadRequestException(
         'Role not found. Please check if the role exists.',

@@ -1,0 +1,2871 @@
+[{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8223"
+  },
+  "name": "Thành phố Hà Nội",
+  "code": 1,
+  "division_type": "thành phố trung ương",
+  "codename": "thanh_pho_ha_noi",
+  "phone_code": 24,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a7fd0"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a7fe3"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a7fec"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a7ffb"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8004"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a801a"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a802d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a803c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8048"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8063"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a807c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8093"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a809e"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a80af"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a80bd"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a80d0"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a80e2"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a80f2"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8112"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8128"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8139"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a814e"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8164"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a817c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a819d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a81b3"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a81d1"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a81ed"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a820b"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8222"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a82f0"
+  },
+  "name": "Tỉnh Hà Giang",
+  "code": 2,
+  "division_type": "tỉnh",
+  "codename": "tinh_ha_giang",
+  "phone_code": 219,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a822c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8240"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8253"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8266"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8274"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a828d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a829b"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a82b4"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a82c7"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a82df"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a82ef"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a839c"
+  },
+  "name": "Tỉnh Cao Bằng",
+  "code": 4,
+  "division_type": "tỉnh",
+  "codename": "tinh_cao_bang",
+  "phone_code": 206,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a82fc"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a830a"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a831c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8332"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8348"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8356"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a836a"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a837a"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a838c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a839b"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8411"
+  },
+  "name": "Tỉnh Bắc Kạn",
+  "code": 6,
+  "division_type": "tỉnh",
+  "codename": "tinh_bac_kan",
+  "phone_code": 209,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a83a5"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a83b0"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a83c0"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a83cb"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a83da"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a83ef"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a83fe"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8410"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a84a3"
+  },
+  "name": "Tỉnh Tuyên Quang",
+  "code": 8,
+  "division_type": "tỉnh",
+  "codename": "tinh_tuyen_quang",
+  "phone_code": 207,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a8421"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a842c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8439"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8452"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8465"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8482"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a84a2"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8545"
+  },
+  "name": "Tỉnh Lào Cai",
+  "code": 10,
+  "division_type": "tỉnh",
+  "codename": "tinh_lao_cai",
+  "phone_code": 214,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a84b5"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a84cb"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a84dc"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a84e7"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a84fb"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a850a"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a851c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a852d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8544"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a85d1"
+  },
+  "name": "Tỉnh Điện Biên",
+  "code": 11,
+  "division_type": "tỉnh",
+  "codename": "tinh_dien_bien",
+  "phone_code": 215,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a8552"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8556"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8562"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a856f"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a857c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8590"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a85a6"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a85b5"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a85c0"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a85d0"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8644"
+  },
+  "name": "Tỉnh Lai Châu",
+  "code": 12,
+  "division_type": "tỉnh",
+  "codename": "tinh_lai_chau",
+  "phone_code": 213,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a85d9"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a85e7"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a85f6"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a860d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a861f"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a862c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8637"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8643"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a871d"
+  },
+  "name": "Tỉnh Sơn La",
+  "code": 14,
+  "division_type": "tỉnh",
+  "codename": "tinh_son_la",
+  "phone_code": 212,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a8651"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a865d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a867b"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a868c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a869d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a86b9"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a86c9"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a86d9"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a86f0"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8704"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a870d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a871c"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a87d4"
+  },
+  "name": "Tỉnh Yên Bái",
+  "code": 15,
+  "division_type": "tỉnh",
+  "codename": "tinh_yen_bai",
+  "phone_code": 216,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a872d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a873c"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8755"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a876f"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a877e"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8794"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a87a1"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a87ba"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a87d3"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8876"
+  },
+  "name": "Tỉnh Hoà Bình",
+  "code": 17,
+  "division_type": "tỉnh",
+  "codename": "tinh_hoa_binh",
+  "phone_code": 218,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a87e8"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a87fa"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8806"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8818"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8823"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8834"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8845"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a885e"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a886a"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8875"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8931"
+  },
+  "name": "Tỉnh Thái Nguyên",
+  "code": 19,
+  "division_type": "tỉnh",
+  "codename": "tinh_thai_nguyen",
+  "phone_code": 208,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a8897"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a88a2"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a88ba"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a88ca"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a88da"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a88ea"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8908"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a891b"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8930"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8a05"
+  },
+  "name": "Tỉnh Lạng Sơn",
+  "code": 20,
+  "division_type": "tỉnh",
+  "codename": "tinh_lang_son",
+  "phone_code": 205,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a893a"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8951"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8965"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8977"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a898e"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a89a0"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a89b3"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a89cc"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a89e1"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a89f7"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a04"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8ac4"
+  },
+  "name": "Tỉnh Quảng Ninh",
+  "code": 22,
+  "division_type": "tỉnh",
+  "codename": "tinh_quang_ninh",
+  "phone_code": 203,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a8a27"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a39"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a4a"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a55"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a5d"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a69"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a73"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a7f"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a88"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8a95"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8aab"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8abf"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8ac3"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18dd28795aa1a1a8ba0"
+  },
+  "name": "Tỉnh Bắc Giang",
+  "code": 24,
+  "division_type": "tỉnh",
+  "codename": "tinh_bac_giang",
+  "phone_code": 204,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a8ad5"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8ae9"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8b00"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8b16"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8b30"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8b4e"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8b60"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8b73"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8b85"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8b9f"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a8c8f"
+  },
+  "name": "Tỉnh Phú Thọ",
+  "code": 25,
+  "division_type": "tỉnh",
+  "codename": "tinh_phu_tho",
+  "phone_code": 210,
+  "districts": [
+    {
+      "$oid": "6770b18dd28795aa1a1a8bb7"
+    },
+    {
+      "$oid": "6770b18dd28795aa1a1a8bc1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8bd8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8bed"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c01"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c13"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c25"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c3e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c4b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c58"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c70"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c7c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8c8e"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a8d21"
+  },
+  "name": "Tỉnh Vĩnh Phúc",
+  "code": 26,
+  "division_type": "tỉnh",
+  "codename": "tinh_vinh_phuc",
+  "phone_code": 211,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a8c99"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8ca4"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8cb9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8cc7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8cd1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8cdf"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8cf1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8d0e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8d20"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a8da8"
+  },
+  "name": "Tỉnh Bắc Ninh",
+  "code": 27,
+  "division_type": "tỉnh",
+  "codename": "tinh_bac_ninh",
+  "phone_code": 222,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a8d35"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8d44"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8d5a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8d69"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8d76"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8d89"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8d98"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8da7"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a8ea0"
+  },
+  "name": "Tỉnh Hải Dương",
+  "code": 30,
+  "division_type": "tỉnh",
+  "codename": "tinh_hai_duong",
+  "phone_code": 220,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a8dc2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8dd6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8dea"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e02"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e15"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e2a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e3c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e4d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e60"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e78"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e8d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8e9f"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a8f89"
+  },
+  "name": "Thành phố Hải Phòng",
+  "code": 31,
+  "division_type": "thành phố trung ương",
+  "codename": "thanh_pho_hai_phong",
+  "phone_code": 225,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a8eaa"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8eb7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8ec7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8ed0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8edb"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8ee2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8ee9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8f0f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8f20"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8f32"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8f45"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8f5b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8f7a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8f87"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8f88"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9035"
+  },
+  "name": "Tỉnh Hưng Yên",
+  "code": 33,
+  "division_type": "tỉnh",
+  "codename": "tinh_hung_yen",
+  "phone_code": 221,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a8f9b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8fa7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8fb3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8fc5"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8fd3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a8fe9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9003"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9015"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9025"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9034"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9142"
+  },
+  "name": "Tỉnh Thái Bình",
+  "code": 34,
+  "division_type": "tỉnh",
+  "codename": "tinh_thai_binh",
+  "phone_code": 227,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9049"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a906f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9093"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a90ba"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a90df"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9100"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9122"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9141"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a91b6"
+  },
+  "name": "Tỉnh Hà Nam",
+  "code": 35,
+  "division_type": "tỉnh",
+  "codename": "tinh_ha_nam",
+  "phone_code": 226,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9158"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9169"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a917c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a918d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a919f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a91b5"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a92a3"
+  },
+  "name": "Tỉnh Nam Định",
+  "code": 36,
+  "division_type": "tỉnh",
+  "codename": "tinh_nam_dinh",
+  "phone_code": 228,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a91d0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a91dc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a91ef"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a920f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9228"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a923d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9253"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9268"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a927f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a92a2"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a933b"
+  },
+  "name": "Tỉnh Ninh Bình",
+  "code": 37,
+  "division_type": "tỉnh",
+  "codename": "tinh_ninh_binh",
+  "phone_code": 229,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a92b2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a92bc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a92d8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a92ee"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a92fa"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a930e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9328"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a933a"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9586"
+  },
+  "name": "Tỉnh Thanh Hóa",
+  "code": 38,
+  "division_type": "tỉnh",
+  "codename": "tinh_thanh_hoa",
+  "phone_code": 237,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a935e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9366"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9372"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a937b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a938b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a93a1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a93ae"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a93b9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a93cf"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a93e1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a93fb"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9410"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a941e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9439"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9458"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9469"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a948c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a94a6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a94cc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a94e4"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a94fd"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a950e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a951d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a953b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a954a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9565"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9585"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9768"
+  },
+  "name": "Tỉnh Nghệ An",
+  "code": 40,
+  "division_type": "tỉnh",
+  "codename": "tinh_nghe_an",
+  "phone_code": 238,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a95a0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a95a8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a95b2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a95c0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a95cd"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a95e3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a95f5"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a960d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9623"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9645"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9653"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a966a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9680"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a96a6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a96ce"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a96f0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9717"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9735"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9749"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a975c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9767"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a984e"
+  },
+  "name": "Tỉnh Hà Tĩnh",
+  "code": 42,
+  "division_type": "tỉnh",
+  "codename": "tinh_ha_tinh",
+  "phone_code": 239,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9778"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a977f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9799"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a97aa"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a97b5"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a97c7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a97da"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a97f0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9807"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a981f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9834"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9841"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a984d"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a98ee"
+  },
+  "name": "Tỉnh Quảng Bình",
+  "code": 44,
+  "division_type": "tỉnh",
+  "codename": "tinh_quang_binh",
+  "phone_code": 232,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a985e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a986e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9882"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9894"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a98b1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a98c1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a98dc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a98ed"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9976"
+  },
+  "name": "Tỉnh Quảng Trị",
+  "code": 45,
+  "division_type": "tỉnh",
+  "codename": "tinh_quang_tri",
+  "phone_code": 233,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a98f8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a98fe"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9911"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9927"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9939"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9947"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9950"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9963"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9974"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9975"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9a0d"
+  },
+  "name": "Tỉnh Thừa Thiên Huế",
+  "code": 46,
+  "division_type": "tỉnh",
+  "codename": "tinh_thua_thien_hue",
+  "phone_code": 234,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a999b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a99ac"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a99b8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a99c7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a99d2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a99dc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a99ef"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a01"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a0c"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9a4e"
+  },
+  "name": "Thành phố Đà Nẵng",
+  "code": 48,
+  "division_type": "thành phố trung ương",
+  "codename": "thanh_pho_da_nang",
+  "phone_code": 236,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9a13"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a1e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a2c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a34"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a39"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a40"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a4c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a4d"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9b52"
+  },
+  "name": "Tỉnh Quảng Nam",
+  "code": 49,
+  "division_type": "tỉnh",
+  "codename": "tinh_quang_nam",
+  "phone_code": 235,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9a5c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a6a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a75"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a81"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9a94"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9aa9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ab8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ac6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ad3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ae0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9aec"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b03"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b13"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b21"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b2c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b3e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b4a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b51"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9c0d"
+  },
+  "name": "Tỉnh Quảng Ngãi",
+  "code": 51,
+  "division_type": "tỉnh",
+  "codename": "tinh_quang_ngai",
+  "phone_code": 255,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9b6a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b81"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b92"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9b9e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9bad"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9bbc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9bc6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9bcc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9bd9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9be7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9bf7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c0b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c0c"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9cb8"
+  },
+  "name": "Tỉnh Bình Định",
+  "code": 52,
+  "division_type": "tỉnh",
+  "codename": "tinh_binh_dinh",
+  "phone_code": 256,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9c23"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c2e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c40"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c50"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c64"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c6e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c7e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9c91"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ca1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9caf"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9cb7"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9d30"
+  },
+  "name": "Tỉnh Phú Yên",
+  "code": 54,
+  "division_type": "tỉnh",
+  "codename": "tinh_phu_yen",
+  "phone_code": 257,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9cc9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9cd7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ce3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9cf3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d02"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d0e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d1a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d24"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d2f"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9dc5"
+  },
+  "name": "Tỉnh Khánh Hòa",
+  "code": 56,
+  "division_type": "tỉnh",
+  "codename": "tinh_khanh_hoa",
+  "phone_code": 258,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9d4c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d5c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d6b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d79"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9d95"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9da4"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9db7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9dc0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9dc4"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9e0e"
+  },
+  "name": "Tỉnh Ninh Thuận",
+  "code": 58,
+  "division_type": "tỉnh",
+  "codename": "tinh_ninh_thuan",
+  "phone_code": 259,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9dd6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9de0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9de9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9df3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9dfd"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e04"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e0d"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9e95"
+  },
+  "name": "Tỉnh Bình Thuận",
+  "code": 60,
+  "division_type": "tỉnh",
+  "codename": "tinh_binh_thuan",
+  "phone_code": 252,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9e21"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e2b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e37"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e4a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e5c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e6a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e78"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e85"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e90"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9e94"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9f06"
+  },
+  "name": "Tỉnh Kon Tum",
+  "code": 62,
+  "division_type": "tỉnh",
+  "codename": "tinh_kon_tum",
+  "phone_code": 260,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9eab"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9eb8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ec1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ecb"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ed5"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9edd"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ee9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ef5"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f01"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f05"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1a9ff4"
+  },
+  "name": "Tỉnh Gia Lai",
+  "code": 64,
+  "division_type": "tỉnh",
+  "codename": "tinh_gia_lai",
+  "phone_code": 269,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1a9f1d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f29"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f32"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f41"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f53"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f62"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f70"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f7d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f8c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9f97"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9fac"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9fbc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9fc5"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9fcf"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9fde"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9fe9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1a9ff3"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa0bc"
+  },
+  "name": "Tỉnh Đắk Lắk",
+  "code": 66,
+  "division_type": "tỉnh",
+  "codename": "tinh_dak_lak",
+  "phone_code": 262,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa00a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa017"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa024"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa02f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa037"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa049"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa051"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa05e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa06f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa07d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa08c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa09d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa0a6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa0b2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa0bb"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa10c"
+  },
+  "name": "Tỉnh Đắk Nông",
+  "code": 67,
+  "division_type": "tỉnh",
+  "codename": "tinh_dak_nong",
+  "phone_code": 261,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa0c5"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa0cd"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa0d6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa0e1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa0ee"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa0f8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa104"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa10b"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa1a7"
+  },
+  "name": "Tỉnh Lâm Đồng",
+  "code": 68,
+  "division_type": "tỉnh",
+  "codename": "tinh_lam_dong",
+  "phone_code": 263,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa11d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa129"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa132"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa139"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa14a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa155"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa165"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa179"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa188"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa192"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa19c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa1a6"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa222"
+  },
+  "name": "Tỉnh Bình Phước",
+  "code": 70,
+  "division_type": "tỉnh",
+  "codename": "tinh_binh_phuoc",
+  "phone_code": 271,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa1af"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa1b8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa1bf"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa1c8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa1d9"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa1e1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa1ef"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa1fb"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa20c"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa216"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa221"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa28a"
+  },
+  "name": "Tỉnh Tây Ninh",
+  "code": 72,
+  "division_type": "tỉnh",
+  "codename": "tinh_tay_ninh",
+  "phone_code": 276,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa22d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa238"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa245"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa251"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa261"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa26a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa274"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa27e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa289"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa2ef"
+  },
+  "name": "Tỉnh Bình Dương",
+  "code": 74,
+  "division_type": "tỉnh",
+  "codename": "tinh_binh_duong",
+  "phone_code": 274,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa299"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa2a1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa2ae"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa2b7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa2c3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa2d0"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa2d8"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa2e3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa2ee"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa3a5"
+  },
+  "name": "Tỉnh Đồng Nai",
+  "code": 75,
+  "division_type": "tỉnh",
+  "codename": "tinh_dong_nai",
+  "phone_code": 251,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa30e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa31e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa331"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa33e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa34d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa35f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa36a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa378"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa387"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa397"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa3a4"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa400"
+  },
+  "name": "Tỉnh Bà Rịa - Vũng Tàu",
+  "code": 77,
+  "division_type": "tỉnh",
+  "codename": "tinh_ba_ria_vung_tau",
+  "phone_code": 254,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa3b7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa3c3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa3d4"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa3e2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa3ea"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa3f3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa3fe"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa3ff"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18ed28795aa1a1aa54f"
+  },
+  "name": "Thành phố Hồ Chí Minh",
+  "code": 79,
+  "division_type": "thành phố trung ương",
+  "codename": "thanh_pho_ho_chi_minh",
+  "phone_code": 28,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa40b"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa417"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa428"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa43d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa44d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa459"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa467"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa48a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa497"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa4a6"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa4b7"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa4c5"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa4d4"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa4e3"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa4f4"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa4ff"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa50a"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa520"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa52d"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa53e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa546"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa54e"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aa61b"
+  },
+  "name": "Tỉnh Long An",
+  "code": 80,
+  "division_type": "tỉnh",
+  "codename": "tinh_long_an",
+  "phone_code": 272,
+  "districts": [
+    {
+      "$oid": "6770b18ed28795aa1a1aa55e"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa567"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa574"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa57f"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa587"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa595"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa5a1"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa5ad"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa5c2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa5d2"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa5df"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa5ea"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa5fc"
+    },
+    {
+      "$oid": "6770b18ed28795aa1a1aa60c"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa61a"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aa6d3"
+  },
+  "name": "Tỉnh Tiền Giang",
+  "code": 82,
+  "division_type": "tỉnh",
+  "codename": "tinh_tien_giang",
+  "phone_code": 273,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aa62d"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa63a"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa64b"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa658"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa672"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa683"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa69b"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa6af"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa6bd"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa6cb"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa6d2"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aa77a"
+  },
+  "name": "Tỉnh Bến Tre",
+  "code": 83,
+  "division_type": "tỉnh",
+  "codename": "tinh_ben_tre",
+  "phone_code": 275,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aa6e2"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa6f8"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa704"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa715"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa72b"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa740"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa758"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa76b"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa779"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aa7ee"
+  },
+  "name": "Tỉnh Trà Vinh",
+  "code": 84,
+  "division_type": "tỉnh",
+  "codename": "tinh_tra_vinh",
+  "phone_code": 294,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aa785"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa794"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa7a0"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa7ac"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa7bb"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa7cb"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa7dd"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa7e5"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa7ed"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aa862"
+  },
+  "name": "Tỉnh Vĩnh Long",
+  "code": 86,
+  "division_type": "tỉnh",
+  "codename": "tinh_vinh_long",
+  "phone_code": 270,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aa7fa"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa80a"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa817"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa82c"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa83e"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa847"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa856"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa861"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aa8fe"
+  },
+  "name": "Tỉnh Đồng Tháp",
+  "code": 87,
+  "division_type": "tỉnh",
+  "codename": "tinh_dong_thap",
+  "phone_code": 277,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aa872"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa87c"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa884"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa88e"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa899"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa8a6"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa8b4"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa8c7"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa8d5"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa8e3"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa8f0"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa8fd"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aa9a6"
+  },
+  "name": "Tỉnh An Giang",
+  "code": 89,
+  "division_type": "tỉnh",
+  "codename": "tinh_an_giang",
+  "phone_code": 296,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aa90c"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa914"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa923"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa932"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa945"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa953"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa962"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa972"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa980"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa993"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa9a5"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aaa46"
+  },
+  "name": "Tỉnh Kiên Giang",
+  "code": 91,
+  "division_type": "tỉnh",
+  "codename": "tinh_kien_giang",
+  "phone_code": 297,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aa9b3"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa9bb"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa9c4"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa9d3"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa9df"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa9ea"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aa9fe"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa0a"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa14"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa20"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa29"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa33"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa38"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa3f"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa45"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aaaa3"
+  },
+  "name": "Thành phố Cần Thơ",
+  "code": 92,
+  "division_type": "thành phố trung ương",
+  "codename": "thanh_pho_can_tho",
+  "phone_code": 292,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aaa52"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa5a"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa63"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa6b"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa75"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa81"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa8c"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaa94"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaaa2"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aaaf7"
+  },
+  "name": "Tỉnh Hậu Giang",
+  "code": 93,
+  "division_type": "tỉnh",
+  "codename": "tinh_hau_giang",
+  "phone_code": 293,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aaaad"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaab4"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaabf"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaac8"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaad8"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaae3"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaaec"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaaf6"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aab70"
+  },
+  "name": "Tỉnh Sóc Trăng",
+  "code": 94,
+  "division_type": "tỉnh",
+  "codename": "tinh_soc_trang",
+  "phone_code": 299,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aab02"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab0b"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab19"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab23"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab2c"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab38"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab44"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab4d"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab58"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab63"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab6f"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aabb8"
+  },
+  "name": "Tỉnh Bạc Liêu",
+  "code": 95,
+  "division_type": "tỉnh",
+  "codename": "tinh_bac_lieu",
+  "phone_code": 291,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aab7b"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab85"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab8e"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aab97"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aaba2"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aabae"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aabb7"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6770b18fd28795aa1a1aac27"
+  },
+  "name": "Tỉnh Cà Mau",
+  "code": 96,
+  "division_type": "tỉnh",
+  "codename": "tinh_ca_mau",
+  "phone_code": 290,
+  "districts": [
+    {
+      "$oid": "6770b18fd28795aa1a1aabca"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aabd3"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aabe0"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aabee"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aabfa"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aac0b"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aac14"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aac1e"
+    },
+    {
+      "$oid": "6770b18fd28795aa1a1aac26"
+    }
+  ]
+}]

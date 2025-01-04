@@ -1,0 +1,18 @@
+[{
+  "_id": {
+    "$oid": "6770b193b50eecacbb8e0c5d"
+  },
+  "role_name": "USER"
+},
+{
+  "_id": {
+    "$oid": "6770b193b50eecacbb8e0c5e"
+  },
+  "role_name": "EMPLOYER"
+},
+{
+  "_id": {
+    "$oid": "6770b193b50eecacbb8e0c5f"
+  },
+  "role_name": "CANDIDATE"
+}]
