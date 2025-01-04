@@ -52,11 +52,19 @@ import { NotificationModule } from './notification/notification.module';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const uri = configService.get<string>('MONGODB_URI');
+
+        // Log URI ra terminal để kiểm tra
+        console.log('MongoDB URI:', uri);
+
+        return {
+          uri,
+        };
+      },
       inject: [ConfigService],
     }),
+
     AuthModule,
     MailerModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
