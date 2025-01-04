@@ -8,16 +8,17 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+
 @WebSocketGateway({
   cors: {
     origin: [
       'http://localhost:5137',
-      'https://frontend-hiring-minhduys-projects.vercel.app/',
+      'https://frontend-hiring-minhduys-projects.vercel.app',
     ],
     methods: ['GET', 'POST'],
     credentials: true,
   },
-  transports: ['websocket'],
+  transports: ['websocket'], // Sử dụng transport WebSocket
 })
 export class NotificationGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -25,34 +26,29 @@ export class NotificationGateway
   @WebSocketServer() server: Server;
 
   constructor(private configService: ConfigService) {}
-  // Hàm này chạy khi WebSocket server được khởi tạo
+
+  // Chạy khi WebSocket server được khởi tạo
   afterInit(server: Server) {
-    const websocketPort = this.configService.get<number>(
-      'WEBSOCKET_PORT',
-      8080,
-    ); // Lấy biến môi trường với giá trị mặc định là 8080
-    console.log('WebSocket server initialized on port:', websocketPort);
     console.log('WebSocket initialized');
   }
 
-  // Hàm này chạy khi có client kết nối
+  // Chạy khi có client kết nối
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
   }
 
-  // Hàm này chạy khi client ngắt kết nối
+  // Chạy khi client ngắt kết nối
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  // Hàm phát thông báo cho ứng viên khi nhà tuyển dụng xem hồ sơ
+  // Phát thông báo cho ứng viên khi nhà tuyển dụng xem hồ sơ
   async sendNotificationToCandidate(candidateId: string, message: string) {
     this.server.to(candidateId.toString()).emit('notification', message);
   }
 
   @SubscribeMessage('joinRoom')
   handleJoinRoom(client: Socket, data: { userId: number }) {
-    // Client join vào "room" riêng của họ (phòng theo ID của ứng viên)
     client.join(data.userId + '');
     console.log(`Client ${client.id} joined room: ${data.userId}`);
   }

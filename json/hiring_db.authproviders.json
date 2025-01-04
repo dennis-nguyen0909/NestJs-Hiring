@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "6770b193b50eecacbb8e0c60"
+  },
+  "provider_name": "GOOGLE",
+  "provider_id": "google"
+},
+{
+  "_id": {
+    "$oid": "6770b193b50eecacbb8e0c61"
+  },
+  "provider_name": "FACEBOOK",
+  "provider_id": "facebook"
+},
+{
+  "_id": {
+    "$oid": "6770b193b50eecacbb8e0c62"
+  },
+  "provider_name": "GITHUB",
+  "provider_id": "github"
+},
+{
+  "_id": {
+    "$oid": "6770b193b50eecacbb8e0c63"
+  },
+  "provider_name": "LOCAL",
+  "provider_id": "local"
+}]

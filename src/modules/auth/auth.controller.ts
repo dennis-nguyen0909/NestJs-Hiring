@@ -152,7 +152,7 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res) {
     const response = await this.authService.signIn(req.user);
     res.redirect(
-      `${this.configService.get<string>('CLIENT_ORIGIN')}?access_token=${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
+      `${this.configService.get<string>('URL_REDIRECT')}${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
     );
   }
 
@@ -167,8 +167,9 @@ export class AuthController {
   @UseGuards(FacebookAuthGuard)
   async facebookAuthRedirect(@Req() req, @Res() res) {
     const response = await this.authService.signIn(req.user);
+    console.log('duydeptrai', this.configService.get<string>('URL_REDIRECT'));
     res.redirect(
-      `${this.configService.get<string>('CLIENT_ORIGIN')}?access_token=${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
+      `${this.configService.get<string>('URL_REDIRECT')}${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
     );
   }
 }

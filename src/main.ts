@@ -10,18 +10,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('PORT') || 8081;
   const reflector = app.get(Reflector);
-  // app.enableCors({
-  //   origin: [
-  //     'https://frontend-hiring-minhduys-projects.vercel.app',
-  //     'http://localhost:5173',
-  //   ],
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   credentials: true,
-  //   preflightContinue: true,
-  //   optionsSuccessStatus: 200,
-  //   allowedHeaders: ['Content-Type', 'Authorization'],
-  //   exposedHeaders: ['X-My-Header'],
-  // });
   app.enableCors({
     origin: [
       'http://localhost:5173',
@@ -32,7 +20,6 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     exposedHeaders: ['X-My-Header'],
   });
-  // 
 
   //config api
   app.setGlobalPrefix('/api/v1', { exclude: [''] });
