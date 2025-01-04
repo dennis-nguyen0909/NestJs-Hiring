@@ -17,7 +17,7 @@ async function bootstrap() {
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Cho phép gửi cookies
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with'],
     exposedHeaders: ['X-My-Header'],
   });
 
