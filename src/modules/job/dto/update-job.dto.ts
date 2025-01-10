@@ -1,7 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateJobDto } from './create-job.dto';
 import { IsBoolean, IsOptional } from 'class-validator';
-import { Types } from 'mongoose';
+import { ObjectId, Types } from 'mongoose';
+import { Transform } from 'class-transformer';
 
 export class UpdateJobDto extends PartialType(CreateJobDto) {
   @IsOptional() // Nếu không bắt buộc
@@ -22,7 +23,7 @@ export class UpdateJobDto extends PartialType(CreateJobDto) {
   apply_email?: string;
 
   @IsOptional()
-  skills?: string[];
+  skills?: Types.ObjectId[];
   @IsOptional()
   job_responsibilities: { responsibility: string }[];
 }

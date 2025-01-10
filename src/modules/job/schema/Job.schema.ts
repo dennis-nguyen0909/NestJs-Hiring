@@ -9,7 +9,6 @@ import { JobType } from 'src/modules/job-type/schema/JobType.schema';
 import { JobContractType } from 'src/modules/job-contract-type/schema/job-contract-type.schema';
 import { Currency } from 'src/modules/currencies/schema/currencies.schema';
 import { DegreeType } from 'src/modules/degree-type/schema/degree-type.schema';
-
 @Schema({ timestamps: true })
 export class Job extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
@@ -135,3 +134,14 @@ export class Job extends Document {
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
+JobSchema.index({ user_id: 1 });
+JobSchema.index({ city_id: 1 });
+JobSchema.index({ district_id: 1 });
+JobSchema.index({ job_type: 1 });
+JobSchema.index({ skills: 1 });
+JobSchema.index({ salary_range: '2d' }); // Nếu salary_range là phạm vi lương (giả sử có loại trường 2d)
+JobSchema.index({ posted_date: 1 }); // Index cho việc sắp xếp theo ngày đăng
+JobSchema.index({ expire_date: 1 }); // Index cho việc sắp xếp theo ngày hết hạn
+JobSchema.index({ title: 'text' }); // Tạo chỉ mục văn bản cho trường 'title' để tìm kiếm từ khóa
+JobSchema.index({ user_id: 1, skills: 1 }); // Index kết hợp cho tìm kiếm user_id và skills
+JobSchema.index({ city_id: 1, user_id: 1, job_type: 1 });

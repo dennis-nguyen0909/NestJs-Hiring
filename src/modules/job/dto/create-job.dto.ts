@@ -6,12 +6,15 @@ import {
   IsEnum,
   IsDate,
   IsMongoId,
+  Validate,
 } from 'class-validator';
 import { ProfessionalSkillDTO } from './general-requirement.dto';
+import { ObjectId, Types } from 'mongoose';
+import { Transform } from 'class-transformer';
 
 export class CreateJobDto {
   @IsMongoId()
-  user_id: string;
+  user_id: Types.ObjectId;
 
   @IsString()
   title: string;
@@ -24,17 +27,15 @@ export class CreateJobDto {
   @IsArray()
   require_experience?: string[];
 
-  @IsOptional()
-  @IsMongoId()
-  city_id?: string;
 
-  @IsOptional()
   @IsMongoId()
-  district_id?: string;
+  city_id?: Types.ObjectId;
 
-  @IsOptional()
   @IsMongoId()
-  ward_id?: string;
+  district_id?: Types.ObjectId;
+
+  @IsMongoId()
+  ward_id?: Types.ObjectId;
 
   @IsOptional()
   salary_range?: { min: number; max: number };
@@ -91,7 +92,7 @@ export class CreateJobDto {
 
   @IsOptional()
   @IsArray()
-  skills?: string[];
+  skills?: Types.ObjectId[];
 
   @Optional()
   is_active: boolean;

@@ -19,7 +19,7 @@ import { SocialLink } from 'src/modules/social_link/schema/social_link.schema';
 export class User extends Document {
   @Prop({ required: true })
   email: string;
-  
+
   @Prop({ required: true })
   full_name: string;
 
@@ -196,3 +196,8 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.index({ email: 1 }); // Tạo chỉ mục cho 'email'
+UserSchema.index({ city_id: 1 }); // Tạo chỉ mục cho 'city_id'
+
+// Tạo chỉ mục kết hợp cho 'city_id', 'district_id' và 'ward_id' nếu cần
+UserSchema.index({ city_id: 1, district_id: 1, ward_id: 1 });

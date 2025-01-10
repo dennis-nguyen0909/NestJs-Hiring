@@ -9,7 +9,7 @@ import {
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, set, Types } from 'mongoose';
+import { Model, PipelineStage, set, Types } from 'mongoose';
 import { Job } from './schema/Job.schema';
 import { UsersService } from '../users/users.service';
 import aqp from 'api-query-params';
@@ -21,6 +21,8 @@ import { Cities } from '../cities/schema/Cities.schema';
 import { Level } from '../level/schema/Level.schema';
 import { IJobService } from './job.interface';
 import { Meta } from '../types';
+import { JobType } from '../job-type/schema/JobType.schema';
+import { JobContractType } from '../job-contract-type/schema/job-contract-type.schema';
 
 @Injectable()
 export class JobService implements IJobService {
@@ -40,14 +42,14 @@ export class JobService implements IJobService {
   }
   async create(createJobDto: CreateJobDto):Promise<Job> {
     const { user_id, expire_date, salary_range, age_range } = createJobDto;
-
+    console.log("created",createJobDto)
     // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
-    const isUserExist = await this.userService.findByObjectId(user_id);
-    if (!isUserExist) {
+    const userExist = await this.userService.findByObjectId(user_id+'');
+    if (!userExist) {
       throw new BadRequestException('User not found');
     }
 
-    const user = await isUserExist.populate('role');
+    const user = await userExist.populate('role');
     if (user.role.role_name !== 'EMPLOYER') {
       throw new UnauthorizedException('User is not an employer');
     }
@@ -72,9 +74,26 @@ export class JobService implements IJobService {
     if (age_range?.min >= age_range?.max) {
       throw new BadRequestException('Age range max must be greater than min');
     }
+    if (createJobDto.skills) {
+      createJobDto.skills = createJobDto.skills.map((skill)=>{
+        return new Types.ObjectId(skill+"");
+      })
+    }
 
     // Nếu tất cả các kiểm tra đều vượt qua, tiếp tục tạo công việc
-    const job = await this.jobRepository.create(createJobDto);
+    const job = await this.jobRepository.create({
+      ...createJobDto,
+      city_id:new Types.ObjectId(createJobDto.city_id),
+      district_id:new Types.ObjectId(createJobDto.district_id),
+      level:new Types.ObjectId(createJobDto.level),
+      type_money:new Types.ObjectId(createJobDto.type_money),
+      degree:new Types.ObjectId(createJobDto.degree),
+      ward_id:new Types.ObjectId(createJobDto.ward_id),
+      job_type:new Types.ObjectId(createJobDto.job_type),
+      job_contract_type:new Types.ObjectId(createJobDto.job_contract_type),
+      user_id:new Types.ObjectId(userExist._id+"")
+    });
+    console.log("createJobDto",createJobDto)
     if (job) {
       user.jobs_ids.push(new Types.ObjectId(job?._id+""))
       user.save()
@@ -84,21 +103,65 @@ export class JobService implements IJobService {
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number):Promise<{items:Job[],meta:Meta}> {
+  async findAll(query: string, current: number, pageSize: number): Promise<{ items: Job[], meta: Meta }> {
     const { filter, sort } = aqp(query);
+  
+    // Xử lý pagination
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
+  
+    const keyword = new RegExp(filter.keyword, 'i');
+    console.log("filter keyword",filter)
+    if (filter.job_type) {
+      if (Array.isArray(filter?.job_type['$in'])) {
+        filter['job_type'] = { $in: filter?.job_type['$in']?.map(id => new Types.ObjectId(id)) };
+      } else {
+        filter['job_type'] = new Types.ObjectId(filter.job_type);
+      }
+    }
+    if (filter.job_contract_type) {
+      if (Array.isArray(filter?.job_contract_type['$in'])) {
+        filter['job_contract_type'] = { $in: filter?.job_contract_type['$in']?.map(id => new Types.ObjectId(id)) };
+      } else {
+        filter['job_contract_type'] = new Types.ObjectId(filter.job_contract_type);
+      }
+    }
+  
+    const user = await this.userModel.find({
+      company_name: keyword
+    }).select("_id");
+    const userIds = user.map(user => user._id);  
+    
+    const skills = await this.employerModel.find({
+      name: keyword
+    }).select("_id");
+    const skillIds = skills.map(skill => skill._id);  
+    
 
-    if (filter.keyword) {
-      const keyword = new RegExp(filter.keyword, 'i'); // 'i' cho phép tìm kiếm không phân biệt chữ hoa/chữ thường
-      filter.$or = [
-        { title: keyword }, // Lọc theo trường 'title'
-        { company: keyword }, // Lọc theo trường 'company'
-        { 'user_id.company_name': keyword }, // Lọc theo trường 'user_id.company'
-      ];
-      delete filter.keyword; // Xóa keyword khỏi filter sau khi sử dụng
+    if (filter.keyword ) {
+      filter.$or = filter.$or || []; // Khởi tạo mảng nếu chưa tồn tại
+      if (filter.keyword) {
+        filter.$or.push(
+          { title: keyword },
+          { 'user_id': { $in: userIds } }, 
+          { 'skills': { $in: skillIds } }
+        );
+      }
+      
+      delete filter.keyword;
+    }
+          
+    if (filter.city_id) {
+      filter['city_id']= new Types.ObjectId(filter.city_id+'')
+    }
+
+
+  
+    if (filter.user_id) {
+      filter['user_id'] = new Types.ObjectId(filter.user_id);
+      delete filter.user_id;
     }
     if (
       filter.salary_range_min !== undefined ||
@@ -108,7 +171,6 @@ export class JobService implements IJobService {
         min: filter.salary_range_min,
         max: filter.salary_range_max,
       };
-      // Lọc salary_range_max nếu có và không phải là Infinity
       if (filter.salary_range.max === 'Infinity') {
         filter['salary_range'] = {
           min: filter.salary_range_min,
@@ -118,10 +180,13 @@ export class JobService implements IJobService {
       delete filter.salary_range_min;
       delete filter.salary_range_max;
     }
-
+  console.log("duydeptrai final",filter)
+    // Lấy tổng số item
     const totalItems = (await this.jobRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
+    
+    // Truy vấn và populate dữ liệu
     const result = await this.jobRepository
       .find(filter)
       .limit(pageSize)
@@ -129,36 +194,36 @@ export class JobService implements IJobService {
       .sort(sort as any)
       .populate({
         path: 'city_id',
-        select: '-districts',
+        select: 'name _id', // Chỉ lấy thông tin cần thiết về city
       })
       .populate({
         path: 'district_id',
-        select: '-wards',
+        select: 'name _id', // Chỉ lấy thông tin cần thiết về district
       })
       .populate({
         path: 'skills',
         model: SkillEmployer.name,
-        select: '-createdAt -updatedAt -description',
+        select: '_id name', // Lấy thông tin cần thiết về skill
       })
       .populate({
         path: 'user_id',
         model: User.name,
-        select:
-          '-password -avatar -role -is_active -is_deleted -createdAt -updatedAt -__v',
-          populate:[
-            {
-              path:'district_id'
-            },
-            {
-              path:'city_id'
-            }
-          ]
+        select: 'company_name _id avatar_company', // Chỉ lấy các trường cần thiết từ user_id
       })
-      .populate('degree')
-      .populate('type_money')
-      .populate('level')
-      .populate('job_contract_type')
-      .populate('job_type');
+      .populate('type_money','_id symbol code')
+      .populate('level','_id name key')
+      .populate({
+        path:'job_type',
+        model:JobType.name,
+        select:'_id name'
+      })
+      .populate({
+        path:'job_contract_type',
+        model:JobContractType.name,
+        select:'_id name'
+      })
+      .select('title _id salary_range is_negotiable job_type job_contract_type');
+    
     return {
       items: result,
       meta: {
@@ -170,6 +235,175 @@ export class JobService implements IJobService {
       },
     };
   }
+  
+
+  
+
+  
+  
+  // async findAll(query: string, current: number, pageSize: number): Promise<{ items: Job[], meta: Meta }> {
+  //   const { filter, sort } = aqp(query);
+  
+  //   // Kiểm tra và loại bỏ các trường không cần thiết từ filter
+  //   if (filter.current) delete filter.current;
+  //   if (filter.pageSize) delete filter.pageSize;
+  //   if (!current) current = 1;
+  //   if (!pageSize) pageSize = 10;
+  
+  //   try {
+  //     // Chuyển các giá trị ID thành ObjectId nếu có
+  //     if (filter.job_type) {
+  //       filter['job_type'] = new Types.ObjectId(filter.job_type);
+  //     }
+  //     if (filter.user_id) {
+  //       filter['user_id'] = new Types.ObjectId(filter.user_id);
+  //     }
+  //     if (filter.city_id) {
+  //       filter['city_id'] = new Types.ObjectId(filter.city_id);
+  //     }
+  //   } catch (err) {
+  //     console.error("Invalid ObjectId conversion:", err.message);
+  //   }
+  
+  //   // Xử lý tìm kiếm với keyword (tìm theo title, company_name hoặc skills)
+  //   if (filter.keyword) {
+  //     const keyword = new RegExp(filter.keyword, 'i');
+    
+  //     // Tìm kiếm các kỹ năng (skills)
+  //     const matchingSkills = await this.employerModel.find({ name: keyword }).select('_id');
+  //     const skillIds = matchingSkills.map(skill => new Types.ObjectId(skill._id+''));
+      
+  //     filter.$or = [
+  //       { title: keyword },
+  //       { 'user_id.company_name': keyword },
+  //       { 'city_id': filter.city_id },
+  //       ...(skillIds.length > 0 ? [{ skills: { $in: skillIds } }] : []), 
+  //     ];
+    
+  //     delete filter.keyword;  // Xóa keyword sau khi đã sử dụng
+  //   }
+  
+  //   // Xử lý lọc theo mức lương
+  //   if (filter.salary_range_min !== undefined || filter.salary_range_max !== undefined) {
+  //     filter['salary_range'] = {
+  //       min: filter.salary_range_min,
+  //       max: filter.salary_range_max === 'Infinity' ? Infinity : filter.salary_range_max,
+  //     };
+  //     delete filter.salary_range_min;
+  //     delete filter.salary_range_max;
+  //   }
+  // console.log("filter",filter)
+  //   // Pipeline tìm kiếm công việc với các lookup từ các bảng khác
+  //   const pipeline: PipelineStage[] = [
+  //     {
+  //       $lookup: {
+  //         from: 'users',
+  //         localField: 'user_id',
+  //         foreignField: '_id',
+  //         as: 'user_id',
+  //       },
+  //     },
+  //     { $unwind: '$user_id' },
+  //     {
+  //       $lookup: {
+  //         from: 'skillemployers',
+  //         localField: 'skills',
+  //         foreignField: '_id',
+  //         as: 'skills',
+  //       },
+  //     },
+  //     {
+  //       $lookup: {
+  //         from: 'cities',
+  //         localField: 'city_id',
+  //         foreignField: '_id',
+  //         as: 'city_id',
+  //       },
+  //     },
+  //     { $unwind: '$city_id' },  // Giải nén city_id
+  //     {
+  //       $lookup: {
+  //         from: 'districts',
+  //         localField: 'district_id',
+  //         foreignField: '_id',
+  //         as: 'district_id',
+  //       },
+  //     },
+  //     { $unwind: '$district_id' },
+  //     {
+  //       $lookup: {
+  //         from: 'jobcontracttypes',
+  //         localField: 'job_contract_type',
+  //         foreignField: '_id',
+  //         as: 'job_contract_type',
+  //       },
+  //     },
+  //     { $unwind: '$job_contract_type' },
+  //     {
+  //       $lookup: {
+  //         from: 'jobtypes',
+  //         localField: 'job_type',
+  //         foreignField: '_id',
+  //         as: 'job_type',
+  //       },
+  //     },
+  //     { $unwind: '$job_type' },
+  //     { $match: { ...filter } }, // Áp dụng filter
+  //     { $skip: (current - 1) * pageSize }, // Phân trang
+  //     { $limit: pageSize },
+  //     {
+  //       $project: {
+  //         '_id': 1,
+  //         'title': 1,
+  //         'district_id': 1,
+  //         'city_id': 1,
+  //         'skills': 1,
+  //         'is_negotiable': 1,
+  //         'is_expired': 1,
+  //         'job_type': 1,
+  //         'expire_date': 1,
+  //         'posted_date': 1,
+  //         'is_active': 1,
+  //         'job_contract_type': 1,
+  //         'salary_range': 1,
+  //         'user_id.company_name': 1,
+  //         'user_id._id': 1,
+  //         'user_id.avatar_company': 1,
+  //       },
+  //     },
+  //   ];
+  
+  //   // Tính toán tổng số công việc và số trang
+  //   const totalItemsResult = await this.jobRepository.aggregate([
+  //     ...pipeline.slice(0, -3),  // Loại bỏ các phần pagination và project để tính tổng
+  //     { $count: 'total' },
+  //   ]);
+  
+  //   const totalItems = totalItemsResult.length > 0 ? totalItemsResult[0].total : 0;
+  //   const totalPages = totalItems > 0 ? Math.ceil(totalItems / pageSize) : 0;
+  
+  //   // Truy vấn dữ liệu công việc theo pipeline
+  //   const result = await this.jobRepository.aggregate(pipeline);
+  
+  //   return {
+  //     items: result,
+  //     meta: {
+  //       count: result.length,
+  //       current_page: current,
+  //       per_page: pageSize,
+  //       total: totalItems,
+  //       total_pages: totalPages,
+  //     },
+  //   }; 
+  // }
+  
+
+  
+  
+  
+  
+  
+  
 
   async findOne(id: string):Promise<Job>{
     const job = await this.jobRepository
