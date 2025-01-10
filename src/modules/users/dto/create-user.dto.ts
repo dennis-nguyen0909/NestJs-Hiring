@@ -136,6 +136,9 @@ export class CreateUserDto {
   toggle_dashboard?: boolean;
 
   @IsOptional()
+  toggle_filter?: boolean;
+
+  @IsOptional()
   @IsMongoId()
   primary_cv_id?: string;
   @IsOptional()

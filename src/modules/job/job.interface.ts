@@ -5,7 +5,12 @@ import { Job } from './schema/Job.schema';
 
 export interface IJobService {
   create(createJobDto: CreateJobDto): Promise<Job>;
-  findAll(query: string, current: number, pageSize: number): Promise<any>;
+  findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+    sortParams: any,
+  ): Promise<any>;
   findOne(id: string): Promise<Job>;
   update(id: string, updateJobDto: UpdateJobDto): Promise<Job>;
   remove(data: DeleteJobDto): Promise<[]>;

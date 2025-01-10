@@ -63,6 +63,9 @@ export class User extends Document {
   toggle_dashboard: boolean;
 
   @Prop({ default: false })
+  toggle_filter: boolean;
+
+  @Prop({ default: false })
   is_search_jobs_status: boolean;
 
   @Prop({ default: false })

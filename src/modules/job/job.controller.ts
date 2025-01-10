@@ -93,10 +93,11 @@ export class JobController {
   @ResponseMessage('Success')
   async findAll(
     @Query('query') query: string,
+    @Query('sort') sort: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ): Promise<{ items: Job[]; meta: Meta }> {
-    return await this.jobService.findAll(query, +current, +pageSize);
+    return await this.jobService.findAll(query, +current, +pageSize, sort);
   }
 
   @Get(':id')

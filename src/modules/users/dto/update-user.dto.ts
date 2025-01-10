@@ -39,6 +39,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   toggle_dashboard?: boolean;
 
   @IsOptional()
+  toggle_filter?: boolean;
+  @IsOptional()
   port_folio?: string;
 
   @IsOptional()
@@ -54,6 +56,4 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsMongoId()
   ward_id?: string;
-
-  
 }

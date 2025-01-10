@@ -42,7 +42,6 @@ export class JobService implements IJobService {
   }
   async create(createJobDto: CreateJobDto):Promise<Job> {
     const { user_id, expire_date, salary_range, age_range } = createJobDto;
-    console.log("created",createJobDto)
     // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
     const userExist = await this.userService.findByObjectId(user_id+'');
     if (!userExist) {
@@ -93,7 +92,6 @@ export class JobService implements IJobService {
       job_contract_type:new Types.ObjectId(createJobDto.job_contract_type),
       user_id:new Types.ObjectId(userExist._id+"")
     });
-    console.log("createJobDto",createJobDto)
     if (job) {
       user.jobs_ids.push(new Types.ObjectId(job?._id+""))
       user.save()
@@ -103,7 +101,7 @@ export class JobService implements IJobService {
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number): Promise<{ items: Job[], meta: Meta }> {
+  async findAll(query: string, current: number, pageSize: number,sortParams:any): Promise<{ items: Job[], meta: Meta }> {
     const { filter, sort } = aqp(query);
   
     // Xử lý pagination
@@ -113,7 +111,6 @@ export class JobService implements IJobService {
     if (!pageSize) pageSize = 10;
   
     const keyword = new RegExp(filter.keyword, 'i');
-    console.log("filter keyword",filter)
     if (filter.job_type) {
       if (Array.isArray(filter?.job_type['$in'])) {
         filter['job_type'] = { $in: filter?.job_type['$in']?.map(id => new Types.ObjectId(id)) };
@@ -180,7 +177,8 @@ export class JobService implements IJobService {
       delete filter.salary_range_min;
       delete filter.salary_range_max;
     }
-  console.log("duydeptrai final",filter)
+    const defaultSort = { createdAt: 'desc' };
+    const sortCriteria = sort || sortParams?.sort || defaultSort; // Nếu không có sort thì mặc định là 'createdAt: desc'
     // Lấy tổng số item
     const totalItems = (await this.jobRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
@@ -191,7 +189,7 @@ export class JobService implements IJobService {
       .find(filter)
       .limit(pageSize)
       .skip(skip)
-      .sort(sort as any)
+      .sort(sortCriteria as any)
       .populate({
         path: 'city_id',
         select: 'name _id', // Chỉ lấy thông tin cần thiết về city
@@ -222,7 +220,7 @@ export class JobService implements IJobService {
         model:JobContractType.name,
         select:'_id name'
       })
-      .select('title _id salary_range is_negotiable job_type job_contract_type');
+      .select('title _id salary_range is_negotiable job_type job_contract_type createdAt');
     
     return {
       items: result,
