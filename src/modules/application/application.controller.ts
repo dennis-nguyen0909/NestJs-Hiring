@@ -155,11 +155,15 @@ export class ApplicationController {
   })
   async getRecentlyApplied(
     @Param('candidate_id') candidate_id: string,
-    @Query('limit') limit: string,
-  ): Promise<Application[]> {
+    @Query('query') query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ): Promise<{ items: Application[]; meta: Meta }> {
     return await this.applicationService.getRecentlyApplied(
       candidate_id,
-      +limit,
+      query,
+      +current,
+      +pageSize,
     );
   }
 }

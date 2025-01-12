@@ -31,8 +31,10 @@ export interface IApplicationService {
   getAppliedUserId(userId: string): Promise<number>;
   getRecentlyApplied(
     candidateId: string,
-    limit: number,
-  ): Promise<Application[]>;
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Application[]; meta: Meta }>;
   getRecentlyAppliedCandidate(
     query: string,
     current: number,

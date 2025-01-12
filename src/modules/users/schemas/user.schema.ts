@@ -9,9 +9,6 @@ import { Skill } from 'src/modules/skill/schema/Skill.schema';
 import { Prize } from 'src/modules/prize/schema/prize.schema';
 import { Course } from 'src/modules/course/schema/course.schema';
 import { Project } from 'src/modules/project/schema/project.schema';
-import { Cities } from 'src/modules/cities/schema/Cities.schema';
-import { District } from 'src/modules/districts/schema/District.schema';
-import { Ward } from 'src/modules/wards/schema/Wards.schema';
 import { FavoriteJob } from 'src/modules/favorite-job/schema/favorite-job.schema';
 import { SocialLink } from 'src/modules/social_link/schema/social_link.schema';
 
@@ -72,13 +69,13 @@ export class User extends Document {
   is_suggestion_job: boolean;
 
   @Prop({ type: Types.ObjectId, ref: 'Cities' })
-  city_id: Cities;
+  city_id: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'District' })
-  district_id: District;
+  district_id: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Ward' })
-  ward_id: Ward;
+  ward_id: Types.ObjectId;
   @Prop()
   code_id: string;
 

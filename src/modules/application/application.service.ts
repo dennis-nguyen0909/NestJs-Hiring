@@ -89,7 +89,19 @@ export class ApplicationService implements IApplicationService {
       .find(filter)
       .limit(pageSize)
       .skip(skip)
-      .sort(sort as any);
+      .sort(sort as any)
+      .populate(
+        'employer_id',
+        '-password -role -account_type -code_id -code_expired -auth_providers',
+      )
+      .populate({
+        path: 'job_id',
+        populate: {
+          path: 'city_id',
+          select: 'name',
+        },
+      });
+
     return {
       items: result,
       meta: {
@@ -347,28 +359,60 @@ export class ApplicationService implements IApplicationService {
 
   async getRecentlyApplied(
     candidateId: string,
-    limit: number,
-  ): Promise<Application[]> {
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Application[]; meta: Meta }> {
     try {
-      const res = await this.applicationRepository
-        .find({ user_id: candidateId })
-        .populate({
-          path: 'job_id',
-          populate: {
-            path: 'city_id', // Populate city_id in job_id
-          },
-        }) // Populate job details
+      const { filter, sort } = aqp(query);
+      if (filter.current) delete filter.current;
+      if (filter.pageSize) delete filter.pageSize;
+      if (!current) current = 1;
+      if (!pageSize) pageSize = 10;
+      const totalItems = (await this.applicationRepository.find(filter)).length;
+      const totalPages = Math.ceil(totalItems / pageSize);
+      const skip = (+current - 1) * pageSize;
+      const result = await this.applicationRepository
+        .find(filter)
+        .limit(pageSize)
+        .skip(skip)
+        .sort({ ...(sort as any), applied_date: -1 })
         .populate(
           'employer_id',
           '-password -role -account_type -code_id -code_expired -auth_providers',
         )
-        .sort({ applied_date: -1 }) // Sort by applied_date (descending)
-        .limit(limit)
-        .exec();
-      if (!res) {
-        throw new NotFoundException('Not found!');
-      }
-      return res;
+        .populate({
+          path: 'job_id',
+          populate: {
+            path: 'city_id',
+            select: 'name',
+          },
+        });
+      return {
+        items: result,
+        meta: {
+          count: result.length,
+          current_page: +current,
+          per_page: +pageSize,
+          total: totalItems,
+          total_pages: totalPages,
+        },
+      };
+      // const res = await this.applicationRepository
+      //   .find({ user_id: candidateId })
+      //   .populate({
+      //     path: 'job_id',
+      //     populate: {
+      //       path: 'city_id', // Populate city_id in job_id
+      //     },
+      //   }) // Populate job details
+      //   .populate(
+      //     'employer_id',
+      //     '-password -role -account_type -code_id -code_expired -auth_providers',
+      //   )
+      //   .sort({ applied_date: -1 }) // Sort by applied_date (descending)
+      //   .limit(limit)
+      //   .exec();
     } catch (error) {
       throw new BadRequestException(error.message);
     }

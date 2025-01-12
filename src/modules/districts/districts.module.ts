@@ -12,6 +12,6 @@ import { District, DistrictSchema } from './schema/District.schema';
   ],
   controllers: [DistrictsController],
   providers: [DistrictsService],
-  exports: [DistrictsModule],
+  exports: [DistrictsModule, MongooseModule],
 })
 export class DistrictsModule {}

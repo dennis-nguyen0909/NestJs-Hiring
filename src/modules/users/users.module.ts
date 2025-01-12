@@ -7,6 +7,8 @@ import { RoleModule } from '../role/role.module';
 import { AuthProviderModule } from '../auth-provider/auth-provider.module';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { NotificationModule } from 'src/notification/notification.module';
+import { CitiesModule } from '../cities/cities.module';
+import { DistrictsModule } from '../districts/districts.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { NotificationModule } from 'src/notification/notification.module';
     AuthProviderModule,
     CloudinaryModule,
     NotificationModule,
+    CitiesModule,
+    DistrictsModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

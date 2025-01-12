@@ -7,6 +7,7 @@ import {
   IsEmail,
   IsMongoId,
 } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsNotEmpty({ message: 'Id is required.' })
@@ -46,14 +47,14 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   introduce?: string;
 
-  @IsOptional()
   @IsMongoId()
-  city_id?: string;
+  @IsOptional()
+  city_id: Types.ObjectId;
 
-  @IsOptional()
   @IsMongoId()
-  district_id?: string;
   @IsOptional()
+  district_id: Types.ObjectId;
   @IsMongoId()
-  ward_id?: string;
+  @IsOptional()
+  ward_id: Types.ObjectId;
 }

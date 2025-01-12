@@ -24,10 +24,14 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { Meta } from '../types';
 import { IUserRepository } from './user.interface';
+import { Cities } from '../cities/schema/Cities.schema';
+import { District } from '../districts/schema/District.schema';
 @Injectable()
 export class UsersService implements IUserRepository{
   constructor(
     @InjectModel(User.name) private readonly userRepository: Model<User>,
+    @InjectModel(Cities.name) private readonly citiesModel: Model<Cities>,
+    @InjectModel(District.name) private readonly districtModel: Model<District>,
     private mailService: MailerService,
     private roleService: RoleService,
     private authProviderService:AuthProviderService,
@@ -229,7 +233,13 @@ export class UsersService implements IUserRepository{
       // Kiểm tra ID người dùng và cập nhật
       const updatedUser = await this.userRepository.findOneAndUpdate(
         { _id: updateUserDto.id },  // Tìm người dùng theo ID
-        { $set: updateUserDto },  // Cập nhật người dùng với dữ liệu mới
+        { $set: {
+          city_id:new Types.ObjectId(updateUserDto.city_id),
+          district_id:new Types.ObjectId(updateUserDto.district_id),
+          ward_id:new Types.ObjectId(updateUserDto.ward_id),
+          account_type:new Types.ObjectId(updateUserDto.account_type),
+          ...updateUserDto
+        } },  // Cập nhật người dùng với dữ liệu mới
         { new: true },  // Trả về bản ghi mới đã được cập nhật
       ).select(['-password', '-code_id', '-code_expired'])
       .populate('role')
@@ -256,11 +266,12 @@ export class UsersService implements IUserRepository{
       if (!updatedUser) {
         throw new NotFoundException('User not found');
       }
+      console.log("Updated User:", updatedUser);
   
       // Loại bỏ password trước khi trả về
       const { password, ...userWithoutPassword } = updatedUser.toObject();
   
-      return userWithoutPassword; // Trả về thông tin người dùng đã được cập nhật
+      return updatedUser; // Trả về thông tin người dùng đã được cập nhật
     } catch (error) {
       // Xử lý lỗi
       throw new BadRequestException(error.message);
@@ -507,26 +518,78 @@ export class UsersService implements IUserRepository{
     return completion;
   }
 
- async getAllCompany(query:string,current:number,pageSize:number):Promise<{items:User[],meta:Meta}> {
-    const {filter,sort}=aqp(query);
-    if(filter.current) delete filter.current;
-    if(filter.pageSize) delete filter.pageSize;
-    if(!current) current=1;
-    if(!pageSize) pageSize=10;
-
+  async getAllCompany(query: string, current: number, pageSize: number): Promise<{ items: User[], meta: Meta }> {
+    const { filter, sort } = aqp(query);
+  
+    // Remove pagination-related properties from filter if present
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+  
+    // Set default values for current page and pageSize
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+  
+    // Apply regex filter for company_name if provided
+    if (filter.company_name) {
+      let companyName = filter.company_name.trim();
+  
+      // Loại bỏ dấu ngoặc và ký tự đặc biệt khỏi chuỗi tìm kiếm
+      companyName = companyName.replace(/[^\w\s]/g, ''); // Chỉ giữ lại chữ và số, bỏ dấu câu
+  
+      // Tách chuỗi tìm kiếm thành các từ đơn và ghép thành regex
+      const searchTerms = companyName.split(' ').filter(term => term !== '').map(term => `(?=.*${term})`).join('');
+  
+      // Tạo regex từ các từ tìm kiếm
+      const regex = new RegExp(searchTerms, 'i');  // 'i' for case-insensitive search
+      filter.company_name = regex;
+    }
+  
+    // Xử lý city_name cho cả thành phố và quận
+    if (filter.city_name) {
+      // Trước tiên, tìm kiếm trong bảng cities
+      const cities = await this.citiesModel.find({ name: { $regex: new RegExp(filter.city_name, 'i') } })
+        .select('_id');  // Lấy chỉ _id của thành phố phù hợp
+      if (cities.length > 0) {
+        // Nếu tìm thấy thành phố, thêm vào bộ lọc city_id
+        const cityIds = cities.map(city => city._id.toString());
+        filter.city_id = { $in: cityIds };  // Lọc theo city_id
+      }
+  
+      // Nếu không tìm thấy thành phố, tìm kiếm trong bảng districts
+      const districts = await this.districtModel.find({ name: { $regex: new RegExp(filter.city_name, 'i') } })
+        .select('_id');  // Lấy chỉ _id của quận phù hợp
+      if (districts.length > 0) {
+        // Nếu tìm thấy quận, thêm vào bộ lọc district_id
+        const districtIds = districts.map(district => district._id.toString());
+        filter.district_id = { $in: districtIds };  // Lọc theo district_id
+      }
+  
+      delete filter.city_name;  // Xóa trường city_name khỏi filter sau khi xử lý
+    }
+  
+    // Count total items based on the filter
     const totalItems = await this.userRepository.find(filter).countDocuments();
-    const totalPages = Math.ceil(totalItems/pageSize);
+    const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
-    if(filter?.role){
+  
+    // Handle role field conversion to ObjectId if it exists
+    if (filter?.role) {
       filter.role = new Types.ObjectId(filter.role);
     }
- 
-    const result = (await this.userRepository.find(filter).limit(pageSize).skip(skip).sort(sort as any)
-    .populate('city_id')
-    .populate('district_id')
-    .populate('jobs_ids')
-    .select('-password -code_id -code_expired -is_active -is_search_jobs_status -phone -toggle_dashboard -certificates -courses -prizes -projects -skills -education_ids -cv_ids -account_type -work_experience_ids'));
-    if(result){
+  
+    console.log("filter", filter);
+  
+    // Query the userRepository with the constructed filter, pagination, and sorting
+    const result = await this.userRepository.find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any)
+      .populate('city_id', '-districts -division_type -phone_code')
+      .populate('district_id', '-wards -short_codename -division_type')
+      .populate('jobs_ids', '_id')
+      .select('_id avatar_company city_id district_id company_name');
+  
+    if (result) {
       return {
         items: result,
         meta: {
@@ -536,9 +599,12 @@ export class UsersService implements IUserRepository{
           total: totalItems,
           total_pages: totalPages,
         },
-      }
+      };
     }
   }
+  
+  
+  
 
   async employerSendMail(body) {
     // Gửi email cho ứng viên với các thông tin công việc và người tuyển dụng
