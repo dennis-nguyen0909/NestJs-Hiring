@@ -158,7 +158,6 @@ export class JobService implements IJobService {
   
     if (filter.user_id) {
       filter['user_id'] = new Types.ObjectId(filter.user_id);
-      delete filter.user_id;
     }
     if (
       filter.salary_range_min !== undefined ||
@@ -180,6 +179,7 @@ export class JobService implements IJobService {
     const defaultSort = { createdAt: 'desc' };
     const sortCriteria = sort || sortParams?.sort || defaultSort; // Nếu không có sort thì mặc định là 'createdAt: desc'
     // Lấy tổng số item
+    console.log("DUYDEPTRAI ",filter)
     const totalItems = (await this.jobRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
@@ -220,7 +220,7 @@ export class JobService implements IJobService {
         model:JobContractType.name,
         select:'_id name'
       })
-      .select('title _id salary_range is_negotiable job_type job_contract_type createdAt');
+      .select('title _id salary_range is_negotiable job_type job_contract_type createdAt is_active is_expired count_apply candidate_ids');
     
     return {
       items: result,

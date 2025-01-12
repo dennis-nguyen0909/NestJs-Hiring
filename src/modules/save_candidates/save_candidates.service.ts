@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateSaveCandidateDto } from './dto/create-save_candidate.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { SaveCandidate } from './schema/SaveCandidates.schema';
 import aqp from 'api-query-params';
 import { ISaveCandidatesService } from './save_candidates.interface';
@@ -16,13 +16,29 @@ export class SaveCandidatesService implements ISaveCandidatesService {
 
   async saveCandidate(data: CreateSaveCandidateDto): Promise<SaveCandidate> {
     try {
-      const res = await this.modelSaveCandidate.create(data);
-      if (!res) {
-        throw new BadRequestException('Failed');
+      // Kiểm tra xem data.employer có hợp lệ không (có thể là ObjectId hợp lệ)
+      const employerId = Types.ObjectId.isValid(data.employer)
+        ? new Types.ObjectId(data.employer)
+        : null;
+
+      if (!employerId) {
+        throw new BadRequestException('Invalid employer ID');
       }
+
+      const res = await this.modelSaveCandidate.create({
+        employer: employerId,
+        ...data,
+      });
+
+      if (!res) {
+        throw new BadRequestException('Failed to save candidate');
+      }
+
       return res;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(
+        error.message || 'An error occurred while saving the candidate',
+      );
     }
   }
   async findAll(
@@ -77,7 +93,7 @@ export class SaveCandidatesService implements ISaveCandidatesService {
       const totalPages = Math.ceil(totalItems / pageSize);
       const skip = (+current - 1) * pageSize;
       const result = await this.modelSaveCandidate
-        .find({ employer: id, ...filter })
+        .find({ employer: new Types.ObjectId(id), ...filter })
         .limit(pageSize)
         .skip(skip)
         .sort(sortOption as any)

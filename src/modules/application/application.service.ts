@@ -171,14 +171,14 @@ export class ApplicationService implements IApplicationService {
       );
       // xóa bảng save-candidate
       await this.saveCandidateModel.deleteOne({
-        employer: application.employer_id,
+        employer: new Types.ObjectId(application.employer_id),
         candidate: userIdObject,
       });
     } else {
       application.save_candidates.push(userIdObject);
       // thêm vào bảng save-candidate
       const employer = await this.userModel.findOne({
-        _id: application.employer_id,
+        _id: new Types.ObjectId(application.employer_id),
       });
       const candidate = await this.userModel.findOne({
         _id: userIdObject,
@@ -190,7 +190,7 @@ export class ApplicationService implements IApplicationService {
         );
       }
       await this.saveCandidateModel.create({
-        employer: application.employer_id,
+        employer: new Types.ObjectId(application.employer_id),
         candidate: userIdObject,
         isActive: true,
       });
