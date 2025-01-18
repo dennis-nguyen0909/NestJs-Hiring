@@ -530,8 +530,8 @@ export class UsersService implements IUserRepository{
     if (!pageSize) pageSize = 10;
   
     // Apply regex filter for company_name if provided
-    if (filter.company_name) {
-      let companyName = filter.company_name.trim();
+    if (filter?.company_name) {
+      let companyName = (typeof filter?.company_name === 'string' ? filter.company_name.trim() : '');
   
       // Loại bỏ dấu ngoặc và ký tự đặc biệt khỏi chuỗi tìm kiếm
       companyName = companyName.replace(/[^\w\s]/g, ''); // Chỉ giữ lại chữ và số, bỏ dấu câu
@@ -663,19 +663,36 @@ export class UsersService implements IUserRepository{
     return user;
   }
 
-    async validateGoogleUser(googleUser:any){
-        const user = await this.userRepository.findOne({
-          email:googleUser?.email
-        })
-        if(user) return user;
-        return await this.create(googleUser);
+  async validateGoogleUser(googleUser: any) {
+    // Find the user by email
+    const user = await this.userRepository.findOne({
+        email: googleUser?.email,
+    });
+
+    if (user) {
+        if (!user.auth_providers.includes(googleUser?.authProvider)) {
+            user.auth_providers.push(googleUser?.authProvider);
+            await user.save();
+        }
+        return user;
     }
+
+    return await this.create(googleUser);
+}
+
+
 
     async validateFacebookUser(facebookUser:any){
       const user = await this.userRepository.findOne({
         email:facebookUser?.email
       })
-      if(user) return user;
+      if(user) {
+          if (!user.auth_providers.includes(facebookUser?.authProvider)) {
+            user.auth_providers.push(facebookUser?.authProvider);
+            await user.save();
+        }
+        return user;
+      };
       return await this.create(facebookUser);
     }
     async removeAvatarEmployer(type:string,userId:string):Promise<[]>{
