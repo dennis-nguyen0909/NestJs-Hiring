@@ -27,8 +27,8 @@ import { JobContractType } from '../job-contract-type/schema/job-contract-type.s
 @Injectable()
 export class JobService implements IJobService {
   constructor(
-    @InjectModel('Job') private jobRepository: Model<Job>,
-    @InjectModel('User') private userModel: Model<User>,
+    @InjectModel(Job.name) private jobRepository: Model<Job>,
+    @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Cities.name) private cityModel: Model<Cities>,
     @InjectModel(Level.name) private levelModel: Model<Cities>,
     @InjectModel(SkillEmployer.name) private employerModel: Model<SkillEmployer>,
@@ -109,7 +109,6 @@ export class JobService implements IJobService {
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
-  
     const keyword = new RegExp(filter.keyword, 'i');
     if (filter.job_type) {
       if (Array.isArray(filter?.job_type['$in'])) {
@@ -175,6 +174,13 @@ export class JobService implements IJobService {
       }
       delete filter.salary_range_min;
       delete filter.salary_range_max;
+    }
+    console.log("filter duydeptrai",filter)
+    if (filter?.district_id && filter.district_id['$exists'] === true) {
+      delete filter.district_id;
+    }
+    if(filter?.district_id){
+      filter['district_id']= new Types.ObjectId(filter.district_id+'')
     }
     const defaultSort = { createdAt: 'desc' };
     const sortCriteria = sort || sortParams?.sort || defaultSort; // Nếu không có sort thì mặc định là 'createdAt: desc'
@@ -404,8 +410,9 @@ export class JobService implements IJobService {
   
 
   async findOne(id: string):Promise<Job>{
+    console.log("duydeptraivl",await this.jobRepository.findOne({_id:id}))
     const job = await this.jobRepository
-      .findOne({ _id: id })
+      .findById(id)
       .populate({
         path:'user_id',
         populate:[
@@ -430,11 +437,30 @@ export class JobService implements IJobService {
     return job;
   }
 
-  async update(id: string, updateJobDto: UpdateJobDto):Promise<Job> {
+  async update(id: string, updateJobDto: UpdateJobDto): Promise<Job> {
     try {
-      const { expire_date, salary_range, age_range, is_negotiable } =
-        updateJobDto;
-
+      const {
+        expire_date,
+        salary_range,
+        age_range,
+        is_negotiable,
+        user_id,
+        city_id,
+        district_id,
+        ward_id,
+        job_contract_type,
+        level,
+        type_money,
+        degree,
+        skills,
+        professional_skills,
+        general_requirements,
+        job_responsibilities,
+        interview_process
+      } = updateJobDto;
+  
+      console.log('updateJobDto', updateJobDto);
+  
       // Kiểm tra ngày hết hạn (expire_date) phải lớn hơn ngày hiện tại
       if (expire_date) {
         const currentDate = new Date();
@@ -445,29 +471,61 @@ export class JobService implements IJobService {
           );
         }
       }
-
+  
       // Kiểm tra salary_range max phải lớn hơn min
       if (salary_range?.min >= salary_range?.max && is_negotiable === false) {
         throw new BadRequestException(
           'Salary range max must be greater than min',
         );
       }
-
+  
       // Kiểm tra age_range max phải lớn hơn min
       if (age_range?.min >= age_range?.max) {
         throw new BadRequestException('Age range max must be greater than min');
       }
-
+  
+      // Convert ObjectId fields in updateJobDto
+      if (user_id) updateJobDto.user_id = new Types.ObjectId(user_id);
+      if (city_id) updateJobDto.city_id = new Types.ObjectId(city_id);
+      if (district_id) updateJobDto.district_id = new Types.ObjectId(district_id);
+      if (ward_id) updateJobDto.ward_id = new Types.ObjectId(ward_id);
+      if (job_contract_type) updateJobDto.job_contract_type = new Types.ObjectId(job_contract_type);
+      if (level) updateJobDto.level = new Types.ObjectId(level);
+      if (type_money) updateJobDto.type_money = new Types.ObjectId(type_money);
+      if (degree) updateJobDto.degree = new Types.ObjectId(degree);
+  
+      // Convert skills and professional_skills (if they contain ObjectId references)
+      if (skills && Array.isArray(skills)) {
+        updateJobDto.skills = skills.map(skill => new Types.ObjectId(skill));
+      }
+  
+      if (professional_skills && Array.isArray(professional_skills)) {
+        updateJobDto.professional_skills = professional_skills.map(skill => {
+          return {
+            ...skill,
+          };
+        });
+      }
+  
+      // Convert job_responsibilities and interview_process if they contain ObjectId references
+      if (job_responsibilities && Array.isArray(job_responsibilities)) {
+        updateJobDto.job_responsibilities = job_responsibilities.map(responsibility => responsibility);
+      }
+  
+      if (interview_process && Array.isArray(interview_process)) {
+        updateJobDto.interview_process = interview_process.map(process => process);
+      }
+  
       // Tiến hành cập nhật công việc nếu tất cả các kiểm tra đều hợp lệ
-      const job = await this.jobRepository.findByIdAndUpdate(id, updateJobDto, {
+      const job = await this.jobRepository.findByIdAndUpdate(new Types.ObjectId(id), updateJobDto, {
         new: true, // Trả về tài liệu mới sau khi cập nhật
         runValidators: true, // Kiểm tra các ràng buộc khi cập nhật
       });
-
+  
       if (!job) {
         throw new NotFoundException('Job not found');
       }
-
+  
       return job;
     } catch (error) {
       throw new NotFoundException(error);
@@ -624,9 +682,11 @@ export class JobService implements IJobService {
     const { filter, sort } = aqp(query); // Sử dụng `aqp` để phân tích query string thành bộ lọc
     if (filter.current) delete filter.current; // Xóa các tham số phân trang không cần thiết từ filter
     if (filter.pageSize) delete filter.pageSize;
-
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
+    if(filter?.user_id){
+      filter['user_id']= new Types.ObjectId(filter?.user_id);
+    }
 
     // Đếm tổng số công việc dựa trên bộ f
     const totalItems = await this.jobRepository.countDocuments(filter);
@@ -642,7 +702,7 @@ export class JobService implements IJobService {
       .find(filter)
       .limit(pageSize)
       .skip(skip)
-      .sort([['posted_date', -1]])
+      .sort(sort as any)
       .populate({
         path: 'city_id',
         select: '-districts',
@@ -682,7 +742,7 @@ export class JobService implements IJobService {
   }
   async countActiveJobsByUser(userId: string): Promise<number> {
     return await this.jobRepository.countDocuments({
-      user_id: userId,
+      user_id: new Types.ObjectId(userId),
       is_active: true,
     });
   }

@@ -106,6 +106,7 @@ export class FavoriteJobService implements IFavoriteJobService {
             path: 'ward_id', // Populate ward_id within job_id
             select: 'name', // Select only the 'name' field
           },
+          { path: 'type_money', select: 'symbol code' },
         ],
       });
     return {

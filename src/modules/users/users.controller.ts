@@ -12,7 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ResponseMessage } from 'src/decorator/customize';
+import { Public, ResponseMessage } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { User } from './schemas/user.schema';
@@ -39,7 +39,9 @@ export class UsersController {
   ): Promise<{ items: User[]; meta: Meta }> {
     return await this.usersService.findAll(query, +current, +pageSize);
   }
+
   @Get('/company')
+  @Public()
   async getAllCompany(
     @Query('query') query: string,
     @Query('current') current: string,
@@ -55,6 +57,7 @@ export class UsersController {
   }
 
   @Patch()
+  // @Public()
   @ResponseMessage('Success')
   async update(@Body() updateUserDto: UpdateUserDto): Promise<Partial<User>> {
     return await this.usersService.update(updateUserDto);

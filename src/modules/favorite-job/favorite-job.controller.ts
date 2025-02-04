@@ -43,8 +43,8 @@ export class FavoriteJobController {
   @Get()
   async findAll(
     @Query('query') query: string,
-    @Query('current') current,
-    @Query('pageSize') pageSize,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
   ): Promise<{ items: FavoriteJob[]; meta: Meta }> {
     return await this.favoriteJobService.findAll(query, +current, +pageSize);
   }

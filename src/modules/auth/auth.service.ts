@@ -132,13 +132,15 @@ export class AuthService implements IAuthService {
       refresh_token: string;
     };
   }> {
+    console.log("duydeptrai",refreshToken)
     let payload: any;
     try {
       payload = await this.jwtService.verifyAsync(refreshToken);
+      console.log("payload",payload)
     } catch (error) {
-      throw new BadRequestException('Invalid refresh token');
+      console.log("error",error)
+      throw new BadRequestException('Invalid refresh token111');
     }
-    console.log("payload",payload)
     const user = await this.userService.findByObjectId(payload.sub);
     if (!user) {
       throw new BadRequestException('User not found');

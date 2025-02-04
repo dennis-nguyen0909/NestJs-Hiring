@@ -47,7 +47,7 @@ export class CreateJobDto {
   salary_type?: string;
 
   @IsOptional()
-  job_contract_type?: string;
+  job_contract_type?: Types.ObjectId;
 
   @IsOptional()
   @IsArray()
@@ -60,7 +60,7 @@ export class CreateJobDto {
 
   @IsOptional()
   // @IsMongoId()
-  level?: string;
+  level?: Types.ObjectId;
 
   @IsOptional()
   @IsDate()
@@ -72,14 +72,14 @@ export class CreateJobDto {
 
   @IsOptional()
   @IsString()
-  type_money?: string;
+  type_money?: Types.ObjectId;
 
   @IsOptional()
   @IsString()
   image?: string;
 
   @IsOptional()
-  degree?: string;
+  degree?: Types.ObjectId;
 
   @IsOptional()
   count_apply?: number;
