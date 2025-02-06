@@ -63,6 +63,20 @@ export class ApplicationService implements IApplicationService {
           { _id: newApplied.job_id },
           { $push: { candidate_ids: new Types.ObjectId(newApplied?.user_id) } },
         );
+        const employer = await this.userModel.findById(
+          createApplicationDto.employer_id,
+        );
+        const candidate = await this.userModel.findById(
+          createApplicationDto.user_id,
+        );
+        this.notificationService.notificationWhenCandidateAppliedEmployer(
+          candidate,
+          employer,
+          'candidate_applied',
+          job.title,
+          newApplied._id.toString(),
+        );
+
         return newApplied;
       } else {
         throw new NotFoundException('Failed to apply for job');

@@ -47,6 +47,12 @@ export class NotificationGateway
     this.server.to(candidateId.toString()).emit('notification', message);
   }
 
+  async sendNotificationToEmployer(employerId: string, message: string) {
+    this.server
+      .to(employerId.toString())
+      .emit('notification-employer', message);
+  }
+
   @SubscribeMessage('joinRoom')
   handleJoinRoom(client: Socket, data: { userId: number }) {
     client.join(data.userId + '');

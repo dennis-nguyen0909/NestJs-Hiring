@@ -109,6 +109,9 @@ export class JobService implements IJobService {
     if (filter.pageSize) delete filter.pageSize;
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
+    console.log("duydeptrai",filter)
+    // const currentDate = new Date();
+    // filter['expire_date'] = { $gt: currentDate };
     const keyword = new RegExp(filter.keyword, 'i');
     if (filter.job_type) {
       if (Array.isArray(filter?.job_type['$in'])) {
@@ -149,7 +152,10 @@ export class JobService implements IJobService {
       delete filter.keyword;
     }
           
-    if (filter.city_id) {
+    if (filter?.city_id && filter.city_id['$exists'] === true) {
+      delete filter.city_id;
+    }
+    if (filter?.city_id) {
       filter['city_id']= new Types.ObjectId(filter.city_id+'')
     }
 
@@ -175,7 +181,7 @@ export class JobService implements IJobService {
       delete filter.salary_range_min;
       delete filter.salary_range_max;
     }
-    console.log("filter duydeptrai",filter)
+    console.log("duydeptrai",filter)
     if (filter?.district_id && filter.district_id['$exists'] === true) {
       delete filter.district_id;
     }
@@ -185,7 +191,6 @@ export class JobService implements IJobService {
     const defaultSort = { createdAt: 'desc' };
     const sortCriteria = sort || sortParams?.sort || defaultSort; // Nếu không có sort thì mặc định là 'createdAt: desc'
     // Lấy tổng số item
-    console.log("DUYDEPTRAI ",filter)
     const totalItems = (await this.jobRepository.find(filter)).length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
@@ -226,7 +231,7 @@ export class JobService implements IJobService {
         model:JobContractType.name,
         select:'_id name'
       })
-      .select('title _id salary_range is_negotiable job_type job_contract_type createdAt is_active is_expired count_apply candidate_ids');
+      .select('title _id salary_range is_negotiable job_type job_contract_type createdAt is_active is_expired count_apply candidate_ids expire_date');
     
     return {
       items: result,

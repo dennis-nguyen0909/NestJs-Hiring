@@ -11,8 +11,6 @@ import {
   NotificationUpdateDto,
   UpdateReadStatusDto,
 } from './dto/NotificationUpdateDto.dto';
-import * as dayjs from 'dayjs';
-import { Application } from 'src/modules/application/schema/Application.schema';
 
 @Injectable()
 export class NotificationService {
@@ -42,6 +40,7 @@ export class NotificationService {
       message,
       title: 'Xem hồ sơ',
       type: 'view_resume',
+      receiverId:candidate?._id,
     });
     notification.save();
     this.emailService.sendMail({
@@ -81,6 +80,7 @@ export class NotificationService {
       message,
       title: 'Lưu hồ sơ',
       type: 'save_profile',
+      receiverId:candidate?._id,
     });
     notification.save();
     this.emailService.sendMail({
@@ -133,7 +133,9 @@ export class NotificationService {
       title: 'Thay đổi trạng thái hồ sơ',
       type: 'status_application',
       status_type_application: type,
-      applicationId:appliedId || ''
+      applicationId:appliedId || '',
+      receiverId:candidate?._id,
+
     });
   
     // Lưu thông báo
@@ -211,7 +213,7 @@ export class NotificationService {
       if (!pageSize) pageSize = 15;
 
       // Thêm điều kiện lọc theo employerId
-      filter.employerId = new Types.ObjectId(employerId);
+      filter.receiverId = new Types.ObjectId(employerId);
 
       // Lấy tổng số thông báo
       const totalItems = await this.notificationModel
@@ -260,7 +262,7 @@ export class NotificationService {
       if (!pageSize) pageSize = 15;
 
       // Thêm điều kiện lọc theo candidateId
-      filter.candidateId = new Types.ObjectId(candidateId);
+      filter.receiverId = new Types.ObjectId(candidateId);
       // Lấy tổng số thông báo
       const totalItems = await this.notificationModel
         .find(filter)
@@ -512,4 +514,46 @@ export class NotificationService {
       },
     };
   }
+  async notificationWhenCandidateAppliedEmployer(
+    candidate: User, 
+    employer: User, 
+    type: 'candidate_applied',
+    jobTitle:string,
+    appliedId:string
+  ) {
+    // Kiểm tra nếu thông báo đã tồn tại
+    const existingNotification = await this.notificationModel.findOne({
+      candidateId: candidate._id,
+      employerId: employer._id,
+      type: 'candidate_applied',
+      status_type_application: type,
+      applicationId:appliedId
+    });
+  
+    // Nếu thông báo đã gửi trước đó, dừng lại và không gửi lại
+    if (existingNotification) {
+      console.log('Thông báo đã được gửi trước đó, không gửi lại');
+      return;
+    }
+  
+    // Tạo thông báo mới với message phù hợp
+    const message = `Ứng viên ${candidate.full_name} vừa ứng tuyển vào vị trí ${jobTitle} của bạn.`;
+    const notification = new this.notificationModel({
+      candidateId: candidate._id,
+      employerId: employer._id,
+      message,
+      title: 'Ứng tuyển',
+      type: 'candidate_applied',
+      status_type_application: type,
+      applicationId:appliedId || '',
+      receiverId:employer?._id
+    });
+  
+    // Lưu thông báo
+    await notification.save();
+  
+    // Gửi thông báo đến ứng viên qua Notification Gateway
+    this.notificationGateway.sendNotificationToEmployer(employer._id + '', message);
+  }
+  
 }

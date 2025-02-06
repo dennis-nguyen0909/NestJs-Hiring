@@ -6,11 +6,13 @@ import { User } from 'src/modules/users/schemas/user.schema';
 @Schema({ timestamps: true })
 export class Notification extends Document {
   @Prop({ type: Types.ObjectId, ref: User.name })
-  candidateId: number;
+  candidateId: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: User.name })
-  employerId: number;
+  employerId: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
+  receiverId: Types.ObjectId;
   @Prop()
   title: string;
   @Prop({ type: Types.ObjectId, ref: Application.name }) // Tham chiếu tới Application schema
@@ -46,11 +48,12 @@ export class Notification extends Document {
       'profile_updated',
       'job_saved',
       'application_shortlisted',
+      'candidate_applied',
     ],
     required: true,
   })
   type: string;
-  @Prop({ enum: ['accepted', 'rejected'] })
+  @Prop({ enum: ['accepted', 'rejected', 'candidate_applied'] })
   status_type_application: string;
 }
 
