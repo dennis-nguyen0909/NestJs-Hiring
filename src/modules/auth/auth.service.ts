@@ -12,6 +12,7 @@ import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { IAuthService } from './auth.interface';
 import { User } from '../users/schemas/user.schema';
+import { authenticator } from 'otplib';
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
@@ -132,13 +133,13 @@ export class AuthService implements IAuthService {
       refresh_token: string;
     };
   }> {
-    console.log("duydeptrai",refreshToken)
+    console.log('duydeptrai', refreshToken);
     let payload: any;
     try {
       payload = await this.jwtService.verifyAsync(refreshToken);
-      console.log("payload",payload)
+      console.log('payload', payload);
     } catch (error) {
-      console.log("error",error)
+      console.log('error', error);
       throw new BadRequestException('Invalid refresh token111');
     }
     const user = await this.userService.findByObjectId(payload.sub);
@@ -171,5 +172,31 @@ export class AuthService implements IAuthService {
         refresh_token: newRefreshToken, // Include new refresh token if applicable
       },
     };
+  }
+  async forgotPassword(email: string): Promise<any> {
+    try {
+      const response = await this.userService.sendOtp(email);
+      return response;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async verifyOtp(email: string, otp: string): Promise<any> {
+    try {
+      const response = await this.userService.verifyOtp(email, otp);
+      return response;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async resetPasswordWithOtp(email:string,newPassword:string):Promise<any>{
+    try {
+      const response = await this.userService.resetPasswordWithOtp(email, newPassword);
+      return response;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

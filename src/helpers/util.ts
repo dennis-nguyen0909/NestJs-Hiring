@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import { authenticator } from 'otplib';
 const saltRounds = 10;
 
 export const hashPasswordHelper = async (plainPassword: string) => {
@@ -32,3 +33,6 @@ export const publicIdRegexOwn = /\/v\d+\/([a-zA-Z0-9_-]+)/;
 // Biểu thức chính quy kiểm tra số điện thoại (chỉ cho phép số và tối thiểu 10 ký tự)
 export const phoneRegex = /^[0-9]{10}$/; // Chỉnh sửa theo định dạng số điện thoại của quốc gia của bạn
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+
+export const generatorOtp =(secretEmail:string)=> authenticator.generate(secretEmail);

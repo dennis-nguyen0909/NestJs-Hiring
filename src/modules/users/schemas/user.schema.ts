@@ -193,6 +193,18 @@ export class User extends Document {
   notification_when_employer_save_profile: boolean;
   @Prop()
   notification_when_employer_reject_cv: boolean;
+  @Prop()
+  otpCode: string;
+  @Prop()
+  otpExpiry: Date;
+  @Prop({ default: 0, required: false })
+  otpAttempts: number;
+  @Prop()
+  lastOtpSentAt: Date;
+  @Prop({ default: false })
+  isOtpVerified: boolean;
+  @Prop()
+  otpVerifiedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

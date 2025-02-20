@@ -172,4 +172,31 @@ export class AuthController {
       `${this.configService.get<string>('URL_REDIRECT')}${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
     );
   }
+
+  @Post('forgot-password')
+  @Public()
+  @ResponseMessage('Success')
+  async forgotPassword(@Body('email') email: string): Promise<any> {
+    return await this.authService.forgotPassword(email);
+  }
+
+  @Post('verify-otp')
+  @Public()
+  @ResponseMessage('Success')
+  async verifyOtp(
+    @Body('email') email: string,
+    @Body('otp') otp: string,
+  ): Promise<any> {
+    return await this.authService.verifyOtp(email, otp);
+  }
+
+  @Post('reset-new-password')
+  @Public()
+  @ResponseMessage('Success')
+  async resetPasswordWithOtp(
+    @Body('email') email: string,
+    @Body('new_password') newPassword: string,
+  ): Promise<any> {
+    return await this.authService.resetPasswordWithOtp(email, newPassword);
+  }
 }

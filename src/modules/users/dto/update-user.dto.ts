@@ -57,4 +57,15 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsMongoId()
   @IsOptional()
   ward_id: Types.ObjectId;
+
+  @IsOptional()
+  otpCode?: string;
+  @IsOptional()
+  otpExpiry?: Date;
+  @IsOptional()
+  otpAttempts: number;
+  @IsOptional()
+  lastOtpSentAt?: Date;
+  @IsOptional()
+  isOtpVerified: boolean;
 }

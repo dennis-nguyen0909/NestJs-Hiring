@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model, Types } from 'mongoose';
-import { cloudinaryPublicIdRegex, comparePasswordHelper, emailRegex, hashPasswordHelper, passwordRegex, publicIdRegexOwn } from 'src/helpers/util';
+import { cloudinaryPublicIdRegex, comparePasswordHelper, emailRegex, generatorOtp, hashPasswordHelper, passwordRegex, publicIdRegexOwn } from 'src/helpers/util';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { RegisterAuthDto } from '../auth/dto/register-auth.dto';
@@ -26,6 +26,9 @@ import { Meta } from '../types';
 import { IUserRepository } from './user.interface';
 import { Cities } from '../cities/schema/Cities.schema';
 import { District } from '../districts/schema/District.schema';
+
+const MAX_OTP_ATTEMPTS = 5;  
+const OTP_ATTEMPT_WINDOW = 60;
 @Injectable()
 export class UsersService implements IUserRepository{
   constructor(
@@ -439,6 +442,58 @@ export class UsersService implements IUserRepository{
     };
   }
 
+
+  async sendOtp(email:string):Promise<any>{
+    try {
+      const user = await this.userRepository.findOne({ email });
+      
+      if (!user) {
+        throw new BadRequestException('User not found!');
+      }
+
+      const now = new Date();
+      const otpAttemptResetTime = new Date(user.lastOtpSentAt || now);
+      otpAttemptResetTime.setMinutes(otpAttemptResetTime.getMinutes() + OTP_ATTEMPT_WINDOW);
+  
+      if (now > otpAttemptResetTime) {
+        user.otpAttempts = 0;
+      }
+  
+      if (user.otpAttempts >= MAX_OTP_ATTEMPTS) {
+        throw new BadRequestException(
+          `You have reached the maximum number of OTP requests. Please try again later.`
+        );
+      }
+  
+      const otp = generatorOtp(user.email);
+      const otpExpiryTime = new Date();
+      otpExpiryTime.setMinutes(otpExpiryTime.getMinutes() + 5);
+  
+      user.otpCode = otp;
+      user.otpExpiry = otpExpiryTime;
+      user.otpAttempts += 1;
+      user.lastOtpSentAt = now;
+  
+      await user.save();
+  
+      this.mailService.sendMail({
+        to: user.email,
+        subject: 'Reset Password - @dennis',
+        text: 'OTP Reset Password',
+        template: 'templateOtp',
+        context: {
+          name: user?.full_name ?? user.email,
+          otpCode: otp,
+        },
+      });
+      
+  
+      return { message: 'OTP sent to your email',status:200};
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<string> {
     const { user_id, current_password, new_password } = resetPasswordDto;
   
@@ -463,7 +518,13 @@ export class UsersService implements IUserRepository{
     if (isNewPasswordSameAsCurrent) {
       throw new BadRequestException('New password cannot be the same as the current password');
     }
-  
+      // Kiểm tra mật khẩu hợp lệ theo biểu thức chính quy
+      if (!passwordRegex.test(new_password)) {
+        throw new BadRequestException(
+          'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
+        );
+      }
+    
     // Hash the new password
     const hashedPassword = await hashPasswordHelper(new_password);
   
@@ -772,5 +833,74 @@ export class UsersService implements IUserRepository{
       }
   
       return user;
+    }
+
+    async verifyOtp(email: string, otp: string): Promise<any> {
+      try {
+        const user = await this.userRepository.findOne({ email });
+        if (!user) {
+          throw new BadRequestException('User not found!');
+        }
+    
+        if (user.otpAttempts >= MAX_OTP_ATTEMPTS) {
+          throw new BadRequestException('OTP attempts exceeded. Please request a new OTP.');
+        }
+    
+        if (new Date() > user.otpExpiry) {
+          throw new BadRequestException('OTP expired. Please request a new OTP.');
+        }
+    
+        if (+user.otpCode !== +otp) {
+          user.otpAttempts += 1;
+          await user.save(); // Lưu lại số lần thử OTP
+          throw new BadRequestException('Invalid OTP.');
+        }
+    
+        user.otpAttempts = 0;
+        user.otpExpiry = new Date(Date.now() - 1);
+        user.otpCode = null;
+        user.isOtpVerified=true;
+        user.otpVerifiedAt= new Date();
+        await user.save();
+    
+        return { message: 'OTP verified. You can now reset your password.' };
+      } catch (error) {
+        throw new BadRequestException(error);
+      }
+    }
+    async resetPasswordWithOtp(email:string,newPassword:string):Promise<any>{
+      try {
+        const user = await this.userRepository.findOne({ email });
+        if (!user) {
+          throw new BadRequestException('User not found!');
+        }
+
+        if (!user.isOtpVerified) {
+          throw new BadRequestException('OTP not verified. Please verify the OTP before resetting the password.');
+        }
+        // Kiểm tra thời gian từ khi OTP được xác thực có còn hợp lệ không
+        const otpVerifiedAt = new Date(user.otpVerifiedAt);
+        const otpVerificationValidity = 5 * 60 * 1000;
+        if (new Date().getTime() - otpVerifiedAt.getTime() > otpVerificationValidity) {
+          throw new BadRequestException('OTP verification has expired. Please verify the OTP again.');
+        }
+            // Kiểm tra mật khẩu hợp lệ theo biểu thức chính quy
+        if (!passwordRegex.test(newPassword)) {
+          throw new BadRequestException(
+            'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
+          );
+        }
+    
+        const hashedPassword = await hashPasswordHelper(newPassword);
+    
+        user.password = hashedPassword;
+        user.isOtpVerified=false;
+        user.otpVerifiedAt=null;
+        await user.save();
+    
+        return { message: 'Password reset successfully' };
+      } catch (error) {
+        throw new BadRequestException(error.message);
+      }
     }
 }
