@@ -9,6 +9,7 @@ import { JobType } from 'src/modules/job-type/schema/JobType.schema';
 import { JobContractType } from 'src/modules/job-contract-type/schema/job-contract-type.schema';
 import { Currency } from 'src/modules/currencies/schema/currencies.schema';
 import { DegreeType } from 'src/modules/degree-type/schema/degree-type.schema';
+
 @Schema({ timestamps: true })
 export class Job extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
@@ -34,6 +35,7 @@ export class Job extends Document {
 
   @Prop({ type: Map, of: Number })
   salary_range: { min: number; max: number };
+
   @Prop({ type: Map, of: Number })
   age_range?: { min: number; max: number };
 
@@ -55,6 +57,7 @@ export class Job extends Document {
 
   @Prop()
   min_experience: string;
+
   @Prop({
     type: [
       {
@@ -65,12 +68,22 @@ export class Job extends Document {
     default: [],
   })
   professional_skills: { title: string; items: string[] }[];
+
+  @Prop({ required: true })
+  skill_name: string[];
+
+  @Prop({ required: true })
+  company_name: string;
+
   @Prop()
   general_requirements: { requirement: string }[];
+
   @Prop()
   job_responsibilities: { responsibility: string }[];
+
   @Prop()
   interview_process: { process: string }[];
+
   @Prop([String])
   benefit: string[];
 
@@ -134,14 +147,28 @@ export class Job extends Document {
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
-JobSchema.index({ user_id: 1 });
+
+// Chỉ mục văn bản cho các trường liên quan đến tìm kiếm bằng từ khóa
+JobSchema.index({
+  title: 'text',
+  company_name: 'text',
+  skill_name: 'text',
+});
+JobSchema.index({ title: 1, company_name: 1 });
+JobSchema.index({ title: 1, company_name: 1, skill_name: 1 });
+JobSchema.index({ skill_name: 1, title: 1, company_name: 1 });
+
+// Chỉ mục riêng cho các trường thường dùng trong lọc
+JobSchema.index({ job_type: 1 });
+JobSchema.index({ job_contract_type: 1 });
 JobSchema.index({ city_id: 1 });
 JobSchema.index({ district_id: 1 });
-JobSchema.index({ job_type: 1 });
 JobSchema.index({ skills: 1 });
-JobSchema.index({ salary_range: '2d' }); // Nếu salary_range là phạm vi lương (giả sử có loại trường 2d)
-JobSchema.index({ posted_date: 1 }); // Index cho việc sắp xếp theo ngày đăng
-JobSchema.index({ expire_date: 1 }); // Index cho việc sắp xếp theo ngày hết hạn
-JobSchema.index({ title: 'text' }); // Tạo chỉ mục văn bản cho trường 'title' để tìm kiếm từ khóa
-JobSchema.index({ user_id: 1, skills: 1 }); // Index kết hợp cho tìm kiếm user_id và skills
-JobSchema.index({ city_id: 1, user_id: 1, job_type: 1 });
+JobSchema.index({ title: 1 });
+JobSchema.index({ company_name: 1 });
+JobSchema.index({ skill_name: 1 });
+JobSchema.index({ createdAt: 1 }); // Chỉ mục cho sắp xếp theo ngày tạo
+
+// Kết hợp các trường lọc thường dùng chung trong truy vấn để tối ưu hiệu suất
+JobSchema.index({ job_type: 1, city_id: 1 });
+JobSchema.index({ job_type: 1, job_contract_type: 1 });

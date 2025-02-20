@@ -6,11 +6,10 @@ import {
   IsEnum,
   IsDate,
   IsMongoId,
-  Validate,
+  IsNotEmpty,
 } from 'class-validator';
 import { ProfessionalSkillDTO } from './general-requirement.dto';
-import { ObjectId, Types } from 'mongoose';
-import { Transform } from 'class-transformer';
+import { Types } from 'mongoose';
 
 export class CreateJobDto {
   @IsMongoId()
@@ -26,7 +25,6 @@ export class CreateJobDto {
   @IsOptional()
   @IsArray()
   require_experience?: string[];
-
 
   @IsMongoId()
   city_id?: Types.ObjectId;
@@ -122,4 +120,12 @@ export class CreateJobDto {
   job_type: string;
   @IsOptional()
   min_experience?: number;
+
+  @IsNotEmpty()
+  @IsArray()
+  skill_name: string[];
+
+  @IsNotEmpty()
+  @IsString()
+  company_name: string;
 }
