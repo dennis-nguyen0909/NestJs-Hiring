@@ -28,7 +28,7 @@ import { Meta } from '../types';
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
-  @Post('create')
+  @Post('')
   @ApiOperation({ summary: 'Tạo role mới' })
   @ApiResponse({ status: 201, description: 'Role được tạo thành công.' })
   @ApiResponse({ status: 400, description: 'Dữ liệu không hợp lệ.' })

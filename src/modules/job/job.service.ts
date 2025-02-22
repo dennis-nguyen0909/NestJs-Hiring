@@ -121,16 +121,28 @@ export class JobService implements IJobService {
     if (filter?.city_id && filter?.city_id['$exists'] === true) {
       delete filter.city_id;
     }
+    if (filter?.job_type && filter?.job_type['$exists'] === true) {
+      delete filter.job_type;
+    }
+    if (filter?.job_contract_type && filter?.job_contract_type['$exists'] === true) {
+      delete filter.job_contract_type;
+    }
     // Nếu có keyword, tìm kiếm trong trường skill_name
     if (filter?.keyword) {
-      const keywordRegex = { $regex: filter.keyword.toString(), $options: 'i' };
+      const keywordRegex = { $regex: filter.keyword.toString().trim(), $options: 'i' };
 
-      // Sử dụng `$or` để tìm kiếm từ khóa trong nhiều trường
-      filter.$or = [
-        { skill_name: { $elemMatch: keywordRegex } }, // Tìm trong skill_name (giả định là mảng string)
-        { title: keywordRegex }, // Tìm trong title
-        { company_name: keywordRegex }, // Tìm trong company_name từ liên kết user_id
-      ];
+      if (filter?.user_id) {
+        filter.$or = [
+          { skill_name: { $elemMatch: keywordRegex } }, 
+          { title: keywordRegex }, 
+        ];
+      } else {
+        filter.$or = [
+          { skill_name: { $elemMatch: keywordRegex } }, 
+          { title: keywordRegex }, 
+          { company_name: keywordRegex },
+        ];
+      }
       delete filter.keyword; // Xóa keyword sau khi đã sử dụng
     }
     if (filter?.job_type) {
@@ -154,6 +166,9 @@ export class JobService implements IJobService {
         
     if (filter?.city_id) {
       filter.city_id = new Types.ObjectId(filter.city_id);
+    }
+    if (filter?.user_id) {
+      filter.user_id = new Types.ObjectId(filter.user_id);
     }
     const defaultSort = { createdAt: 'desc' };
     const sortCriteria = sort || sortParams?.sort || defaultSort;
