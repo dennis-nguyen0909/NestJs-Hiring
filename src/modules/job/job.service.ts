@@ -62,6 +62,7 @@ export class JobService implements IJobService {
         'Expiry date must be later than the current date',
       );
     }
+    console.log('createJobDto', createJobDto);
 
     // Kiểm tra salary_range max phải lớn hơn min
     if (salary_range?.min >= salary_range?.max) {
@@ -400,10 +401,11 @@ export class JobService implements IJobService {
           },
           { path: 'social_links' },
         ],
+        select: 'company_name _id avatar_company banner_company',
       })
       .populate('city_id', '-districts')
       .populate('district_id', '-wards')
-      .populate('skills')
+      .populate('skills','-createdAt -updatedAt -description -user_id')
       .populate('degree')
       .populate('type_money')
       .populate('level')

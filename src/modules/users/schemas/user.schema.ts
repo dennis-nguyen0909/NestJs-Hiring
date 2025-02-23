@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Job } from '../../job/schema/Job.schema'; // Nhớ import Job schema
+import { Job, JobModel } from '../../job/schema/Job.schema'; // Nhớ import Job schema
 import { Role } from '../../role/schema/Role.schema';
 import { AuthProvider } from '../../auth-provider/schema/AuthProvider.schema';
 import { CV } from '../../cv/schema/CV.schema';
@@ -205,6 +205,8 @@ export class User extends Document {
   isOtpVerified: boolean;
   @Prop()
   otpVerifiedAt: Date;
+  @Prop({ default: false })
+  isRememberAccount: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -213,3 +215,18 @@ UserSchema.index({ city_id: 1 }); // Tạo chỉ mục cho 'city_id'
 
 // Tạo chỉ mục kết hợp cho 'city_id', 'district_id' và 'ward_id' nếu cần
 UserSchema.index({ city_id: 1, district_id: 1, ward_id: 1 });
+
+UserSchema.pre('findOneAndDelete', async function (next) {
+  console.log('Middleware findOneAndDelete called');
+
+  const userId = this.getQuery()['_id'];
+  if (!userId) {
+    return next(new Error('User ID not found'));
+  }
+
+  await JobModel.deleteMany({ user_id: new Types.ObjectId(userId.toString()) });
+  console.log(`Deleted jobs for user: ${userId}`);
+
+  next();
+});
+

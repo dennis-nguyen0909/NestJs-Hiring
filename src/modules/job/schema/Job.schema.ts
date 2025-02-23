@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 import { Level } from '../../level/schema/Level.schema';
 import { District } from 'src/modules/districts/schema/District.schema';
 import { Ward } from 'src/modules/wards/schema/Wards.schema';
@@ -147,6 +147,7 @@ export class Job extends Document {
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
+export const JobModel = mongoose.model('Job', JobSchema);
 
 // Chỉ mục văn bản cho các trường liên quan đến tìm kiếm bằng từ khóa
 JobSchema.index({

@@ -299,10 +299,10 @@ export class UsersService implements IUserRepository{
     }
 
     // Thực hiện xóa người dùng theo id
-    const result = await this.userRepository.deleteOne({ _id: id });
+    const result = await this.userRepository.findByIdAndDelete(id);
 
     // Kiểm tra kết quả của việc xóa
-    if (result.deletedCount === 0) {
+    if (!result) {
       throw new NotFoundException('Không tìm thấy người dùng với id này');
     }
 
