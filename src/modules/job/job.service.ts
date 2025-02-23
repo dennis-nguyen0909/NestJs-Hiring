@@ -62,7 +62,6 @@ export class JobService implements IJobService {
         'Expiry date must be later than the current date',
       );
     }
-    console.log('createJobDto', createJobDto);
 
     // Kiểm tra salary_range max phải lớn hơn min
     if (salary_range?.min >= salary_range?.max) {

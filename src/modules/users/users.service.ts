@@ -26,7 +26,9 @@ import { Meta } from '../types';
 import { IUserRepository } from './user.interface';
 import { Cities } from '../cities/schema/Cities.schema';
 import { District } from '../districts/schema/District.schema';
-
+import { LogService } from 'src/log/log.service';
+import { UAParser } from 'ua-parser-js';
+import { Request } from 'express';
 const MAX_OTP_ATTEMPTS = 5;  
 const OTP_ATTEMPT_WINDOW = 60;
 @Injectable()
@@ -39,7 +41,8 @@ export class UsersService implements IUserRepository{
     private roleService: RoleService,
     private authProviderService:AuthProviderService,
     private cloudinaryService:CloudinaryService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private logService: LogService
   ) {}
 
   isEmailExists = async (email: string): Promise<boolean> => {
@@ -186,15 +189,13 @@ export class UsersService implements IUserRepository{
     }
   }
 
-  async update(updateUserDto: UpdateUserDto): Promise<Partial<User>>{
+  async update(updateUserDto: UpdateUserDto,request:Request): Promise<Partial<User>>{
     try {
-      // Kiểm tra định dạng và độ dài số điện thoại
-      const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g; // Kiểm tra số điện thoại chỉ chứa các chữ số và không quá 10 ký tự
+      const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
       if (updateUserDto.phone && !phoneRegex.test(updateUserDto.phone)) {
         throw new BadRequestException('Phone number must be numeric and up to 10 digits');
       }
   
-      // Kiểm tra số điện thoại đã tồn tại trong hệ thống, ngoại trừ chính người dùng hiện tại
       const existingUserByPhone = await this.userRepository.findOne({ phone: updateUserDto.phone });
       const existUser = await this.userRepository.findOne({
         _id:updateUserDto.id
@@ -232,8 +233,8 @@ export class UsersService implements IUserRepository{
           }
         }
       }
-  
-      // Kiểm tra ID người dùng và cập nhật
+      const oldUserData = existUser.toObject();
+      const { id, ...updateUserData } = updateUserDto;
       const updatedUser = await this.userRepository.findOneAndUpdate(
         { _id: updateUserDto.id },  // Tìm người dùng theo ID
         { $set: {
@@ -241,7 +242,7 @@ export class UsersService implements IUserRepository{
           district_id:new Types.ObjectId(updateUserDto.district_id),
           ward_id:new Types.ObjectId(updateUserDto.ward_id),
           account_type:new Types.ObjectId(updateUserDto.account_type),
-          ...updateUserDto
+          ...updateUserData
         } },  // Cập nhật người dùng với dữ liệu mới
         { new: true },  // Trả về bản ghi mới đã được cập nhật
       ).select(['-password', '-code_id', '-code_expired'])
@@ -269,14 +270,61 @@ export class UsersService implements IUserRepository{
       if (!updatedUser) {
         throw new NotFoundException('User not found');
       }
-      console.log("Updated User:", updatedUser);
+      const ipAddress = Array.isArray(request.headers['x-forwarded-for']) 
+      ? request.headers['x-forwarded-for'][0] 
+      : request.ip || request.connection.remoteAddress;
+    
+      const userAgent = request.headers['user-agent'];
+      const parser = new UAParser(userAgent);
+      const deviceInfo = parser.getResult();
   
-      // Loại bỏ password trước khi trả về
+      const changes = {};
+
+      for (const key in updateUserDto) {
+        if (key !== '_id' && key !== 'id') {  // Bỏ qua _id hoặc id
+          if (oldUserData[key] !== updateUserDto[key]) {
+            changes[key] = { old: new Types.ObjectId(oldUserData[key]), new: new Types.ObjectId(updateUserDto[key]) };
+          }
+        }
+      }
+      
+  
+      if (Object.keys(changes).length > 0) {
+        await this.logService.createLog({
+          userId: new Types.ObjectId(updatedUser._id.toString()),
+          action: 'UPDATE',
+          entityId: updatedUser._id.toString(),
+          entityCollection: 'users',
+          changes,
+          ipAddress,
+          deviceInfo: { 
+            os: {
+              name: deviceInfo.os.name || 'Unknown OS', // Tên hệ điều hành
+              version: deviceInfo.os.version || 'Unknown Version' // Phiên bản hệ điều hành
+            },
+            device: {
+              model: deviceInfo.device.model || 'Unknown Device', // Model của thiết bị
+              type: deviceInfo.device.type || 'Unknown Type', // Loại thiết bị (vd: mobile, tablet, desktop)
+              vendor: deviceInfo.device.vendor || 'Unknown Vendor' // Nhà sản xuất thiết bị (vd: Apple, Samsung)
+            },
+            browser: {
+              name: deviceInfo.browser.name || 'Unknown Browser', // Tên trình duyệt
+              version: deviceInfo.browser.version || 'Unknown Version' // Phiên bản trình duyệt
+            },
+            engine: {
+              name: deviceInfo.engine.name || 'Unknown Engine', // Engine của trình duyệt (vd: WebKit, Blink)
+              version: deviceInfo.engine.version || 'Unknown Version' // Phiên bản của engine
+            }
+          },
+          activityDetail: 'user_update_info',
+          description: 'User profile update',
+        });
+      }
+  
       const { password, ...userWithoutPassword } = updatedUser.toObject();
   
-      return updatedUser; // Trả về thông tin người dùng đã được cập nhật
+      return updatedUser;
     } catch (error) {
-      // Xử lý lỗi
       throw new BadRequestException(error.message);
     }
   }
@@ -343,7 +391,6 @@ export class UsersService implements IUserRepository{
     const hashPassword = await hashPasswordHelper(password);
     const findRole = await this.roleService.findByRoleName(role);
     const roles = await this.roleService.findAll('',1,15);
-    console.log("roles",roles)
     if (!findRole) {
       throw new BadRequestException(
         'Role not found. Please check if the role exists.',
@@ -638,7 +685,6 @@ export class UsersService implements IUserRepository{
       filter.role = new Types.ObjectId(filter.role);
     }
   
-    console.log("filter", filter);
   
     // Query the userRepository with the constructed filter, pagination, and sorting
     const result = await this.userRepository.find(filter)
@@ -772,7 +818,6 @@ export class UsersService implements IUserRepository{
                     const updateRes = await this.userRepository.updateOne({ _id: userId }, {
                       avatar_company: ''
                     });
-                    console.log("Update response:", updateRes);
                   }
                 }
               }

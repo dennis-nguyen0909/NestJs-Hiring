@@ -1,9 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import {
-  District,
-  DistrictSchema,
-} from 'src/modules/districts/schema/District.schema';
+import { District } from 'src/modules/districts/schema/District.schema';
 
 @Schema()
 export class Cities extends Document {

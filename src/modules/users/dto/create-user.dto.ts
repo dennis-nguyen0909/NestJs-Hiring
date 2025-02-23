@@ -165,4 +165,7 @@ export class CreateUserDto {
   notification_when_employer_save_profile: boolean;
   @IsOptional()
   notification_when_employer_reject_cv: boolean;
+
+  @IsOptional()
+  dateFormat: string;
 }

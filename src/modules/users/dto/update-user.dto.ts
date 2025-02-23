@@ -70,4 +70,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   isOtpVerified: boolean;
   @IsOptional()
   isRememberAccount: boolean;
+  @IsOptional()
+  dateFormat: string;
 }

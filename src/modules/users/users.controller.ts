@@ -17,6 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { User } from './schemas/user.schema';
 import { Meta } from '../types';
+import { Request } from 'express';
 
 @Controller('users')
 @ApiTags('Users')
@@ -59,8 +60,11 @@ export class UsersController {
   @Patch()
   // @Public()
   @ResponseMessage('Success')
-  async update(@Body() updateUserDto: UpdateUserDto): Promise<Partial<User>> {
-    return await this.usersService.update(updateUserDto);
+  async update(
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() request: Request,
+  ): Promise<Partial<User>> {
+    return await this.usersService.update(updateUserDto, request);
   }
   @Delete('delete-avatar')
   async deleteAvatarCompany(

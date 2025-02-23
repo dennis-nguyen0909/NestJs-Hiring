@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { Meta } from '../types';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -22,7 +23,7 @@ export interface IUserRepository {
   ): Promise<{ items: User[]; meta: Meta }>;
 
   // Cập nhật thông tin người dùng
-  update(updateDto: UpdateUserDto): Promise<Partial<User>>;
+  update(updateDto: UpdateUserDto, request: Request): Promise<Partial<User>>;
 
   // Xóa một người dùng theo ID
   remove(id: string): Promise<string>;

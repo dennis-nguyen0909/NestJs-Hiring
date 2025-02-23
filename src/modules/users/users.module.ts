@@ -9,6 +9,7 @@ import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { CitiesModule } from '../cities/cities.module';
 import { DistrictsModule } from '../districts/districts.module';
+import { LogModule } from 'src/log/log.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DistrictsModule } from '../districts/districts.module';
     NotificationModule,
     CitiesModule,
     DistrictsModule,
+    LogModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

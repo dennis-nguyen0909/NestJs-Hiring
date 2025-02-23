@@ -167,7 +167,6 @@ export class AuthController {
   @UseGuards(FacebookAuthGuard)
   async facebookAuthRedirect(@Req() req, @Res() res) {
     const response = await this.authService.signIn(req.user);
-    console.log('duydeptrai', this.configService.get<string>('URL_REDIRECT'));
     res.redirect(
       `${this.configService.get<string>('URL_REDIRECT')}${response.user.access_token}&refresh_token=${response.user.refresh_token}`,
     );

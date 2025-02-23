@@ -207,6 +207,9 @@ export class User extends Document {
   otpVerifiedAt: Date;
   @Prop({ default: false })
   isRememberAccount: boolean;
+
+  @Prop({ default: 'DD/MM/YYYY' })
+  dateFormat: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -229,4 +232,3 @@ UserSchema.pre('findOneAndDelete', async function (next) {
 
   next();
 });
-

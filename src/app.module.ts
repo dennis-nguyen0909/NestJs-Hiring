@@ -44,6 +44,8 @@ import { IndustryTypeModule } from './modules/industry_type/industry_type.module
 import { TeamsizeModule } from './modules/teamsize/teamsize.module';
 import { NotificationGateway } from './notification/notification.gateway';
 import { NotificationModule } from './notification/notification.module';
+import { LogModule } from './log/log.module';
+import { logConnection } from './db/conection';
 @Module({
   imports: [
     UsersModule,
@@ -64,6 +66,14 @@ import { NotificationModule } from './notification/notification.module';
       },
       inject: [ConfigService],
     }),
+    // MongooseModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   connectionName: logConnection,
+    //   useFactory: async (configService: ConfigService) => ({
+    //     uri: configService.get<string>('MONGODB_URI_LOG'),
+    //   }),
+    //   inject: [ConfigService],
+    // }),
 
     AuthModule,
     MailerModule.forRootAsync({
@@ -125,6 +135,7 @@ import { NotificationModule } from './notification/notification.module';
     OrganizationTypeModule,
     IndustryTypeModule,
     TeamsizeModule,
+    LogModule,
   ],
   controllers: [AppController],
   providers: [
