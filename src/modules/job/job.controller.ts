@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
@@ -16,6 +17,7 @@ import { Public, ResponseMessage } from 'src/decorator/customize';
 import { DeleteJobDto, ToggleLikeDTO } from './dto/delete-job.dto';
 import { Job } from './schema/Job.schema';
 import { Meta } from '../types';
+import { Request } from 'express';
 
 @Controller('jobs')
 @ApiTags('Job')
@@ -25,8 +27,11 @@ export class JobController {
 
   @Post()
   @ResponseMessage('Success')
-  async create(@Body() createJobDto: CreateJobDto): Promise<Job> {
-    return await this.jobService.create(createJobDto);
+  async create(
+    @Body() createJobDto: CreateJobDto,
+    @Req() request: Request,
+  ): Promise<Job> {
+    return await this.jobService.create(createJobDto, request);
   }
   @Get('test')
   async testSearch(

@@ -8,6 +8,8 @@ import { CitiesModule } from '../cities/cities.module';
 import { LevelModule } from '../level/level.module';
 import { SkillEmployerModule } from '../skill_employer/skill.module';
 import { ApplicationModule } from '../application/application.module';
+import { LogService } from 'src/log/log.service';
+import { LogModule } from 'src/log/log.module';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { ApplicationModule } from '../application/application.module';
     CitiesModule,
     LevelModule,
     SkillEmployerModule,
+    LogModule,
   ],
   controllers: [JobController],
   providers: [JobService],

@@ -67,4 +67,8 @@ export class CreateLogDto {
   @IsString()
   @IsOptional()
   activityDetail?: string; // Chi tiết hoạt động
+
+  @IsOptional()
+  @IsString()
+  entityName: string;
 }

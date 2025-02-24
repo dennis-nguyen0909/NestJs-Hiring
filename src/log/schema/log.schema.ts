@@ -55,6 +55,9 @@ export class Log {
 
   @Prop()
   activityDetail: string;
+
+  @Prop()
+  entityName: string;
 }
 
 export const LogSchema = SchemaFactory.createForClass(Log);

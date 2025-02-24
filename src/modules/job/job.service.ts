@@ -2,6 +2,7 @@
 import {
   BadGatewayException,
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -23,6 +24,10 @@ import { IJobService } from './job.interface';
 import { Meta } from '../types';
 import { JobType } from '../job-type/schema/JobType.schema';
 import { JobContractType } from '../job-contract-type/schema/job-contract-type.schema';
+import { Log } from 'src/log/schema/log.schema';
+import { LogService } from 'src/log/log.service';
+import { Request } from 'express';
+import { UAParser } from 'ua-parser-js';
 
 @Injectable()
 export class JobService implements IJobService {
@@ -32,8 +37,10 @@ export class JobService implements IJobService {
     @InjectModel(Cities.name) private cityModel: Model<Cities>,
     @InjectModel(Level.name) private levelModel: Model<Cities>,
     @InjectModel(SkillEmployer.name)
+  
     private employerModel: Model<SkillEmployer>,
     private userService: UsersService,
+    private logService: LogService
   ) {}
   validateExpiryDate(expireDate: string): void {
     throw new Error('Method not implemented.');
@@ -41,66 +48,119 @@ export class JobService implements IJobService {
   validateSalaryRange(salaryRange: { min: number; max: number }): void {
     throw new Error('Method not implemented.');
   }
-  async create(createJobDto: CreateJobDto): Promise<Job> {
-    const { user_id, expire_date, salary_range, age_range } = createJobDto;
-    // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
-    const userExist = await this.userService.findByObjectId(user_id + '');
-    if (!userExist) {
-      throw new BadRequestException('User not found');
-    }
-
-    const user = await userExist.populate('role');
-    if (user.role.role_name !== 'EMPLOYER') {
-      throw new UnauthorizedException('User is not an employer');
-    }
-
-    // Kiểm tra ngày hết hạn (expiry_date) phải lớn hơn ngày hiện tại
-    const currentDate = new Date();
-    const jobExpiryDate = new Date(expire_date);
-    if (jobExpiryDate <= currentDate) {
-      throw new BadRequestException(
-        'Expiry date must be later than the current date',
-      );
-    }
-
-    // Kiểm tra salary_range max phải lớn hơn min
-    if (salary_range?.min >= salary_range?.max) {
-      throw new BadRequestException(
-        'Salary range max must be greater than min',
-      );
-    }
-
-    // Kiểm tra age_range max phải lớn hơn min
-    if (age_range?.min >= age_range?.max) {
-      throw new BadRequestException('Age range max must be greater than min');
-    }
-    if (createJobDto.skills) {
-      createJobDto.skills = createJobDto.skills.map((skill) => {
-        return new Types.ObjectId(skill + '');
-      });
-    }
-
-    // Nếu tất cả các kiểm tra đều vượt qua, tiếp tục tạo công việc
-    const job = await this.jobRepository.create({
-      ...createJobDto,
-      city_id: new Types.ObjectId(createJobDto.city_id),
-      district_id: new Types.ObjectId(createJobDto.district_id),
-      level: new Types.ObjectId(createJobDto.level),
-      type_money: new Types.ObjectId(createJobDto.type_money),
-      degree: new Types.ObjectId(createJobDto.degree),
-      ward_id: new Types.ObjectId(createJobDto.ward_id),
-      job_type: new Types.ObjectId(createJobDto.job_type),
-      job_contract_type: new Types.ObjectId(createJobDto.job_contract_type),
-      user_id: new Types.ObjectId(userExist._id + ''),
-    });
-    if (job) {
-      user.jobs_ids.push(new Types.ObjectId(job?._id + ''));
-      user.save();
-      return job;
-    } else {
-      throw new BadRequestException('Create job failed');
+  async create(createJobDto: CreateJobDto, request: Request): Promise<Job> {
+    const session = await this.jobRepository.startSession();
+    session.startTransaction(); // Bắt đầu transaction
+    
+    try {
+      const { user_id, expire_date, salary_range, age_range } = createJobDto;
+  
+      // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
+      const userExist = await this.userService.findByObjectId(user_id + '');
+      if (!userExist) {
+        throw new BadRequestException('User not found');
+      }
+  
+      const user = await userExist.populate('role');
+      if (user.role.role_name !== 'EMPLOYER') {
+        throw new UnauthorizedException('User is not an employer');
+      }
+  
+      // Kiểm tra ngày hết hạn (expiry_date) phải lớn hơn ngày hiện tại
+      const currentDate = new Date();
+      const jobExpiryDate = new Date(expire_date);
+      if (jobExpiryDate <= currentDate) {
+        throw new BadRequestException('Expiry date must be later than the current date');
+      }
+  
+      // Kiểm tra salary_range max phải lớn hơn min
+      if (salary_range?.min >= salary_range?.max) {
+        throw new BadRequestException('Salary range max must be greater than min');
+      }
+  
+      // Kiểm tra age_range max phải lớn hơn min
+      if (age_range?.min >= age_range?.max) {
+        throw new BadRequestException('Age range max must be greater than min');
+      }
+  
+      if (createJobDto.skills) {
+        createJobDto.skills = createJobDto.skills.map((skill) => {
+          return new Types.ObjectId(skill + '');
+        });
+      }
+  
+      // Tạo job
+      const job = await this.jobRepository.create([{
+        ...createJobDto,
+        city_id: new Types.ObjectId(createJobDto.city_id),
+        district_id: new Types.ObjectId(createJobDto.district_id),
+        level: new Types.ObjectId(createJobDto.level),
+        type_money: new Types.ObjectId(createJobDto.type_money),
+        degree: new Types.ObjectId(createJobDto.degree),
+        ward_id: new Types.ObjectId(createJobDto.ward_id),
+        job_type: new Types.ObjectId(createJobDto.job_type),
+        job_contract_type: new Types.ObjectId(createJobDto.job_contract_type),
+        user_id: new Types.ObjectId(userExist._id + ''),
+      }], { session }); // Pass session vào create
+  
+      const ipAddress = Array.isArray(request.headers['x-forwarded-for']) 
+        ? request.headers['x-forwarded-for'][0] 
+        : request.ip || request.connection.remoteAddress;
+      
+      const userAgent = request.headers['user-agent'];
+      const parser = new UAParser(userAgent);
+      const deviceInfo = parser.getResult();
+  
+      if (job) {
+        // Tạo log
+        await this.logService.createLog({
+          userId: new Types.ObjectId(userExist._id + ''),
+          action: 'CREATE',
+          entityId: job[0]._id.toString(),
+          entityCollection: 'jobs',
+          entityName: job[0]?.title,
+          activityDetail: 'user_create_job',
+          ipAddress,
+          deviceInfo: { 
+            os: {
+              name: deviceInfo.os.name || 'Unknown OS',
+              version: deviceInfo.os.version || 'Unknown Version',
+            },
+            device: {
+              model: deviceInfo.device.model || 'Unknown Device',
+              type: deviceInfo.device.type || 'Unknown Type',
+              vendor: deviceInfo.device.vendor || 'Unknown Vendor',
+            },
+            browser: {
+              name: deviceInfo.browser.name || 'Unknown Browser',
+              version: deviceInfo.browser.version || 'Unknown Version',
+            },
+            engine: {
+              name: deviceInfo.engine.name || 'Unknown Engine',
+              version: deviceInfo.engine.version || 'Unknown Version',
+            },
+          },
+        }); // Pass session vào logService
+  
+        // Thêm job vào user
+        user.jobs_ids.push(new Types.ObjectId(job[0]._id + ''));
+        await user.save({ session }); // Pass session vào user.save()
+  
+        // Commit transaction nếu tất cả đều thành công
+        await session.commitTransaction();
+        session.endSession();
+  
+        return job[0];
+      } else {
+        throw new BadRequestException('Create job failed');
+      }
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
     }
   }
+  
 
   async findAll(
     query: string,
@@ -209,12 +269,12 @@ export class JobService implements IJobService {
       .populate({
         path: 'job_type',
         model: JobType.name,
-        select: '_id name',
+        select: '_id name key',
       })
       .populate({
         path: 'job_contract_type',
         model: JobContractType.name,
-        select: '_id name',
+        select: '_id name key',
       })
       .select(
         'title _id salary_range is_negotiable job_type job_contract_type createdAt is_active is_expired count_apply candidate_ids expire_date skill_name',

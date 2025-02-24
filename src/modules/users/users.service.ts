@@ -297,27 +297,28 @@ export class UsersService implements IUserRepository{
           entityCollection: 'users',
           changes,
           ipAddress,
-          deviceInfo: { 
+          deviceInfo: {
             os: {
-              name: deviceInfo.os.name || 'Unknown OS', // Tên hệ điều hành
-              version: deviceInfo.os.version || 'Unknown Version' // Phiên bản hệ điều hành
+              name: deviceInfo.os.name || 'Unknown OS',
+              version: deviceInfo.os.version || 'Unknown Version'
             },
             device: {
-              model: deviceInfo.device.model || 'Unknown Device', // Model của thiết bị
-              type: deviceInfo.device.type || 'Unknown Type', // Loại thiết bị (vd: mobile, tablet, desktop)
-              vendor: deviceInfo.device.vendor || 'Unknown Vendor' // Nhà sản xuất thiết bị (vd: Apple, Samsung)
+              model: deviceInfo.device.model || 'Unknown Device',
+              type: deviceInfo.device.type || 'Unknown Type',
+              vendor: deviceInfo.device.vendor || 'Unknown Vendor'
             },
             browser: {
-              name: deviceInfo.browser.name || 'Unknown Browser', // Tên trình duyệt
-              version: deviceInfo.browser.version || 'Unknown Version' // Phiên bản trình duyệt
+              name: deviceInfo.browser.name || 'Unknown Browser',
+              version: deviceInfo.browser.version || 'Unknown Version'
             },
             engine: {
-              name: deviceInfo.engine.name || 'Unknown Engine', // Engine của trình duyệt (vd: WebKit, Blink)
-              version: deviceInfo.engine.version || 'Unknown Version' // Phiên bản của engine
+              name: deviceInfo.engine.name || 'Unknown Engine',
+              version: deviceInfo.engine.version || 'Unknown Version'
             }
           },
           activityDetail: 'user_update_info',
           description: 'User profile update',
+          entityName: updatedUser?.full_name ?? updatedUser?.email
         });
       }
   
@@ -693,7 +694,7 @@ export class UsersService implements IUserRepository{
       .sort(sort as any)
       .populate('city_id', '-districts -division_type -phone_code')
       .populate('district_id', '-wards -short_codename -division_type')
-      .populate('jobs_ids', '_id')
+      .populate('jobs_ids', '_id title')
       .select('_id avatar_company city_id district_id company_name');
   
     if (result) {
