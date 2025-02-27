@@ -4,6 +4,7 @@ import { FavoriteJobController } from './favorite-job.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FavoriteJob, FavoriteJobSchema } from './schema/favorite-job.schema';
 import { UsersModule } from '../users/users.module';
+import { LogModule } from 'src/log/log.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UsersModule } from '../users/users.module';
       },
     ]),
     UsersModule,
+    LogModule,
   ],
   controllers: [FavoriteJobController],
   providers: [FavoriteJobService],

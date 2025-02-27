@@ -3,9 +3,13 @@ import { UpdateApplicationDto } from './dto/update-application.dto';
 import { DeleteApplicationDto } from './dto/delete-application.dto';
 import { Application } from './schema/Application.schema';
 import { Meta } from '../types';
+import { Request } from 'express';
 
 export interface IApplicationService {
-  create(createApplicationDto: CreateApplicationDto): Promise<Application>;
+  create(
+    createApplicationDto: CreateApplicationDto,
+    req: Request,
+  ): Promise<Application>;
   findAll(
     query: string,
     current: number,

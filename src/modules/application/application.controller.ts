@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   Put,
+  Req,
 } from '@nestjs/common';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
@@ -17,6 +18,7 @@ import { ResponseMessage } from 'src/decorator/customize';
 import { DeleteApplicationDto } from './dto/delete-application.dto';
 import { Application } from './schema/Application.schema';
 import { Meta } from '../types';
+import { Request } from 'express';
 
 @Controller('applications')
 @ApiTags('Application')
@@ -28,8 +30,9 @@ export class ApplicationController {
   @ApiBody({ type: CreateApplicationDto })
   async create(
     @Body() createApplicationDto: CreateApplicationDto,
+    @Req() req: Request,
   ): Promise<Application> {
-    return await this.applicationService.create(createApplicationDto);
+    return await this.applicationService.create(createApplicationDto, req);
   }
 
   @Get('recently-applied-candidate')

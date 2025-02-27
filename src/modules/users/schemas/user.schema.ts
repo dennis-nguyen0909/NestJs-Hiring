@@ -185,13 +185,13 @@ export class User extends Document {
     contact: boolean;
   };
 
-  @Prop()
+  @Prop({ default: false })
   is_profile_privacy: boolean;
-  @Prop()
+  @Prop({ default: false })
   is_resume_privacy: boolean;
-  @Prop()
+  @Prop({ default: false })
   notification_when_employer_save_profile: boolean;
-  @Prop()
+  @Prop({ default: false })
   notification_when_employer_reject_cv: boolean;
   @Prop()
   otpCode: string;
@@ -210,6 +210,13 @@ export class User extends Document {
 
   @Prop({ default: 'DD/MM/YYYY' })
   dateFormat: string;
+
+  @Prop({ required: false })
+  name_city?: string;
+  @Prop({ required: false })
+  name_district?: string;
+  @Prop({ required: false })
+  name_ward?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

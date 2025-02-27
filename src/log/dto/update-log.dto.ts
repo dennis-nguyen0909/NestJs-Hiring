@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsMongoId, IsObject } from 'class-validator';
+import { IsString, IsOptional, IsMongoId, IsObject, IsNotEmpty } from 'class-validator';
 import { Types } from 'mongoose';
 export class UpdateLogDto {
   @IsMongoId()
@@ -46,7 +46,7 @@ export class UpdateLogDto {
     };
   }; // Thông tin thiết bị
 
-  @IsString()
+  @IsNotEmpty()
   @IsOptional()
   activityDetail?: string; // Chi tiết hoạt động
 

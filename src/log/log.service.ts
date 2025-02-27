@@ -7,6 +7,7 @@ import { logConnection } from 'src/db/conection';
 import { Log, LogDocument } from './schema/log.schema';
 import aqp from 'api-query-params';
 import { Meta } from 'src/modules/types';
+import { UAParser } from 'ua-parser-js';
 
 @Injectable()
 export class LogService {
@@ -14,7 +15,36 @@ export class LogService {
 
   // Ghi log tạo mới
   async createLog(createLogDto: CreateLogDto): Promise<Log> {
-    const createdLog = new this.logModel(createLogDto);
+    const ipAddress = Array.isArray(createLogDto.req.headers['x-forwarded-for'])
+      ? createLogDto.req.headers['x-forwarded-for'][0]
+      : createLogDto.req.ip || createLogDto.req.connection.remoteAddress;
+
+    const userAgent = createLogDto.req.headers['user-agent'];
+    const parser = new UAParser(userAgent);
+    const deviceInfo = parser.getResult();
+    const createdLog = new this.logModel({
+      ...createLogDto,
+      ipAddress,
+      deviceInfo: {
+        os: {
+          name: deviceInfo.os.name || 'Unknown OS',
+          version: deviceInfo.os.version || 'Unknown Version',
+        },
+        device: {
+          model: deviceInfo.device.model || 'Unknown Device',
+          type: deviceInfo.device.type || 'Unknown Type',
+          vendor: deviceInfo.device.vendor || 'Unknown Vendor',
+        },
+        browser: {
+          name: deviceInfo.browser.name || 'Unknown Browser',
+          version: deviceInfo.browser.version || 'Unknown Version',
+        },
+        engine: {
+          name: deviceInfo.engine.name || 'Unknown Engine',
+          version: deviceInfo.engine.version || 'Unknown Version',
+        },
+      },
+    });
     return createdLog.save();
   }
 
@@ -67,11 +97,12 @@ export class LogService {
     if (!pageSize) pageSize = 10;
     if (filter?.userId) {
       filter.userId = new Types.ObjectId(filter.userId);
-      delete filter.userId;
     }
     const skip = (current - 1) * pageSize;
     const total = await this.logModel.countDocuments(filter);
     const sortDefault = { createdAt: -1 };
+
+    console.log('duy filter', filter);
     const result = await this.logModel
       .find(filter)
       .skip(skip)

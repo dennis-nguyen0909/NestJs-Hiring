@@ -16,6 +16,8 @@ import { NotificationService } from 'src/notification/notification.service';
 import { User } from '../users/schemas/user.schema';
 import { IApplicationService } from './application.interface';
 import { Meta } from '../types';
+import { LogService } from 'src/log/log.service';
+import { Request } from 'express';
 
 @Injectable()
 export class ApplicationService implements IApplicationService {
@@ -25,14 +27,18 @@ export class ApplicationService implements IApplicationService {
     @InjectModel('SaveCandidate')
     private saveCandidateModel: Model<SaveCandidate>,
     private notificationService: NotificationService,
+    private logService: LogService,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel('Job') private jobModel: Model<Job>,
   ) {}
 
   async create(
     createApplicationDto: CreateApplicationDto,
+    req: Request,
   ): Promise<Application> {
     try {
+      const session = await this.applicationRepository.startSession();
+      session.startTransaction();
       // Kiểm tra xem Job có tồn tại, còn hạn và đang hoạt động không
       const job = await this.jobModel.findOne({
         _id: createApplicationDto.job_id,
@@ -69,6 +75,17 @@ export class ApplicationService implements IApplicationService {
         const candidate = await this.userModel.findById(
           createApplicationDto.user_id,
         );
+
+        await this.logService.createLog({
+          userId: new Types.ObjectId(candidate._id.toString()),
+          action: 'APPLY',
+          entityId: newApplied._id.toString(),
+          entityCollection: 'Application',
+          description: 'Candidate applied for job',
+          entityName: job?.title,
+          activityDetail: 'applied_job',
+          req: req,
+        });
         this.notificationService.notificationWhenCandidateAppliedEmployer(
           candidate,
           employer,
@@ -79,6 +96,7 @@ export class ApplicationService implements IApplicationService {
 
         return newApplied;
       } else {
+        await session.abortTransaction();
         throw new NotFoundException('Failed to apply for job');
       }
     } catch (error) {

@@ -7,22 +7,28 @@ import { CreateFavoriteJobDto } from './dto/create-favorite-job.dto';
 import { UpdateFavoriteJobDto } from './dto/update-favorite-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { FavoriteJob } from './schema/favorite-job.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from '../users/schemas/user.schema';
 import aqp from 'api-query-params';
 import { IFavoriteJobService } from './favorite-job.interface';
 import { Meta } from '../types';
+import { LogService } from 'src/log/log.service';
+import { Request } from 'express';
 
 @Injectable()
 export class FavoriteJobService implements IFavoriteJobService {
   constructor(
     @InjectModel(FavoriteJob.name) private favoriteJobModel: Model<FavoriteJob>,
     @InjectModel(User.name) private userModel: Model<User>,
+    private logService: LogService,
   ) {}
   async create(
     createFavoriteJobDto: CreateFavoriteJobDto,
+    req: Request,
   ): Promise<FavoriteJob | []> {
     try {
+      const session = await this.favoriteJobModel.startSession();
+      session.startTransaction();
       const favorite = await this.favoriteJobModel.findOne({
         job_id: createFavoriteJobDto.job_id,
       });
@@ -39,11 +45,31 @@ export class FavoriteJobService implements IFavoriteJobService {
         await this.favoriteJobModel.deleteOne({
           _id: favorite._id,
         });
+        await this.logService.createLog({
+          userId: new Types.ObjectId(createFavoriteJobDto?.user_id),
+          action: 'UNFAVORITE',
+          entityId: favorite._id.toString(),
+          entityCollection: 'FavoriteJob',
+          description: 'Unfavorite job',
+          entityName: createFavoriteJobDto?.jobTitle,
+          activityDetail: 'unfavorite_job',
+          req: req,
+        });
         return [];
       } else {
         const create = await this.favoriteJobModel.create(createFavoriteJobDto);
-        user.favorite_jobs.push(create._id);
+        user.favorite_jobs.push(create._id);  
         await user.save();
+        await this.logService.createLog({
+          userId: new Types.ObjectId(createFavoriteJobDto?.user_id),
+          action: 'FAVORITE',
+          entityId: create._id.toString(),
+          entityCollection: 'FavoriteJob',
+          description: 'Favorite job',
+          entityName: createFavoriteJobDto?.jobTitle,
+          activityDetail: 'favorite_job',
+          req: req,
+        });
         return create;
       }
     } catch (error) {
@@ -51,9 +77,10 @@ export class FavoriteJobService implements IFavoriteJobService {
     }
   }
 
-  async getFavoriteJobDetailByUserId(
-    data: CreateFavoriteJobDto,
-  ): Promise<FavoriteJob> {
+  async getFavoriteJobDetailByUserId(data: {
+    user_id: string;
+    job_id: string;
+  }): Promise<FavoriteJob> {
     try {
       const res = await this.favoriteJobModel.findOne({
         user_id: data.user_id,

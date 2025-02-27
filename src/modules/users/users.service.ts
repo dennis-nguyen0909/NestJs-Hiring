@@ -281,9 +281,9 @@ export class UsersService implements IUserRepository{
       const changes = {};
 
       for (const key in updateUserDto) {
-        if (key !== '_id' && key !== 'id') {  // Bỏ qua _id hoặc id
+        if (key !== '_id' && key !== 'id' && key !== 'city_id' && key !== 'district_id' && key !== 'ward_id' ) {  // Bỏ qua _id hoặc id
           if (oldUserData[key] !== updateUserDto[key]) {
-            changes[key] = { old: new Types.ObjectId(oldUserData[key]), new: new Types.ObjectId(updateUserDto[key]) };
+            changes[key] = { old: oldUserData[key], new: updateUserDto[key] };
           }
         }
       }
@@ -296,29 +296,10 @@ export class UsersService implements IUserRepository{
           entityId: updatedUser._id.toString(),
           entityCollection: 'users',
           changes,
-          ipAddress,
-          deviceInfo: {
-            os: {
-              name: deviceInfo.os.name || 'Unknown OS',
-              version: deviceInfo.os.version || 'Unknown Version'
-            },
-            device: {
-              model: deviceInfo.device.model || 'Unknown Device',
-              type: deviceInfo.device.type || 'Unknown Type',
-              vendor: deviceInfo.device.vendor || 'Unknown Vendor'
-            },
-            browser: {
-              name: deviceInfo.browser.name || 'Unknown Browser',
-              version: deviceInfo.browser.version || 'Unknown Version'
-            },
-            engine: {
-              name: deviceInfo.engine.name || 'Unknown Engine',
-              version: deviceInfo.engine.version || 'Unknown Version'
-            }
-          },
           activityDetail: 'user_update_info',
           description: 'User profile update',
-          entityName: updatedUser?.full_name ?? updatedUser?.email
+          entityName: updatedUser?.full_name ?? updatedUser?.email,
+          req: request,
         });
       }
   

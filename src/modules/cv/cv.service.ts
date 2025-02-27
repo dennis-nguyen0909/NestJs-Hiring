@@ -3,6 +3,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -19,26 +20,64 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { cloudinaryPublicIdRegexNew } from 'src/helpers/util';
 import { ICvService } from './cv.interface';
 import { Meta } from '../types';
+import { LogService } from 'src/log/log.service';
+import { Request } from 'express';
 @Injectable()
 export class CvService implements ICvService {
   constructor(
     @InjectModel('CV') private cvRepository: Model<CV>,
     @InjectModel(User.name) private userModel: Model<User>,
-   private cloudinaryService:CloudinaryService
+   private cloudinaryService:CloudinaryService,
+   private logService:LogService
   ) {}
-  async create(createCvDto: CreateCvDto):Promise<CV> {
-   const cv:CV = await this.cvRepository.create(createCvDto);
-   const user:User = await this.userModel.findOne({_id:createCvDto.user_id})
-   if(!user){
-     throw new BadRequestException('user not found')
-   }
-    if(!cv){
-      throw new BadRequestException('cv not created')
+  async create(createCvDto: CreateCvDto, req: Request): Promise<CV> {
+    const session = await this.cvRepository.startSession(); // Start session
+    session.startTransaction(); // Start transaction
+  
+    try {
+      const cvArray: CV[] = await this.cvRepository.create([createCvDto], { session }); // Create CV in session
+      const cv: CV = cvArray[0]; // Extract the first CV from the array
+      
+      const user: User = await this.userModel.findOne({ _id: createCvDto.user_id }).session(session); // Find user in session
+  
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+  
+      if (!cv) {
+        throw new BadRequestException('CV not created');
+      }
+  
+      user.cvs.push(cv._id as any);
+      await user.save({ session }); // Save user changes within the session
+  
+      // Create log entry
+      await this.logService.createLog({
+        userId: new Types.ObjectId(createCvDto?.user_id),
+        action: 'UPLOAD_CV',
+        entityId: cv._id.toString(),
+        entityCollection: 'CV',
+        description: 'Upload CV',
+        entityName: createCvDto?.cv_name,
+        activityDetail: 'upload_cv',
+        req: req,
+        changesLink:{
+          link:cv.cv_link,
+          name:cv.cv_name,
+        }
+      });
+  
+      await session.commitTransaction(); // Commit transaction
+      return cv;
+    } catch (error) {
+      await session.abortTransaction(); // Rollback transaction on error
+      throw new InternalServerErrorException('Error occurred, transaction rolled back: ' + error.message);
+    } finally {
+      session.endSession(); // Always end session
     }
-    user.cvs.push(cv._id as any)
-    await user.save()
-    return cv
   }
+  
+  
 
   async findAll(query: string, current: number, pageSize: number):Promise<{items:CV[],meta: Meta}> {
     const { filter, sort } = aqp(query);
@@ -88,7 +127,7 @@ export class CvService implements ICvService {
     }
   }
 
-  async remove(data: DeleteCvDto, userId: string):Promise<{ message: string; data: any[] }>{
+  async remove(data: DeleteCvDto, userId: string,req:Request):Promise<{ message: string; data: any[] }>{
     const { ids } = data;
     
     // Tìm người dùng
@@ -124,6 +163,16 @@ export class CvService implements ICvService {
             { _id: userId },
             { $pull: { cvs: ids[0] } }
           );
+          await this.logService.createLog({
+            userId: new Types.ObjectId(userId),
+            action: 'DELETE_CV',
+            entityId: cv._id.toString(),
+            entityCollection: 'CV',
+            description: 'Delete CV',
+            entityName: cv.cv_name,
+            activityDetail: 'activity_delete_cv',
+            req: req,
+          });
           return {
             message: 'CV deleted successfully',
             data: [],
@@ -162,6 +211,16 @@ export class CvService implements ICvService {
           { _id: userId },
           { $pull: { cvs: { $in: ids } } }
         );
+        await this.logService.createLog({
+          userId: new Types.ObjectId(userId),
+          action: 'DELETE_CV',
+          entityId: ids.toString(),
+          entityCollection: 'CV',
+          description: 'Delete CV',
+          entityName: cvs[0].cv_name,
+          activityDetail: 'activity_delete_cv',
+          req: req,
+        });
         return {
           message: 'CVs deleted successfully',
           data: [],

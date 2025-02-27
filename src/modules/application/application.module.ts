@@ -7,6 +7,7 @@ import { SaveCandidatesModule } from '../save_candidates/save_candidates.module'
 import { JobModule } from '../job/job.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { UsersModule } from '../users/users.module';
+import { LogModule } from 'src/log/log.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsersModule } from '../users/users.module';
     JobModule,
     NotificationModule,
     UsersModule,
+    LogModule,
   ],
   controllers: [ApplicationController],
   providers: [ApplicationService],

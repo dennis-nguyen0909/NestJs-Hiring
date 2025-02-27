@@ -72,4 +72,13 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   isRememberAccount: boolean;
   @IsOptional()
   dateFormat: string;
+
+  @IsOptional()
+  name_city?: string;
+
+  @IsOptional()
+  name_district?: string;
+
+  @IsOptional()
+  name_ward?: string;
 }

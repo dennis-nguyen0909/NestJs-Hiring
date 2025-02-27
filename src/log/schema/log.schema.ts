@@ -9,7 +9,23 @@ export class Log {
   @Prop({ required: true, ref: User.name })
   userId: Types.ObjectId;
 
-  @Prop({ required: true, enum: ['CREATE', 'UPDATE', 'DELETE'] })
+  @Prop({
+    required: true,
+    enum: [
+      'CREATE',
+      'UPDATE',
+      'DELETE',
+      'APPLY',
+      'SAVE',
+      'REJECT',
+      'CANCEL',
+      'UNFAVORITE',
+      'FAVORITE',
+      'View',
+      'UPLOAD_CV',
+      'DELETE_CV',
+    ],
+  })
   action: string;
 
   @Prop({ required: true })
@@ -58,6 +74,12 @@ export class Log {
 
   @Prop()
   entityName: string;
+
+  @Prop({ type: Object })
+  changesLink: {
+    link: string;
+    name: string;
+  };
 }
 
 export const LogSchema = SchemaFactory.createForClass(Log);

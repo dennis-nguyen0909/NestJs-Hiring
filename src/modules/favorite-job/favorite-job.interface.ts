@@ -1,14 +1,18 @@
 import { CreateFavoriteJobDto } from './dto/create-favorite-job.dto';
 import { UpdateFavoriteJobDto } from './dto/update-favorite-job.dto';
 import { FavoriteJob } from './schema/favorite-job.schema';
-import { User } from '../users/schemas/user.schema';
 import { Meta } from '../types';
+import { Request } from 'express';
 
 export interface IFavoriteJobService {
-  create(createFavoriteJobDto: CreateFavoriteJobDto): Promise<FavoriteJob | []>;
-  getFavoriteJobDetailByUserId(
-    data: CreateFavoriteJobDto,
-  ): Promise<FavoriteJob>;
+  create(
+    createFavoriteJobDto: CreateFavoriteJobDto,
+    req: Request,
+  ): Promise<FavoriteJob | []>;
+  getFavoriteJobDetailByUserId(data: {
+    user_id: string;
+    job_id: string;
+  }): Promise<FavoriteJob>;
   findAll(
     query: string,
     current: number,

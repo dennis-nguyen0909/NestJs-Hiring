@@ -103,13 +103,6 @@ export class JobService implements IJobService {
         user_id: new Types.ObjectId(userExist._id + ''),
       }], { session }); // Pass session vào create
   
-      const ipAddress = Array.isArray(request.headers['x-forwarded-for']) 
-        ? request.headers['x-forwarded-for'][0] 
-        : request.ip || request.connection.remoteAddress;
-      
-      const userAgent = request.headers['user-agent'];
-      const parser = new UAParser(userAgent);
-      const deviceInfo = parser.getResult();
   
       if (job) {
         // Tạo log
@@ -120,26 +113,7 @@ export class JobService implements IJobService {
           entityCollection: 'jobs',
           entityName: job[0]?.title,
           activityDetail: 'user_create_job',
-          ipAddress,
-          deviceInfo: { 
-            os: {
-              name: deviceInfo.os.name || 'Unknown OS',
-              version: deviceInfo.os.version || 'Unknown Version',
-            },
-            device: {
-              model: deviceInfo.device.model || 'Unknown Device',
-              type: deviceInfo.device.type || 'Unknown Type',
-              vendor: deviceInfo.device.vendor || 'Unknown Vendor',
-            },
-            browser: {
-              name: deviceInfo.browser.name || 'Unknown Browser',
-              version: deviceInfo.browser.version || 'Unknown Version',
-            },
-            engine: {
-              name: deviceInfo.engine.name || 'Unknown Engine',
-              version: deviceInfo.engine.version || 'Unknown Version',
-            },
-          },
+          req: request,
         }); // Pass session vào logService
   
         // Thêm job vào user

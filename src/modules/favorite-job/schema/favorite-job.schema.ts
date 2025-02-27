@@ -10,6 +10,7 @@ export class FavoriteJob {
 
   @Prop({ type: Types.ObjectId, ref: Job.name })
   job_id: Types.ObjectId;
+
 }
 
 export const FavoriteJobSchema = SchemaFactory.createForClass(FavoriteJob);

@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { FavoriteJobService } from './favorite-job.service';
 import { CreateFavoriteJobDto } from './dto/create-favorite-job.dto';
@@ -14,6 +15,7 @@ import { UpdateFavoriteJobDto } from './dto/update-favorite-job.dto';
 import { ResponseMessage } from 'src/decorator/customize';
 import { FavoriteJob } from './schema/favorite-job.schema';
 import { Meta } from '../types';
+import { Request } from 'express';
 
 @Controller('favorite-jobs')
 export class FavoriteJobController {
@@ -23,8 +25,9 @@ export class FavoriteJobController {
   @ResponseMessage('Success')
   async create(
     @Body() createFavoriteJobDto: CreateFavoriteJobDto,
+    @Req() req: Request,
   ): Promise<FavoriteJob | []> {
-    return await this.favoriteJobService.create(createFavoriteJobDto);
+    return await this.favoriteJobService.create(createFavoriteJobDto, req);
   }
 
   @Get('/get-detail')
@@ -33,7 +36,7 @@ export class FavoriteJobController {
     @Query('user_id') user_id: any,
     @Query('job_id') job_id: any,
   ): Promise<FavoriteJob> {
-    const data: CreateFavoriteJobDto = {
+    const data = {
       user_id,
       job_id,
     };

@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateFavoriteJobDto {
@@ -9,4 +9,8 @@ export class CreateFavoriteJobDto {
   @IsNotEmpty()
   // @IsMongoId()
   job_id: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  jobTitle: string;
 }

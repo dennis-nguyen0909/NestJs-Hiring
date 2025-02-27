@@ -8,7 +8,7 @@ import {
   Delete,
   Query,
   Res,
-  Req,
+  Req
 } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -18,6 +18,7 @@ import { ResponseMessage } from 'src/decorator/customize';
 import { DeleteCvDto } from './dto/delete-cv.dto';
 import { CV } from './schema/CV.schema';
 import { Meta } from '../types';
+import { Request } from 'express';
 
 @Controller('cvs')
 @ApiTags('CV')
@@ -26,8 +27,11 @@ export class CvController {
 
   @Post()
   @ResponseMessage('success')
-  async create(@Body() createCvDto: CreateCvDto): Promise<CV> {
-    return await this.cvService.create(createCvDto);
+  async create(
+    @Body() createCvDto: CreateCvDto,
+    @Req() req: Request,
+  ): Promise<CV> {
+    return await this.cvService.create(createCvDto, req);
   }
 
   @Get('download/:userId')
@@ -78,7 +82,7 @@ export class CvController {
     @Req() req,
   ): Promise<{ message: string; data: any[] }> {
     const userId = req.user._id;
-    return await this.cvService.remove(data, userId);
+    return await this.cvService.remove(data, userId, req);
   }
   @Delete(':id')
   @ResponseMessage('success')

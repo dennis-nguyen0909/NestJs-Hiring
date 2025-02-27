@@ -4,7 +4,10 @@ import {
   IsOptional,
   IsMongoId,
   IsObject,
+  isNotEmpty,
+  IsEnum,
 } from 'class-validator';
+import { Request } from 'express';
 import { Types } from 'mongoose';
 
 export class CreateLogDto {
@@ -12,9 +15,34 @@ export class CreateLogDto {
   @IsNotEmpty()
   userId: Types.ObjectId; // ID người dùng
 
-  @IsString()
+  @IsEnum([
+    'CREATE',
+    'UPDATE',
+    'DELETE',
+    'APPLY',
+    'SAVE',
+    'REJECT',
+    'CANCEL',
+    'UNFAVORITE',
+    'FAVORITE',
+    'View',
+    'DELETE_CV',
+    'UPLOAD_CV',
+  ])
   @IsNotEmpty()
-  action: string; // Hành động (VD: 'CREATE', 'UPDATE', 'DELETE')
+  action:
+    | 'CREATE'
+    | 'UPDATE'
+    | 'DELETE'
+    | 'APPLY'
+    | 'SAVE'
+    | 'REJECT'
+    | 'CANCEL'
+    | 'UNFAVORITE'
+    | 'FAVORITE'
+    | 'View'
+    | 'DELETE_CV'
+    | 'UPLOAD_CV'; // Hành động (VD: 'CREATE', 'UPDATE', 'DELETE')
 
   @IsString()
   @IsNotEmpty()
@@ -32,12 +60,17 @@ export class CreateLogDto {
   @IsOptional()
   changes?: {
     [key: string]: {
-      is_need_trans: string;
-      new_attribute: string;
-      old_attribute: string;
+      new: string | Types.ObjectId;
+      old: string | Types.ObjectId;
     };
   }; // Thay đổi đã thực hiện (VD: các thuộc tính được cập nhật)
 
+  @IsObject()
+  @IsOptional()
+  changesLink?: {
+    link: string;
+    name: string;
+  };
   @IsString()
   @IsOptional()
   ipAddress?: string; // Địa chỉ IP của người dùng
@@ -64,11 +97,14 @@ export class CreateLogDto {
     };
   }; // Thông tin thiết bị (hệ điều hành, thiết bị, trình duyệt)
 
-  @IsString()
+  @IsNotEmpty()
   @IsOptional()
   activityDetail?: string; // Chi tiết hoạt động
 
   @IsOptional()
   @IsString()
   entityName: string;
+
+  @IsNotEmpty()
+  req: Request;
 }
