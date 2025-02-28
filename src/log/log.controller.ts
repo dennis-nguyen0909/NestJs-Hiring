@@ -58,7 +58,6 @@ export class LogController {
 
   @Get('system-activities')
   @ResponseMessage('Get user activity success')
-  @Public()
   async getUserActivity(
     @Query('current') current: number,
     @Query('pageSize') pageSize: number,

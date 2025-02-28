@@ -3,10 +3,12 @@ import { CreateEducationDto } from './dto/create-education.dto';
 import { UpdateEducationDto } from './dto/update-education.dto';
 import { BadRequestException } from '@nestjs/common';
 import { Meta } from '../types';
+import { Request } from 'express';
 
 export interface IEducationService {
   addEducation(
     createEducationDto: CreateEducationDto,
+    req: Request,
   ): Promise<Education | BadRequestException>;
   findEducationsByUserId(userId: string): Promise<Education[]>;
   findAll(
@@ -19,6 +21,7 @@ export interface IEducationService {
     id: string,
     updateEducationDto: UpdateEducationDto,
     userId: string,
+    req: Request,
   ): Promise<Education>;
-  deleteByUserId(id: string, userId: string): Promise<[]>;
+  deleteByUserId(id: string, userId: string, req: Request): Promise<[]>;
 }

@@ -270,14 +270,6 @@ export class UsersService implements IUserRepository{
       if (!updatedUser) {
         throw new NotFoundException('User not found');
       }
-      const ipAddress = Array.isArray(request.headers['x-forwarded-for']) 
-      ? request.headers['x-forwarded-for'][0] 
-      : request.ip || request.connection.remoteAddress;
-    
-      const userAgent = request.headers['user-agent'];
-      const parser = new UAParser(userAgent);
-      const deviceInfo = parser.getResult();
-  
       const changes = {};
 
       for (const key in updateUserDto) {

@@ -107,4 +107,12 @@ export class CreateLogDto {
 
   @IsNotEmpty()
   req: Request;
+
+  @IsObject()
+  @IsOptional()
+  changeColumns?: {
+    [key: string]: {
+      value: any;
+    };
+  };
 }

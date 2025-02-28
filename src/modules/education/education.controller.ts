@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { EducationService } from './education.service';
 import { UpdateEducationDto } from './dto/update-education.dto';
@@ -27,8 +28,9 @@ export class EducationController {
   @UseGuards(JwtAuthGuard)
   async addEducation(
     @Body() createEducationDto: CreateEducationDto,
+    @Req() req,
   ): Promise<Education> {
-    return await this.educationService.addEducation(createEducationDto);
+    return await this.educationService.addEducation(createEducationDto, req);
   }
 
   // Lấy danh sách giáo dục của một người dùng
@@ -61,6 +63,7 @@ export class EducationController {
       id,
       updateEducationDto,
       req.user._id,
+      req,
     );
   }
 
@@ -68,7 +71,7 @@ export class EducationController {
   @ResponseMessage('Success')
   @UseGuards(JwtAuthGuard)
   async deleteByUserId(@Param('id') id: string, @Request() req): Promise<[]> {
-    return await this.educationService.deleteByUserId(id, req.user._id);
+    return await this.educationService.deleteByUserId(id, req.user._id,req);
   }
 
   @Get(':id')

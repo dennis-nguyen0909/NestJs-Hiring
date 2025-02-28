@@ -38,7 +38,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         err ||
         new UnauthorizedException({
           status: 419,
-          message: 'Token expired',
+          message: 'Access denied',
         })
       );
     }

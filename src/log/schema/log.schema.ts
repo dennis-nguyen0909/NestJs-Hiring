@@ -80,6 +80,13 @@ export class Log {
     link: string;
     name: string;
   };
+
+  @Prop({ type: Object })
+  changeColumns: {
+    [key: string]: {
+      value: any;
+    };
+  };
 }
 
 export const LogSchema = SchemaFactory.createForClass(Log);

@@ -114,7 +114,7 @@ export class JobService implements IJobService {
           entityName: job[0]?.title,
           activityDetail: 'user_create_job',
           req: request,
-        }); // Pass session vào logService
+        });
   
         // Thêm job vào user
         user.jobs_ids.push(new Types.ObjectId(job[0]._id + ''));
