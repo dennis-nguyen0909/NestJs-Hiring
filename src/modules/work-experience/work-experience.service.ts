@@ -9,6 +9,8 @@ import aqp from 'api-query-params';
 import { User } from '../users/schemas/user.schema';
 import { IWorkExperienceService } from './work-exxperience.interface';
 import { Meta } from '../types';
+import { Request } from 'express';
+import { LogService } from 'src/log/log.service';
 
 @Injectable()
 export class WorkExperienceService implements IWorkExperienceService{
@@ -17,8 +19,11 @@ export class WorkExperienceService implements IWorkExperienceService{
     private workExperienceModel: Model<WorkExperience>,
     @InjectModel(User.name)
     private userModel: Model<User>,
+    private logService: LogService,
   ) {}
-  async create(createWorkExperienceDto: CreateWorkExperienceDto):Promise<WorkExperience> {
+  async create(createWorkExperienceDto: CreateWorkExperienceDto, req: Request):Promise<WorkExperience> {
+    const session = await this.workExperienceModel.startSession();
+    session.startTransaction();
     try {
       const workExperience = await this.workExperienceModel.create(
         createWorkExperienceDto,
@@ -27,7 +32,7 @@ export class WorkExperienceService implements IWorkExperienceService{
       const user = await this.userModel.findOneAndUpdate(
         { _id: workExperience.user_id },
         { $push: { work_experience_ids: workExperience._id } }, // Thêm ObjectId của Education vào mảng education_ids của User
-        { new: true }, // Trả về tài liệu người dùng đã được cập nhật
+        { new: true ,session}, // Trả về tài liệu người dùng đã được cập nhật
       );
 
       // Kiểm tra xem người dùng có tồn tại không
@@ -38,8 +43,29 @@ export class WorkExperienceService implements IWorkExperienceService{
       if (!workExperience) {
         throw new BadGatewayException('WorkExperience not created');
       }
+      await this.logService.createLog({
+        userId: new Types.ObjectId(user?._id + ''),
+        userRole: 'CANDIDATE',
+        action: 'CREATE',
+        entityId: workExperience._id.toString(),
+        entityCollection: 'work_experience',
+        entityName: workExperience?.company,
+        activityDetail: 'user_create_work_experience',
+        description: 'User create work experience',
+        req: req,
+        changeColumns:{
+          company: { value: workExperience?.company },
+          position: { value: workExperience?.position },
+          start_date: { value: workExperience?.start_date },
+          end_date: { value: workExperience?.end_date },
+          description: { value: workExperience?.description },
+          currently_working: { value: workExperience?.currently_working },
+        }
+      });
+      await session.commitTransaction();
       return workExperience;
     } catch (error) {
+      await session.abortTransaction();
       throw new BadGatewayException(error);
     }
   }
@@ -86,7 +112,9 @@ export class WorkExperienceService implements IWorkExperienceService{
     return res;
   }
 
-  async update(id: string, updateWorkExperienceDto: UpdateWorkExperienceDto):Promise<WorkExperience>  {
+  async update(id: string, updateWorkExperienceDto: UpdateWorkExperienceDto, req: Request):Promise<WorkExperience>  {
+    const session = await this.workExperienceModel.startSession();
+    session.startTransaction();
     try {
       const work = await this.workExperienceModel.findById(id);
       if (!work) {
@@ -101,13 +129,38 @@ export class WorkExperienceService implements IWorkExperienceService{
       if (!update) {
         throw new BadGatewayException('Update error!');
         }
+        const changes = {};
+        for (const key in updateWorkExperienceDto) {
+          if (key !== '_id' && key !== 'id' && key !== 'user_id' ) {  // Bỏ qua _id hoặc id
+            if (work[key] !== updateWorkExperienceDto[key]) {
+              changes[key] = { old: work[key], new: updateWorkExperienceDto[key] };
+            }
+          }
+        }
+      
+        await this.logService.createLog({
+          userId: new Types.ObjectId(work?.user_id + ''),
+          userRole: 'CANDIDATE',
+          action: 'UPDATE',
+          entityId: work?._id.toString(),
+          entityCollection: 'work_experience',
+          entityName: work?.company,
+          activityDetail: 'user_update_work_experience',
+          description: 'User update work experience',
+          req: req,
+          changes:changes
+        });
+        
         return update;
     } catch (error) {
+      await session.abortTransaction();
       throw new BadGatewayException(error.message);
+    } finally {
+      await session.endSession();
     }
   }
 
-  async remove(ids: Array<string>):Promise<[]>  {
+  async remove(ids: Array<string>, req: Request):Promise<[]>  {
     if (!Array.isArray(ids)) {
       throw new BadRequestException('Ids not is array');
     }

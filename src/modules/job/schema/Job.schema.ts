@@ -34,10 +34,7 @@ export class Job extends Document {
   ward_id: Ward;
 
   @Prop({ type: Map, of: Number })
-  salary_range: { min: number; max: number };
-
-  @Prop({ type: Map, of: Number })
-  age_range?: { min: number; max: number };
+  age_range: { min: number; max: number };
 
   @Prop({
     type: String,
@@ -90,9 +87,6 @@ export class Job extends Document {
   @Prop()
   time_work: Date;
 
-  @Prop()
-  require_experience: string[];
-
   @Prop({ type: Types.ObjectId, ref: Level.name })
   level: Types.ObjectId;
 
@@ -144,6 +138,12 @@ export class Job extends Document {
 
   @Prop({ type: String, default: '' })
   apply_email: string;
+
+  @Prop({ type: Number, default: 0 })
+  salary_range_max: number;
+
+  @Prop({ type: Number, default: 0 })
+  salary_range_min: number;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

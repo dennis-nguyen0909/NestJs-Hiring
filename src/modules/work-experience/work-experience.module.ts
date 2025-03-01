@@ -7,6 +7,7 @@ import {
   WorkExperienceSchema,
 } from './schema/WorkExperience.schema';
 import { UsersModule } from '../users/users.module';
+import { LogModule } from 'src/log/log.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UsersModule } from '../users/users.module';
       { name: WorkExperience.name, schema: WorkExperienceSchema },
     ]),
     UsersModule,
+    LogModule,
   ],
   controllers: [WorkExperienceController],
   providers: [WorkExperienceService],

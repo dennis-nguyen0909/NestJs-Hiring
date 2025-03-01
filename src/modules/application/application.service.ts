@@ -78,6 +78,7 @@ export class ApplicationService implements IApplicationService {
 
         await this.logService.createLog({
           userId: new Types.ObjectId(candidate._id.toString()),
+          userRole: 'CANDIDATE',
           action: 'APPLY',
           entityId: newApplied._id.toString(),
           entityCollection: 'Application',

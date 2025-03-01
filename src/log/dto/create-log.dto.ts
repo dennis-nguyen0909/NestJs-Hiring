@@ -14,6 +14,9 @@ export class CreateLogDto {
   @IsMongoId()
   @IsNotEmpty()
   userId: Types.ObjectId; // ID người dùng
+  @IsNotEmpty()
+  @IsString()
+  userRole: string;
 
   @IsEnum([
     'CREATE',

@@ -6,7 +6,7 @@ export class SkillEmployer extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   user_id: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   name: string;
 
   @Prop()

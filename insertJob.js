@@ -13,7 +13,6 @@ const createJobData = (index) => ({
   age_range: { min: 28, max: 65 },
   job_contract_type: '67793df8a1bfd4d09d374e5e',
   benefit: [`Lợi ích ${index}`],
-  require_experience: [],
   level: '67793d7ca1bfd4d09d374dc8',
   type_money: '67793da3a1bfd4d09d374dfe',
   degree: '67793e12a1bfd4d09d374e65',

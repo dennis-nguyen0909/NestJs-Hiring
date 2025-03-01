@@ -98,11 +98,14 @@ export class LogService {
     if (filter?.userId) {
       filter.userId = new Types.ObjectId(filter.userId);
     }
+    if (filter.action === 'ALL') delete filter.action;
+    if (filter.userRole === 'ALL') delete filter.userRole;
+    if (filter.keyword) {
+    }
     const skip = (current - 1) * pageSize;
     const total = await this.logModel.countDocuments(filter);
     const sortDefault = { createdAt: -1 };
 
-    console.log('duy filter', filter);
     const result = await this.logModel
       .find(filter)
       .skip(skip)
@@ -121,6 +124,7 @@ export class LogService {
         path: 'changes.new.ward_id', // Populating the 'new' value's ward_id
         select: 'name codename',
       })
+      .select('-userRole')
       .exec();
     return {
       items: result,

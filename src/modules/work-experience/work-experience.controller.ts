@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   Request,
+  Req,
 } from '@nestjs/common';
 import { WorkExperienceService } from './work-experience.service';
 import { CreateWorkExperienceDto } from './dto/create-work-experience.dto';
@@ -26,8 +27,9 @@ export class WorkExperienceController {
   @ResponseMessage('Success')
   create(
     @Body() createWorkExperienceDto: CreateWorkExperienceDto,
+    @Req() req,
   ): Promise<WorkExperience> {
-    return this.workExperienceService.create(createWorkExperienceDto);
+    return this.workExperienceService.create(createWorkExperienceDto, req);
   }
 
   @Get()
@@ -56,13 +58,14 @@ export class WorkExperienceController {
   update(
     @Param('id') id: string,
     @Body() updateWorkExperienceDto: UpdateWorkExperienceDto,
+    @Req() req,
   ): Promise<WorkExperience> {
-    return this.workExperienceService.update(id, updateWorkExperienceDto);
+    return this.workExperienceService.update(id, updateWorkExperienceDto, req);
   }
 
   @Delete()
   @ResponseMessage('Success')
-  remove(@Body('ids') ids: Array<string>): Promise<[]> {
-    return this.workExperienceService.remove(ids);
+  remove(@Body('ids') ids: Array<string>, @Req() req): Promise<[]> {
+    return this.workExperienceService.remove(ids, req);
   }
 }

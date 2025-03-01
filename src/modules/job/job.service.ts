@@ -2,7 +2,6 @@
 import {
   BadGatewayException,
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -10,12 +9,11 @@ import {
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, PipelineStage, set, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Job } from './schema/Job.schema';
 import { UsersService } from '../users/users.service';
 import aqp from 'api-query-params';
 import { DeleteJobDto } from './dto/delete-job.dto';
-import { CitiesService } from '../cities/cities.service';
 import { SkillEmployer } from '../skill_employer/schema/EmployerSkill.schema';
 import { User } from '../users/schemas/user.schema';
 import { Cities } from '../cities/schema/Cities.schema';
@@ -24,10 +22,8 @@ import { IJobService } from './job.interface';
 import { Meta } from '../types';
 import { JobType } from '../job-type/schema/JobType.schema';
 import { JobContractType } from '../job-contract-type/schema/job-contract-type.schema';
-import { Log } from 'src/log/schema/log.schema';
 import { LogService } from 'src/log/log.service';
 import { Request } from 'express';
-import { UAParser } from 'ua-parser-js';
 
 @Injectable()
 export class JobService implements IJobService {
@@ -53,8 +49,8 @@ export class JobService implements IJobService {
     session.startTransaction(); // Bắt đầu transaction
     
     try {
-      const { user_id, expire_date, salary_range, age_range } = createJobDto;
-  
+      const { user_id, expire_date, salary_range_max, salary_range_min, age_range } = createJobDto;
+  console.log("create",createJobDto.expire_date)
       // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
       const userExist = await this.userService.findByObjectId(user_id + '');
       if (!userExist) {
@@ -72,13 +68,8 @@ export class JobService implements IJobService {
       if (jobExpiryDate <= currentDate) {
         throw new BadRequestException('Expiry date must be later than the current date');
       }
+      CreateJobDto.validateSalaryRange(salary_range_min, salary_range_max);
   
-      // Kiểm tra salary_range max phải lớn hơn min
-      if (salary_range?.min >= salary_range?.max) {
-        throw new BadRequestException('Salary range max must be greater than min');
-      }
-  
-      // Kiểm tra age_range max phải lớn hơn min
       if (age_range?.min >= age_range?.max) {
         throw new BadRequestException('Age range max must be greater than min');
       }
@@ -108,6 +99,7 @@ export class JobService implements IJobService {
         // Tạo log
         await this.logService.createLog({
           userId: new Types.ObjectId(userExist._id + ''),
+          userRole:userExist?.role?.role_name,
           action: 'CREATE',
           entityId: job[0]._id.toString(),
           entityCollection: 'jobs',
@@ -251,7 +243,7 @@ export class JobService implements IJobService {
         select: '_id name key',
       })
       .select(
-        'title _id salary_range is_negotiable job_type job_contract_type createdAt is_active is_expired count_apply candidate_ids expire_date skill_name',
+        'title _id salary_range_min salary_range_max is_negotiable job_type job_contract_type createdAt is_active is_expired count_apply candidate_ids expire_date skill_name',
       )
       .lean();
     return {
@@ -455,9 +447,7 @@ export class JobService implements IJobService {
     try {
       const {
         expire_date,
-        salary_range,
         age_range,
-        is_negotiable,
         user_id,
         city_id,
         district_id,
@@ -468,14 +458,12 @@ export class JobService implements IJobService {
         degree,
         skills,
         professional_skills,
-        general_requirements,
         job_responsibilities,
         interview_process,
+        salary_range_max,
+        salary_range_min,
       } = updateJobDto;
-
-      console.log('updateJobDto', updateJobDto);
-
-      // Kiểm tra ngày hết hạn (expire_date) phải lớn hơn ngày hiện tại
+      
       if (expire_date) {
         const currentDate = new Date();
         const jobExpiryDate = new Date(expire_date);
@@ -486,12 +474,7 @@ export class JobService implements IJobService {
         }
       }
 
-      // Kiểm tra salary_range max phải lớn hơn min
-      if (salary_range?.min >= salary_range?.max && is_negotiable === false) {
-        throw new BadRequestException(
-          'Salary range max must be greater than min',
-        );
-      }
+      CreateJobDto.validateSalaryRange(salary_range_min, salary_range_max);
 
       // Kiểm tra age_range max phải lớn hơn min
       if (age_range?.min >= age_range?.max) {

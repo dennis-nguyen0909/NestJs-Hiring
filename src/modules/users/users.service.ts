@@ -284,6 +284,7 @@ export class UsersService implements IUserRepository{
       if (Object.keys(changes).length > 0) {
         await this.logService.createLog({
           userId: new Types.ObjectId(updatedUser._id.toString()),
+          userRole:updatedUser?.role?.role_name,
           action: 'UPDATE',
           entityId: updatedUser._id.toString(),
           entityCollection: 'users',

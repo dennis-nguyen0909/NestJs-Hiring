@@ -9,6 +9,9 @@ export class Log {
   @Prop({ required: true, ref: User.name })
   userId: Types.ObjectId;
 
+  @Prop({ required: true })
+  userRole: string;
+
   @Prop({
     required: true,
     enum: [
@@ -90,3 +93,13 @@ export class Log {
 }
 
 export const LogSchema = SchemaFactory.createForClass(Log);
+
+// Thêm các index bằng createIndexes
+LogSchema.index({ userId: 1 }); // Tạo index cho userId
+LogSchema.index({ userId: -1 }); // Tạo index cho userId
+LogSchema.index({ userRole: 1 }); // Tạo index cho userRole
+LogSchema.index({ userRole: -1 }); // Tạo index cho userRole
+LogSchema.index({ action: 1 }); // Tạo index cho action
+LogSchema.index({ action: -1 }); // Tạo index cho action
+LogSchema.index({ createdAt: -1 }); // Index cho trường createdAt theo thứ tự giảm dần
+LogSchema.index({ createdAt: 1 }); // Index cho trường createdAt theo thứ tự giảm dần

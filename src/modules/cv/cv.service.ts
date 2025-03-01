@@ -54,6 +54,7 @@ export class CvService implements ICvService {
       // Create log entry
       await this.logService.createLog({
         userId: new Types.ObjectId(createCvDto?.user_id),
+        userRole: 'CANDIDATE',
         action: 'UPLOAD_CV',
         entityId: cv._id.toString(),
         entityCollection: 'CV',
@@ -165,6 +166,7 @@ export class CvService implements ICvService {
           );
           await this.logService.createLog({
             userId: new Types.ObjectId(userId),
+            userRole: 'CANDIDATE',
             action: 'DELETE_CV',
             entityId: cv._id.toString(),
             entityCollection: 'CV',
@@ -213,6 +215,7 @@ export class CvService implements ICvService {
         );
         await this.logService.createLog({
           userId: new Types.ObjectId(userId),
+          userRole: 'CANDIDATE',
           action: 'DELETE_CV',
           entityId: ids.toString(),
           entityCollection: 'CV',

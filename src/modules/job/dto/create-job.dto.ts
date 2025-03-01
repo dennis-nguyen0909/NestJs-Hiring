@@ -1,4 +1,4 @@
-import { Optional } from '@nestjs/common';
+import { BadRequestException, Optional } from '@nestjs/common';
 import {
   IsString,
   IsArray,
@@ -7,6 +7,10 @@ import {
   IsDate,
   IsMongoId,
   IsNotEmpty,
+  ArrayNotEmpty,
+  IsObject,
+  IsNotEmptyObject,
+  IsNumber,
 } from 'class-validator';
 import { ProfessionalSkillDTO } from './general-requirement.dto';
 import { Types } from 'mongoose';
@@ -22,65 +26,66 @@ export class CreateJobDto {
   @IsString()
   description?: string;
 
-  @IsOptional()
-  @IsArray()
-  require_experience?: string[];
+  @IsMongoId()
+  @IsNotEmpty()
+  city_id: Types.ObjectId;
 
   @IsMongoId()
-  city_id?: Types.ObjectId;
+  @IsNotEmpty()
+  district_id: Types.ObjectId;
 
   @IsMongoId()
-  district_id?: Types.ObjectId;
-
-  @IsMongoId()
-  ward_id?: Types.ObjectId;
+  @IsNotEmpty()
+  ward_id: Types.ObjectId;
 
   @IsOptional()
-  salary_range?: { min: number; max: number };
-
-  @IsOptional()
-  age_range?: { min: number; max: number };
+  @IsObject()
+  @IsNotEmptyObject()
+  age_range: { min: number; max: number };
   @IsOptional()
   @IsEnum(['monthly', 'yearly', 'weekly', 'hourly'])
   salary_type?: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   job_contract_type?: Types.ObjectId;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
-  benefit?: string[];
+  @ArrayNotEmpty({ message: 'benefit cannot be empty' })
+  benefit: string[];
 
   @IsOptional()
   @IsDate()
   time_work?: Date;
 
-  @IsOptional()
-  // @IsMongoId()
-  level?: Types.ObjectId;
+  @IsNotEmpty()
+  @IsMongoId()
+  level: Types.ObjectId;
 
   @IsOptional()
   @IsDate()
   posted_date?: Date;
 
-  @IsOptional()
+  @IsNotEmpty()
   // @IsDate()
   expire_date?: Date;
 
-  @IsOptional()
   @IsString()
-  type_money?: Types.ObjectId;
+  @IsMongoId()
+  type_money: Types.ObjectId;
 
   @IsOptional()
   @IsString()
   image?: string;
 
-  @IsOptional()
-  degree?: Types.ObjectId;
+  @IsNotEmpty()
+  @IsMongoId()
+  degree: Types.ObjectId;
 
-  @IsOptional()
-  count_apply?: number;
+  @IsNotEmpty()
+  @IsNumber()
+  count_apply: number;
 
   @IsOptional()
   @IsString()
@@ -88,9 +93,10 @@ export class CreateJobDto {
   @IsOptional()
   is_negotiable: boolean;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsArray()
-  skills?: Types.ObjectId[];
+  @ArrayNotEmpty({ message: 'skills cannot be empty' })
+  skills: Types.ObjectId[];
 
   @Optional()
   is_active: boolean;
@@ -107,25 +113,53 @@ export class CreateJobDto {
   @IsOptional()
   apply_email?: string;
 
-  @IsOptional()
-  professional_skills?: ProfessionalSkillDTO[];
-  @IsOptional()
-  general_requirements?: { requirement: string }[];
-  @IsOptional()
-  job_responsibilities?: { responsibility: string }[];
-  @IsOptional()
-  interview_process?: { process: string }[];
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty({ message: 'professional_skills cannot be empty' })
+  professional_skills: ProfessionalSkillDTO[];
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty({ message: 'general_requirements cannot be empty' })
+  general_requirements: { requirement: string }[];
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty({ message: 'job_responsibilities cannot be empty' })
+  job_responsibilities: { responsibility: string }[];
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty({ message: 'interview_process cannot be empty' })
+  interview_process: { process: string }[];
 
-  @IsOptional()
+  @IsNotEmpty()
   job_type: string;
-  @IsOptional()
-  min_experience?: number;
+  @IsNotEmpty()
+  min_experience: number;
 
   @IsNotEmpty()
   @IsArray()
+  @ArrayNotEmpty({ message: 'skill_name cannot be empty' })
   skill_name: string[];
 
   @IsNotEmpty()
   @IsString()
   company_name: string;
+
+  @IsOptional()
+  salary_range_max?: number;
+  static validateSalaryRange(
+    salary_range_min?: number,
+    salary_range_max?: number,
+  ) {
+    if (
+      salary_range_min &&
+      salary_range_max &&
+      salary_range_min >= salary_range_max
+    ) {
+      throw new BadRequestException(
+        'Salary range max must be greater than salary range min',
+      );
+    }
+  }
+  @IsOptional()
+  salary_range_min?: number;
 }

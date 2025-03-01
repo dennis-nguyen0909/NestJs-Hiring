@@ -55,6 +55,7 @@ export class EducationService {
 
       await this.logService.createLog({
         userId: new Types.ObjectId(user?._id + ''),
+        userRole: 'CANDIDATE',
         action: 'CREATE',
         entityId: education._id.toString(),
         entityCollection: 'education',
@@ -176,6 +177,7 @@ export class EducationService {
       if (Object.keys(changes).length > 0) {
         await this.logService.createLog({
           userId: new Types.ObjectId(userId),
+          userRole: 'CANDIDATE',
           action: 'UPDATE',
           entityId: id,
           entityCollection: 'education',
@@ -238,6 +240,7 @@ export class EducationService {
         .session(session);
       await this.logService.createLog({
         userId: new Types.ObjectId(userId),
+        userRole: 'CANDIDATE',
         action: 'DELETE',
         entityId: id,
         entityCollection: 'education',
