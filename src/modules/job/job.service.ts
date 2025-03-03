@@ -147,6 +147,9 @@ export class JobService implements IJobService {
     if (filter?.city_id && filter?.city_id['$exists'] === true) {
       delete filter.city_id;
     }
+    if (filter?.district_id && filter?.district_id['$exists'] === true) {
+      delete filter.district_id;
+    }
     if (filter?.job_type && filter?.job_type['$exists'] === true) {
       delete filter.job_type;
     }
@@ -196,6 +199,10 @@ export class JobService implements IJobService {
     if (filter?.user_id) {
       filter.user_id = new Types.ObjectId(filter.user_id);
     }
+    if(filter?.district_id){
+      filter.district_id = new Types.ObjectId(filter.district_id);
+    }
+    console.log("filter 123123",filter)
     const defaultSort = { createdAt: 'desc' };
     const sortCriteria = sort || sortParams?.sort || defaultSort;
 
@@ -204,7 +211,6 @@ export class JobService implements IJobService {
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
 
-    console.log('filter', filter);
 
     // Truy vấn và populate dữ liệu với lean() để giảm overhead
     const result = await this.jobRepository

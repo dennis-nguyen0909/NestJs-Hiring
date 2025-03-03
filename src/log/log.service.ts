@@ -98,10 +98,30 @@ export class LogService {
     if (filter?.userId) {
       filter.userId = new Types.ObjectId(filter.userId);
     }
-    if (filter.action === 'ALL') delete filter.action;
-    if (filter.userRole === 'ALL') delete filter.userRole;
+    if (filter.action && filter.action['$exists'] === true) {
+      delete filter.action;
+    }
+    if (filter.userRole && filter.userRole['$exists'] === true) {
+      delete filter.userRole;
+    }
     if (filter.keyword) {
     }
+    if (filter?.start_date && filter?.end_date) {
+      const startDate = new Date(filter.start_date);
+      const endDate = new Date(filter.end_date);
+
+      // Thêm điều kiện lọc theo ngày
+      filter.createdAt = {
+        $gte: startDate,
+        $lte: endDate,
+      };
+
+      // Xóa start_date và end_date sau khi đã sử dụng
+      delete filter.start_date;
+      delete filter.end_date;
+    }
+
+    console.log('filter', filter);
     const skip = (current - 1) * pageSize;
     const total = await this.logModel.countDocuments(filter);
     const sortDefault = { createdAt: -1 };
