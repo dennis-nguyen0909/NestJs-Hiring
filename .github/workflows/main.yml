@@ -1,0 +1,25 @@
+name: Hire Dev API
+
+on: 
+    push:
+      branches: [production]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploying API HireDev
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: 22
+        script: |
+          cd /home/ubuntu/NestJs-Hiring
+          git fetch origin
+          git checkout production
+          git pull
+          npm install --legacy-peer-deps
+          npm run build
+          pm2 reload hire-dev-api
