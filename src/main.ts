@@ -56,5 +56,7 @@ async function bootstrap() {
   console.log(
     `Swagger running on port: ${port}/${configService.get('SWAGGER_PATH')}`,
   );
+
+  console.log('duydeptraiasdiaidasidaidia');
 }
 bootstrap();
