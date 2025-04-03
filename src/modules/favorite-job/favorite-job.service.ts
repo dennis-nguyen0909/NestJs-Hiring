@@ -47,7 +47,7 @@ export class FavoriteJobService implements IFavoriteJobService {
         });
         await this.logService.createLog({
           userId: new Types.ObjectId(createFavoriteJobDto?.user_id),
-          userRole: user?.role?.role_name,
+          userRole: 'CANDIDATE',
           action: 'UNFAVORITE',
           entityId: favorite._id.toString(),
           entityCollection: 'FavoriteJob',
@@ -63,7 +63,7 @@ export class FavoriteJobService implements IFavoriteJobService {
         await user.save();
         await this.logService.createLog({
           userId: new Types.ObjectId(createFavoriteJobDto?.user_id),
-          userRole: user?.role?.role_name,
+          userRole: 'CANDIDATE',
           action: 'FAVORITE',
           entityId: create._id.toString(),
           entityCollection: 'FavoriteJob',

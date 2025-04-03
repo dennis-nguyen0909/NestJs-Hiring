@@ -15,6 +15,7 @@ async function bootstrap() {
       'http://localhost:5173',
       'https://hire-dev.online',
       'https://frontend-hiring-minhduys-projects.vercel.app',
+      'http://localhost:65417',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Cho phép gửi cookies

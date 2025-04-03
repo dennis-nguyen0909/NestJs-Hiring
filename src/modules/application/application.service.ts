@@ -149,7 +149,10 @@ export class ApplicationService implements IApplicationService {
 
   async findOne(id: string): Promise<Application> {
     try {
-      const applied = await this.applicationRepository.findById(id);
+      const applied = (await this.applicationRepository.findById(id)).populate(
+        'cv_id',
+      );
+      console.log('aplied', applied);
       if (applied) {
         return applied;
       } else {
@@ -476,10 +479,10 @@ export class ApplicationService implements IApplicationService {
       .populate({
         path: 'job_id',
         populate: {
-          path: 'city_id',
-          select: 'name',
+          path: 'city_id type_money',
         },
-      });
+      })
+      .populate('cv_id');
     return {
       items: result,
       meta: {

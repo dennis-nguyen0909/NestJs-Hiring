@@ -27,6 +27,7 @@ export class FavoriteJobController {
     @Body() createFavoriteJobDto: CreateFavoriteJobDto,
     @Req() req: Request,
   ): Promise<FavoriteJob | []> {
+    console.log('createFavoriteJobDto', createFavoriteJobDto);
     return await this.favoriteJobService.create(createFavoriteJobDto, req);
   }
 
