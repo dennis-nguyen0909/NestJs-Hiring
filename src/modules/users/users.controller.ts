@@ -27,7 +27,7 @@ export class UsersController {
   @Post('create')
   @ResponseMessage('Create user successfully')
   // eslint-disable-next-line prettier/prettier
-  async create(@Body() createUserDto: CreateUserDto): Promise<User>  {
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.usersService.create(createUserDto);
   }
 
@@ -110,5 +110,12 @@ export class UsersController {
   ): Promise<{ items: User }> {
     const employerId = req?.user?._id;
     return await this.usersService.getProfileCandidate(userId, employerId);
+  }
+
+  @Post('validate-facebook')
+  @ResponseMessage('Success')
+  @Public()
+  async validateFacebook(@Body() body: any) {
+    return await this.usersService.validateFacebookUser(body);
   }
 }

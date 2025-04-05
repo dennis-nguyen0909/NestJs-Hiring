@@ -2,7 +2,6 @@
 import {
   IsNotEmpty,
   IsString,
-  IsDate,
   IsBoolean,
   IsOptional,
   IsDateString,
@@ -23,7 +22,7 @@ export class CreateCertificateDto {
   start_date?: Date;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   end_date?: Date;
 
   @IsOptional()
