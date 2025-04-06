@@ -217,6 +217,9 @@ export class User extends Document {
   name_district?: string;
   @Prop({ required: false })
   name_ward?: string;
+
+  @Prop({ type: [Types.ObjectId], ref: Job.name, default: [] })
+  viewed_jobs: Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

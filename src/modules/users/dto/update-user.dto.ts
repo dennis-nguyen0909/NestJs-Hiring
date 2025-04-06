@@ -81,4 +81,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsOptional()
   name_ward?: string;
+  @IsOptional()
+  viewed_jobs?: Types.ObjectId[];
 }

@@ -5,14 +5,14 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { Job } from './schema/Job.schema';
 
 export interface IJobService {
-  create(createJobDto: CreateJobDto,request:Request): Promise<Job>;
+  create(createJobDto: CreateJobDto, request: Request): Promise<Job>;
   findAll(
     query: string,
     current: number,
     pageSize: number,
     sortParams: any,
   ): Promise<any>;
-  findOne(id: string): Promise<Job>;
+  findOne(id: string, user_id: string): Promise<Job>;
   update(id: string, updateJobDto: UpdateJobDto): Promise<Job>;
   remove(data: DeleteJobDto): Promise<[]>;
   getJobByEmployer(

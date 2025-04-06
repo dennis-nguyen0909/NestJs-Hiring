@@ -168,4 +168,6 @@ export class CreateUserDto {
 
   @IsOptional()
   dateFormat: string;
+  @IsOptional()
+  viewed_jobs: Types.ObjectId[];
 }

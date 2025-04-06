@@ -33,10 +33,9 @@ export class JobService implements IJobService {
     @InjectModel(Cities.name) private cityModel: Model<Cities>,
     @InjectModel(Level.name) private levelModel: Model<Cities>,
     @InjectModel(SkillEmployer.name)
-  
     private employerModel: Model<SkillEmployer>,
     private userService: UsersService,
-    private logService: LogService
+    private logService: LogService,
   ) {}
   validateExpiryDate(expireDate: string): void {
     throw new Error('Method not implemented.');
@@ -47,59 +46,73 @@ export class JobService implements IJobService {
   async create(createJobDto: CreateJobDto, request: Request): Promise<Job> {
     const session = await this.jobRepository.startSession();
     session.startTransaction(); // Bắt đầu transaction
-    
+
     try {
-      const { user_id, expire_date, salary_range_max, salary_range_min, age_range } = createJobDto;
-  console.log("create",createJobDto.expire_date)
+      const {
+        user_id,
+        expire_date,
+        salary_range_max,
+        salary_range_min,
+        age_range,
+      } = createJobDto;
+      console.log('create', createJobDto.expire_date);
       // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
       const userExist = await this.userService.findByObjectId(user_id + '');
       if (!userExist) {
         throw new BadRequestException('User not found');
       }
-  
+
       const user = await userExist.populate('role');
       if (user.role.role_name !== 'EMPLOYER') {
         throw new UnauthorizedException('User is not an employer');
       }
-  
+
       // Kiểm tra ngày hết hạn (expiry_date) phải lớn hơn ngày hiện tại
       const currentDate = new Date();
       const jobExpiryDate = new Date(expire_date);
       if (jobExpiryDate <= currentDate) {
-        throw new BadRequestException('Expiry date must be later than the current date');
+        throw new BadRequestException(
+          'Expiry date must be later than the current date',
+        );
       }
       CreateJobDto.validateSalaryRange(salary_range_min, salary_range_max);
-  
+
       if (age_range?.min >= age_range?.max) {
         throw new BadRequestException('Age range max must be greater than min');
       }
-  
+
       if (createJobDto.skills) {
         createJobDto.skills = createJobDto.skills.map((skill) => {
           return new Types.ObjectId(skill + '');
         });
       }
-  
+
       // Tạo job
-      const job = await this.jobRepository.create([{
-        ...createJobDto,
-        city_id: new Types.ObjectId(createJobDto.city_id),
-        district_id: new Types.ObjectId(createJobDto.district_id),
-        level: new Types.ObjectId(createJobDto.level),
-        type_money: new Types.ObjectId(createJobDto.type_money),
-        degree: new Types.ObjectId(createJobDto.degree),
-        ward_id: new Types.ObjectId(createJobDto.ward_id),
-        job_type: new Types.ObjectId(createJobDto.job_type),
-        job_contract_type: new Types.ObjectId(createJobDto.job_contract_type),
-        user_id: new Types.ObjectId(userExist._id + ''),
-      }], { session }); // Pass session vào create
-  
-  
+      const job = await this.jobRepository.create(
+        [
+          {
+            ...createJobDto,
+            city_id: new Types.ObjectId(createJobDto.city_id),
+            district_id: new Types.ObjectId(createJobDto.district_id),
+            level: new Types.ObjectId(createJobDto.level),
+            type_money: new Types.ObjectId(createJobDto.type_money),
+            degree: new Types.ObjectId(createJobDto.degree),
+            ward_id: new Types.ObjectId(createJobDto.ward_id),
+            job_type: new Types.ObjectId(createJobDto.job_type),
+            job_contract_type: new Types.ObjectId(
+              createJobDto.job_contract_type,
+            ),
+            user_id: new Types.ObjectId(userExist._id + ''),
+          },
+        ],
+        { session },
+      ); // Pass session vào create
+
       if (job) {
         // Tạo log
         await this.logService.createLog({
           userId: new Types.ObjectId(userExist._id + ''),
-          userRole:userExist?.role?.role_name,
+          userRole: userExist?.role?.role_name,
           action: 'CREATE',
           entityId: job[0]._id.toString(),
           entityCollection: 'jobs',
@@ -107,15 +120,15 @@ export class JobService implements IJobService {
           activityDetail: 'user_create_job',
           req: request,
         });
-  
+
         // Thêm job vào user
         user.jobs_ids.push(new Types.ObjectId(job[0]._id + ''));
         await user.save({ session }); // Pass session vào user.save()
-  
+
         // Commit transaction nếu tất cả đều thành công
         await session.commitTransaction();
         session.endSession();
-  
+
         return job[0];
       } else {
         throw new BadRequestException('Create job failed');
@@ -126,7 +139,6 @@ export class JobService implements IJobService {
       throw error;
     }
   }
-  
 
   async findAll(
     query: string,
@@ -153,22 +165,28 @@ export class JobService implements IJobService {
     if (filter?.job_type && filter?.job_type['$exists'] === true) {
       delete filter.job_type;
     }
-    if (filter?.job_contract_type && filter?.job_contract_type['$exists'] === true) {
+    if (
+      filter?.job_contract_type &&
+      filter?.job_contract_type['$exists'] === true
+    ) {
       delete filter.job_contract_type;
     }
     // Nếu có keyword, tìm kiếm trong trường skill_name
     if (filter?.keyword) {
-      const keywordRegex = { $regex: filter.keyword.toString().trim(), $options: 'i' };
+      const keywordRegex = {
+        $regex: filter.keyword.toString().trim(),
+        $options: 'i',
+      };
 
       if (filter?.user_id) {
         filter.$or = [
-          { skill_name: { $elemMatch: keywordRegex } }, 
-          { title: keywordRegex }, 
+          { skill_name: { $elemMatch: keywordRegex } },
+          { title: keywordRegex },
         ];
       } else {
         filter.$or = [
-          { skill_name: { $elemMatch: keywordRegex } }, 
-          { title: keywordRegex }, 
+          { skill_name: { $elemMatch: keywordRegex } },
+          { title: keywordRegex },
           { company_name: keywordRegex },
         ];
       }
@@ -177,7 +195,9 @@ export class JobService implements IJobService {
     if (filter?.job_type) {
       // Nếu job_type là mảng, sử dụng $in để lọc các công việc có chứa các ObjectId trong mảng
       if (Array.isArray(filter.job_type['$in'])) {
-        filter.job_type = { $in: filter.job_type['$in'].map((id) => new Types.ObjectId(id)) };
+        filter.job_type = {
+          $in: filter.job_type['$in'].map((id) => new Types.ObjectId(id)),
+        };
       } else {
         // Nếu chỉ là 1 giá trị đơn, chuyển thành ObjectId bình thường
         filter.job_type = new Types.ObjectId(filter.job_type);
@@ -186,23 +206,27 @@ export class JobService implements IJobService {
     if (filter?.job_contract_type) {
       // Nếu job_contract_type là mảng, sử dụng $in để lọc các công việc có chứa các ObjectId trong mảng
       if (Array.isArray(filter.job_contract_type['$in'])) {
-        filter.job_contract_type = { $in: filter.job_contract_type['$in'].map((id) => new Types.ObjectId(id)) };
+        filter.job_contract_type = {
+          $in: filter.job_contract_type['$in'].map(
+            (id) => new Types.ObjectId(id),
+          ),
+        };
       } else {
         // Nếu chỉ là 1 giá trị đơn, chuyển thành ObjectId bình thường
         filter.job_contract_type = new Types.ObjectId(filter.job_contract_type);
       }
     }
-        
+
     if (filter?.city_id) {
       filter.city_id = new Types.ObjectId(filter.city_id);
     }
     if (filter?.user_id) {
       filter.user_id = new Types.ObjectId(filter.user_id);
     }
-    if(filter?.district_id){
+    if (filter?.district_id) {
       filter.district_id = new Types.ObjectId(filter.district_id);
     }
-    console.log("filter 123123",filter)
+    console.log('filter 123123', filter);
     const defaultSort = { createdAt: 'desc' };
     const sortCriteria = sort || sortParams?.sort || defaultSort;
 
@@ -210,7 +234,6 @@ export class JobService implements IJobService {
     const totalItems = await this.jobRepository.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / pageSize);
     const skip = (+current - 1) * pageSize;
-
 
     // Truy vấn và populate dữ liệu với lean() để giảm overhead
     const result = await this.jobRepository
@@ -420,8 +443,7 @@ export class JobService implements IJobService {
   //   };
   // }
 
-  async findOne(id: string): Promise<Job> {
-    console.log('duydeptraivl', await this.jobRepository.findOne({ _id: id }));
+  async findOne(id: string, user_id: string): Promise<Job> {
     const job = await this.jobRepository
       .findById(id)
       .populate({
@@ -436,16 +458,37 @@ export class JobService implements IJobService {
       })
       .populate('city_id', '-districts')
       .populate('district_id', '-wards')
-      .populate('skills','-createdAt -updatedAt -description -user_id')
+      .populate('skills', '-createdAt -updatedAt -description -user_id')
       .populate('degree')
       .populate('type_money')
       .populate('level')
       .populate('job_contract_type')
       .populate('job_type')
       .populate('ward_id');
+
     if (!job) {
       throw new NotFoundException();
     }
+
+    try {
+      console.log('user_id', user_id);
+      const userDoc = await this.userModel.findById(user_id);
+
+      if (userDoc && !userDoc.viewed_jobs.includes(new Types.ObjectId(id))) {
+        const user = await this.userModel.findByIdAndUpdate(
+          user_id,
+          {
+            $addToSet: { viewed_jobs: new Types.ObjectId(id) },
+          },
+          { new: true },
+        );
+        console.log('user', user);
+      }
+    } catch (error) {
+      console.error('Error updating viewed_jobs:', error);
+      // Continue execution even if updating viewed_jobs fails
+    }
+
     return job;
   }
 
@@ -469,7 +512,7 @@ export class JobService implements IJobService {
         salary_range_max,
         salary_range_min,
       } = updateJobDto;
-      
+
       if (expire_date) {
         const currentDate = new Date();
         const jobExpiryDate = new Date(expire_date);

@@ -105,10 +105,13 @@ export class JobController {
     return await this.jobService.findAll(query, +current, +pageSize, sort);
   }
 
-  @Get(':id')
+  @Get(':id/:user_id')
   @ResponseMessage('Success')
-  async findOne(@Param('id') id: string): Promise<Job> {
-    return await this.jobService.findOne(id);
+  async findOne(
+    @Param('id') id: string,
+    @Param('user_id') user_id: string,
+  ): Promise<Job> {
+    return await this.jobService.findOne(id, user_id);
   }
 
   @Patch(':id')

@@ -17,7 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { User } from './schemas/user.schema';
 import { Meta } from '../types';
-import { Request } from 'express';
+import { query, Request } from 'express';
 
 @Controller('users')
 @ApiTags('Users')
@@ -34,7 +34,7 @@ export class UsersController {
   @Get('')
   @ResponseMessage('List of users')
   async findAll(
-    @Query() query: string,
+    @Query('query') query: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ): Promise<{ items: User[]; meta: Meta }> {
@@ -117,5 +117,21 @@ export class UsersController {
   @Public()
   async validateFacebook(@Body() body: any) {
     return await this.usersService.validateFacebookUser(body);
+  }
+
+  @Get('get-viewed-jobs/:id')
+  @ResponseMessage('Success')
+  async getViewedJobs(
+    @Param('id') userId: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+    @Query('query') query: string,
+  ) {
+    return await this.usersService.getViewedJobs(
+      userId,
+      query,
+      +current,
+      +pageSize,
+    );
   }
 }
