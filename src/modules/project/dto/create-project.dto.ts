@@ -13,31 +13,31 @@ export class CreateProjectDto {
   user_id: Types.ObjectId;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   project_name: string;
 
   @IsString()
-  @IsNotEmpty() // Tùy chọn
+  @IsOptional() // Tùy chọn
   customer_name?: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   team_number?: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   location?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   mission?: string;
 
   @IsString()
   @IsOptional()
   technology?: string;
-  @IsNotEmpty()
+  @IsOptional()
   start_date?: Date;
-  @IsNotEmpty()
+  @IsOptional()
   end_date?: Date;
 
   @IsString()

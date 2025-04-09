@@ -6,7 +6,7 @@ export class CreateEducationDto {
   user_id: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   school: string;
 
   @IsString()
@@ -14,13 +14,13 @@ export class CreateEducationDto {
   degree: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   major: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   start_date: Date;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsOptional()
   end_date: Date;
 
