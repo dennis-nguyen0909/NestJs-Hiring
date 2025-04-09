@@ -24,7 +24,7 @@ async function bootstrap() {
   });
 
   //config api
-  app.setGlobalPrefix('api/nest', { exclude: [''] });
+  app.setGlobalPrefix('api/v1', { exclude: [''] });
   //config validator
   app.useGlobalPipes(
     new ValidationPipe({
