@@ -220,6 +220,9 @@ export class User extends Document {
 
   @Prop({ type: [Types.ObjectId], ref: Job.name, default: [] })
   viewed_jobs: Types.ObjectId[];
+
+  @Prop()
+  role_name: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

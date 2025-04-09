@@ -31,13 +31,13 @@ export class Education extends Document {
     description: 'Major',
     example: 'Software Engineer',
   })
-  @Prop({ required: true })
+  @Prop({})
   major: string;
   @ApiProperty({
     description: 'Start date',
     example: '2022-01-01',
   })
-  @Prop({ required: true })
+  @Prop({})
   start_date: Date;
 
   @ApiProperty({
