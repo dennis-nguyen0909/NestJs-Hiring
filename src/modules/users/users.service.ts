@@ -665,6 +665,10 @@ export class UsersService implements IUserRepository {
     if (!current) current = 1;
     if (!pageSize) pageSize = 10;
 
+    if (filter?.city_name && filter?.city_name['$exists'] === true) {
+      delete filter.city_name;
+    }
+
     // Apply regex filter for company_name if provided
     if (filter?.company_name) {
       let companyName =
@@ -686,7 +690,7 @@ export class UsersService implements IUserRepository {
       const regex = new RegExp(searchTerms, 'i'); // 'i' for case-insensitive search
       filter.company_name = regex;
     }
-
+    console.log('filter', filter);
     // Xử lý city_name cho cả thành phố và quận
     if (filter.city_name) {
       // Trước tiên, tìm kiếm trong bảng cities

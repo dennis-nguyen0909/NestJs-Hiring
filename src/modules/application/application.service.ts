@@ -129,10 +129,17 @@ export class ApplicationService implements IApplicationService {
       )
       .populate({
         path: 'job_id',
-        populate: {
-          path: 'city_id',
-          select: 'name',
-        },
+        populate: [
+          {
+            path: 'city_id',
+            select: 'name',
+          },
+          {
+            path: 'type_money',
+            select: 'symbol',
+          },
+          { path: 'job_type', select: 'name' },
+        ],
       });
 
     return {
@@ -348,7 +355,7 @@ export class ApplicationService implements IApplicationService {
     applicationId: string,
     userId: string,
     // eslint-disable-next-line prettier/prettier
-  ): Promise<{message:string}> {
+  ): Promise<{ message: string }> {
     try {
       const application = await this.applicationRepository.findOne({
         _id: applicationId,
@@ -478,9 +485,19 @@ export class ApplicationService implements IApplicationService {
       )
       .populate({
         path: 'job_id',
-        populate: {
-          path: 'city_id type_money',
-        },
+        select:
+          '-professional_skills -min_experience -skill_name -general_requirements -interview_process -benefit -skills -candidate_ids -degree -level -job_responsibilities -job_contract_type -age_range -description -is_expired',
+        populate: [
+          {
+            path: 'city_id',
+            select: 'name',
+          },
+          {
+            path: 'type_money',
+            select: 'symbol',
+          },
+          { path: 'job_type', select: 'name' },
+        ],
       })
       .populate('cv_id');
     return {
@@ -493,5 +510,41 @@ export class ApplicationService implements IApplicationService {
         total_pages: totalPages,
       },
     };
+  }
+
+  async getTop5RecentlyApplied(candidateId: string): Promise<Application[]> {
+    try {
+      console.log('candidateId', candidateId);
+      const applications = await this.applicationRepository
+        .find({
+          user_id: candidateId,
+        })
+        .sort({ applied_date: -1 })
+        .limit(5)
+        .populate({
+          path: 'job_id',
+          select:
+            '-professional_skills -min_experience -skill_name -general_requirements -interview_process -benefit -skills -candidate_ids -degree -level -job_responsibilities -job_contract_type -age_range -description -is_expired',
+          populate: [
+            {
+              path: 'city_id',
+              select: 'name',
+            },
+            {
+              path: 'type_money',
+              select: 'symbol',
+            },
+            { path: 'job_type', select: 'name' },
+          ],
+        })
+        .populate(
+          'employer_id',
+          'avatar_company banner_company full_name _id ',
+        );
+
+      return applications;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

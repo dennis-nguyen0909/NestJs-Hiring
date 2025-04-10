@@ -44,4 +44,6 @@ export interface IApplicationService {
     current: number,
     pageSize: number,
   ): Promise<any>;
+
+  getTop5RecentlyApplied(candidateId: string): Promise<Application[]>;
 }

@@ -169,4 +169,12 @@ export class ApplicationController {
       +pageSize,
     );
   }
+
+  @Get('recently/:candidate_id')
+  @ResponseMessage('Success')
+  async getTop5RecentlyApplied(
+    @Param('candidate_id') candidate_id: string,
+  ): Promise<Application[]> {
+    return await this.applicationService.getTop5RecentlyApplied(candidate_id);
+  }
 }
