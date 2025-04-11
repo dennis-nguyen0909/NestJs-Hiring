@@ -59,7 +59,7 @@ export class FavoriteJobService implements IFavoriteJobService {
         return [];
       } else {
         const create = await this.favoriteJobModel.create(createFavoriteJobDto);
-        user.favorite_jobs.push(create._id);  
+        user.favorite_jobs.push(create._id);
         await user.save();
         await this.logService.createLog({
           userId: new Types.ObjectId(createFavoriteJobDto?.user_id),
@@ -115,7 +115,7 @@ export class FavoriteJobService implements IFavoriteJobService {
       .find(filter)
       .limit(pageSize)
       .skip(skip)
-      .sort(sort as any)
+      .sort({ ...(sort as any), createdAt: -1 })
       .populate({
         path: 'job_id',
         populate: [
@@ -136,6 +136,7 @@ export class FavoriteJobService implements IFavoriteJobService {
             select: 'name', // Select only the 'name' field
           },
           { path: 'type_money', select: 'symbol code' },
+          { path: 'job_type', select: 'name key' },
         ],
       });
     return {
@@ -193,6 +194,17 @@ export class FavoriteJobService implements IFavoriteJobService {
     } catch (error) {
       throw new BadRequestException(
         'An error occurred while removing the favorite job',
+      );
+    }
+  }
+  async countFavoriteOfCandidate(id: string): Promise<number> {
+    try {
+      const count = await this.favoriteJobModel.countDocuments({ user_id: id });
+      return count;
+    } catch (error) {
+      console.error('Error counting favorite jobs:', error);
+      throw new BadRequestException(
+        'An error occurred while counting favorite jobs.',
       );
     }
   }

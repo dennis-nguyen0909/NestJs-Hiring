@@ -478,7 +478,12 @@ export class JobService implements IJobService {
         const user = await this.userModel.findByIdAndUpdate(
           user_id,
           {
-            $addToSet: { viewed_jobs: new Types.ObjectId(id) },
+            $push: {
+              viewed_jobs: {
+                $each: [new Types.ObjectId(id)],
+                $position: 0, // Thêm vào đầu mảng
+              },
+            },
           },
           { new: true },
         );

@@ -1020,6 +1020,7 @@ export class UsersService implements IUserRepository {
       throw new BadRequestException(error.message);
     }
   }
+
   async getViewedJobs(
     userId: string,
     query: string,
@@ -1057,7 +1058,7 @@ export class UsersService implements IUserRepository {
           path: 'user_id',
           select: '_id avatar_company banner_company company_name',
         },
-        options: { sort: { createdAt: -1 } },
+        // options: { sort: { createdAt: -1 } },
       });
 
     const totalItems = userWithViewedJobsCount.viewed_jobs?.length || 0;
@@ -1069,10 +1070,13 @@ export class UsersService implements IUserRepository {
       .findOne({ _id: new Types.ObjectId(userId) })
       .populate({
         path: 'viewed_jobs',
-        populate: {
-          path: 'user_id',
-          select: '_id avatar_company banner_company company_name',
-        },
+        populate: [
+          {
+            path: 'user_id',
+            select: '_id avatar_company banner_company company_name',
+          },
+          { path: 'job_type', select: 'name key' },
+        ],
         options: {
           skip: skip,
           limit: pageSize,
@@ -1090,5 +1094,25 @@ export class UsersService implements IUserRepository {
         total_pages: totalPages,
       },
     };
+  }
+
+  async countViewedJobs(id: string): Promise<number> {
+    try {
+      const result = await this.userRepository.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(id) } },
+        { $project: { viewedJobsCount: { $size: '$viewed_jobs' } } },
+      ]);
+
+      if (result && result.length > 0) {
+        return result[0].viewedJobsCount;
+      }
+
+      return 0; // Return 0 if user not found or viewed_jobs is empty
+    } catch (error) {
+      console.error('Error counting viewed jobs:', error);
+      throw new BadRequestException(
+        'An error occurred while counting viewed jobs.',
+      );
+    }
   }
 }

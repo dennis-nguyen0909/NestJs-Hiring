@@ -496,7 +496,7 @@ export class ApplicationService implements IApplicationService {
             path: 'type_money',
             select: 'symbol',
           },
-          { path: 'job_type', select: 'name' },
+          { path: 'job_type', select: 'name key' },
         ],
       })
       .populate('cv_id');
@@ -534,7 +534,7 @@ export class ApplicationService implements IApplicationService {
               path: 'type_money',
               select: 'symbol',
             },
-            { path: 'job_type', select: 'name' },
+            { path: 'job_type', select: 'name key' },
           ],
         })
         .populate(

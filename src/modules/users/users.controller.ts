@@ -134,4 +134,10 @@ export class UsersController {
       +pageSize,
     );
   }
+
+  @Get('count-viewed-jobs/:id')
+  @ResponseMessage('Success')
+  async countViewedJobs(@Param('id') userId: string): Promise<number> {
+    return await this.usersService.countViewedJobs(userId);
+  }
 }

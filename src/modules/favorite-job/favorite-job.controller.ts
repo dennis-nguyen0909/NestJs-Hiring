@@ -12,7 +12,7 @@ import {
 import { FavoriteJobService } from './favorite-job.service';
 import { CreateFavoriteJobDto } from './dto/create-favorite-job.dto';
 import { UpdateFavoriteJobDto } from './dto/update-favorite-job.dto';
-import { ResponseMessage } from 'src/decorator/customize';
+import { Public, ResponseMessage } from 'src/decorator/customize';
 import { FavoriteJob } from './schema/favorite-job.schema';
 import { Meta } from '../types';
 import { Request } from 'express';
@@ -69,5 +69,11 @@ export class FavoriteJobController {
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<[]> {
     return await this.favoriteJobService.remove(id);
+  }
+
+  @Get('candidate/:id')
+  @ResponseMessage('Success')
+  async countFavoriteOfCandidate(@Param('id') id: string): Promise<number> {
+    return await this.favoriteJobService.countFavoriteOfCandidate(id);
   }
 }
