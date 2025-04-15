@@ -36,6 +36,12 @@ export class Application extends Document {
   @Prop({ type: Types.ObjectId, ref: CV.name })
   cv_id: Types.ObjectId;
 
+  @Prop()
+  cv_name: string;
+
+  @Prop()
+  cv_link: string;
+
   @Prop({ type: [Types.ObjectId], ref: User.name, default: [] })
   save_candidates: Types.ObjectId[];
 }

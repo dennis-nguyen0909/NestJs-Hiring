@@ -386,14 +386,9 @@ export class ApplicationService implements IApplicationService {
 
   async getAppliedUserId(userId: string): Promise<number> {
     try {
-      // Sử dụng countDocuments để đếm số lượng ứng tuyển của user_id
       const count = await this.applicationRepository.countDocuments({
         user_id: userId,
       });
-      if (count === 0) {
-        throw new NotFoundException('No applications found for this user!');
-      }
-
       return count;
     } catch (error) {
       throw new BadRequestException(error.message);

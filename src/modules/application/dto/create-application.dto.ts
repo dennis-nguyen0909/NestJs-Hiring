@@ -62,6 +62,10 @@ export class CreateApplicationDto {
   @IsEnum(['pending', 'accepted', 'rejected'])
   status: string;
 
+  @IsNotEmpty()
+  cv_name: string;
+  @IsNotEmpty()
+  cv_link: string;
   @IsOptional()
   save_candidates: Types.ObjectId[];
 
