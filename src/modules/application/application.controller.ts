@@ -36,6 +36,7 @@ export class ApplicationController {
   }
 
   @Get('recently-applied-candidate')
+  @ResponseMessage('Success')
   async getRecentlyAppliedCandidate(
     @Query('query') query: string,
     @Query('current') current: number,

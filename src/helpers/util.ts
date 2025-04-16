@@ -34,5 +34,7 @@ export const publicIdRegexOwn = /\/v\d+\/([a-zA-Z0-9_-]+)/;
 export const phoneRegex = /^[0-9]{10}$/; // Chỉnh sửa theo định dạng số điện thoại của quốc gia của bạn
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+export const cvPublicIdRegex = /\/raw\/upload\/(?:v\d+\/)?([\w\/-]+)\.pdf$/;
 
-export const generatorOtp =(secretEmail:string)=> authenticator.generate(secretEmail);
+export const generatorOtp = (secretEmail: string) =>
+  authenticator.generate(secretEmail);
