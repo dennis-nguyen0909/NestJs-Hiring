@@ -24,7 +24,10 @@ export class CvUploadService implements ICvUploadService {
     if (!file) {
       throw new BadRequestException('File not found');
     }
-    const uploadOnCloud = await this.cloudinaryService.uploadFile(file);
+    const uploadOnCloud = await this.cloudinaryService.uploadFile(
+      file,
+      findUser._id.toString(),
+    );
     if (!uploadOnCloud) {
       throw new BadRequestException('Upload on cloud failed');
     }
