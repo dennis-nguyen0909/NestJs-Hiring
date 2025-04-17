@@ -186,16 +186,11 @@ export class CvService implements ICvService {
 
     if (ids.length === 1) {
       const cv = await this.cvRepository.findOne({ _id: ids[0] });
-      console.log('cv', cv);
       if (cv) {
         if (cv.cv_link) {
-          const res = await this.cloudinaryService.deleteFileResourceType(
-            cv.public_id,
-            { resource_type: 'raw' },
-          );
-          if (res.result !== 'ok') {
-            throw new BadRequestException('Deleted failed cloudinary');
-          }
+          await this.cloudinaryService.deleteFileResourceType(cv.public_id, {
+            resource_type: 'raw',
+          });
         }
         const res = await this.cvRepository.deleteOne({ _id: ids[0] });
         if (res.deletedCount > 0) {
@@ -233,13 +228,9 @@ export class CvService implements ICvService {
       if (cvs && cvs.length > 0) {
         for (const cv of cvs) {
           if (cv.cv_link) {
-            const res = await this.cloudinaryService.deleteFileResourceType(
-              cv.public_id,
-              { resource_type: 'raw' },
-            );
-            if (res.result !== 'ok') {
-              throw new BadRequestException('Deleted failed cloudinary');
-            }
+            await this.cloudinaryService.deleteFileResourceType(cv.public_id, {
+              resource_type: 'raw',
+            });
           }
         }
       }

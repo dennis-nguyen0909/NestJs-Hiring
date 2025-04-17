@@ -22,13 +22,14 @@ export class CloudinaryController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
 
   // Upload một file
-  @Post('upload-file') // Đặt route là /cloudinary/upload-file
+  @Post('upload-file')
   @UseInterceptors(FileInterceptor('file'))
   @ResponseMessage('Success')
   uploadFile(
     @UploadedFile() file: Express.Multer.File,
+    @Body() formData: { userId: string },
   ): Promise<{ url: string; originalName: string; result: any }> {
-    return this.cloudinaryService.uploadFile(file);
+    return this.cloudinaryService.uploadFile(file, formData.userId);
   }
 
   // Upload nhiều file
@@ -37,8 +38,9 @@ export class CloudinaryController {
   @ResponseMessage('Success')
   uploadFiles(
     @UploadedFiles() files: Express.Multer.File[],
+    @Body('userId') userId: string,
   ): Promise<{ url: string; originalName: string }[]> {
-    return this.cloudinaryService.uploadFiles(files);
+    return this.cloudinaryService.uploadFiles(files, userId);
   }
   @Delete('delete-file/:publicId')
   @ResponseMessage('Success')

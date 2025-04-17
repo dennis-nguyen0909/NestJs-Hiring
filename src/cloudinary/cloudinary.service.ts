@@ -26,13 +26,27 @@ export class CloudinaryService {
   // Upload một file
   async uploadFile(
     file: Express.Multer.File,
-    folder: string = 'hiring/images', // Thêm tham số folder, mặc định là 'hiring/images'
+    userId: string,
+    folder: string = 'hiring/images',
   ): Promise<{ url: string; originalName: string; result: any }> {
     return new Promise<{ url: string; originalName: string; result: any }>(
       (resolve, reject) => {
+        console.log('userId', userId);
+        if (!userId) {
+          throw new BadRequestException('userId is required');
+        }
+
+        const fileNameWithoutExt = path.parse(file.originalname).name;
+        const timestamp = Date.now();
+        const uniqueFileName = `${fileNameWithoutExt}_${timestamp}`;
+
         const uploadStream = cloudinary.uploader.upload_stream(
           {
-            folder: folder, // Chỉ định thư mục trong Cloudinary
+            folder: `${folder}/${userId}`,
+            public_id: uniqueFileName,
+            overwrite: false,
+            use_filename: false,
+            unique_filename: false,
           },
           (error, result) => {
             if (error) {
@@ -41,8 +55,13 @@ export class CloudinaryService {
             }
             resolve({
               url: result.url,
-              originalName: file.originalname,
-              result: result,
+              originalName: uniqueFileName,
+              result: {
+                public_id: result.public_id,
+                url: result.secure_url,
+                bytes: result.bytes,
+                asset_id: result.asset_id,
+              },
             });
           },
         );
@@ -55,10 +74,15 @@ export class CloudinaryService {
   // Upload nhiều file
   async uploadFiles(
     files: Express.Multer.File[],
-    folder: string = 'hiring/images', // Thêm tham số folder cho hàm uploadFiles
+    userId: string,
+    folder: string = 'hiring/images',
   ): Promise<{ url: string; originalName: string }[]> {
     if (!files || files.length === 0) {
       throw new BadRequestException('No files provided.');
+    }
+
+    if (!userId) {
+      throw new BadRequestException('userId is required');
     }
 
     for (const file of files) {
@@ -74,7 +98,9 @@ export class CloudinaryService {
       }
     }
 
-    const uploadPromises = files.map((file) => this.uploadFile(file, folder)); // Truyền folder vào
+    const uploadPromises = files.map((file) =>
+      this.uploadFile(file, userId, folder),
+    );
     return Promise.all(uploadPromises);
   }
 
