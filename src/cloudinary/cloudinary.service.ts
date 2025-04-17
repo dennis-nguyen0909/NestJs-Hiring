@@ -189,7 +189,6 @@ export class CloudinaryService {
               url: result.secure_url,
               bytes: result.bytes,
               asset_id: result.asset_id,
-              ...result,
             },
           });
         },
@@ -234,8 +233,16 @@ export class CloudinaryService {
     userId: string,
   ): Promise<any> {
     try {
-      const folder = oldPublicId.substring(0, oldPublicId.lastIndexOf('/'));
-      const newPublicId = `${folder}/${userId}/${newFileName}`;
+      // Tách folder từ oldPublicId
+      let folder = oldPublicId.substring(0, oldPublicId.lastIndexOf('/'));
+
+      // Nếu folder đã chứa userId rồi thì không thêm nữa
+      if (!folder.endsWith(userId)) {
+        folder = `${folder}/${userId}`;
+      }
+
+      const newPublicId = `${folder}/${newFileName}`;
+
       const result = await cloudinary.uploader.rename(
         oldPublicId,
         newPublicId,
@@ -244,6 +251,7 @@ export class CloudinaryService {
           overwrite: true,
         },
       );
+
       return result;
     } catch (error) {
       console.error('Error renaming PDF:', error);

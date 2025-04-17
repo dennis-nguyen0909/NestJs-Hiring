@@ -137,7 +137,7 @@ export class CvService implements ICvService {
           updateCvDto.cv_name,
           cv.user_id.toString(),
         );
-        console.log('result', result);
+
         if (result.secure_url && result.public_id) {
           updateCvDto.cv_link = result.secure_url;
           updateCvDto.public_id = result.public_id;
