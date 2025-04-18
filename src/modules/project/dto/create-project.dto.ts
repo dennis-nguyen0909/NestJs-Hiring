@@ -4,8 +4,10 @@ import {
   IsOptional,
   IsMongoId,
   IsNumber,
+  IsDateString,
 } from 'class-validator';
 import { Types } from 'mongoose';
+import { IsEndDateAfterStartDate } from 'src/decorator/validate-date.decorator';
 
 export class CreateProjectDto {
   @IsMongoId()
@@ -35,10 +37,17 @@ export class CreateProjectDto {
   @IsString()
   @IsOptional()
   technology?: string;
+
   @IsOptional()
-  start_date?: Date;
+  @IsDateString()
+  start_date: Date;
+
   @IsOptional()
-  end_date?: Date;
+  @IsDateString()
+  @IsEndDateAfterStartDate('start_date', {
+    message: 'end_date_must_be_bigger_than_start_date',
+  })
+  end_date: Date;
 
   @IsString()
   @IsOptional()
