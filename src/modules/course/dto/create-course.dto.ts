@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsOptional, IsMongoId, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsMongoId,
+  IsDateString,
+} from 'class-validator';
+import { IsEndDateAfterStartDate } from 'src/decorator/validate-date.decorator';
 
 export class CreateCourseDto {
   @IsMongoId()
@@ -17,11 +24,14 @@ export class CreateCourseDto {
 
   @IsOptional()
   @IsDateString()
-  start_date?: Date;
+  start_date: Date;
 
   @IsOptional()
   @IsDateString()
-  end_date?: Date;
+  @IsEndDateAfterStartDate('start_date', {
+    message: 'end_date_must_be_bigger_than_start_date',
+  })
+  end_date: Date;
 
   @IsOptional()
   @IsString()
