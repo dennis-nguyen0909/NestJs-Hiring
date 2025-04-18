@@ -20,7 +20,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with'],
-    exposedHeaders: ['X-My-Header'],
+    exposedHeaders: ['X-My-Header', 'Set-Cookie'],
   });
 
   //config api
