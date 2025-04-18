@@ -7,6 +7,7 @@ import {
   IsDateString,
 } from 'class-validator';
 import { Types } from 'mongoose';
+import { IsEndDateAfterStartDate } from 'src/decorator/validate-date.decorator';
 
 export class CreateCertificateDto {
   @IsNotEmpty()
@@ -19,11 +20,14 @@ export class CreateCertificateDto {
 
   @IsOptional()
   @IsDateString()
-  start_date?: Date;
+  start_date: Date;
 
   @IsOptional()
   @IsDateString()
-  end_date?: Date;
+  @IsEndDateAfterStartDate('start_date', {
+    message: 'end_date_must_be_bigger_than_start_date',
+  })
+  end_date: Date;
 
   @IsOptional()
   @IsBoolean()
