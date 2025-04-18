@@ -768,7 +768,7 @@ export class JobService implements IJobService {
       .find(filter)
       .limit(pageSize)
       .skip(skip)
-      .sort(sort as any)
+      .sort({ ...(sort as any), createdAt: -1 })
       .populate({
         path: 'city_id',
         select: '-districts',
