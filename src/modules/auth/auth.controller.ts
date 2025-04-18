@@ -47,15 +47,15 @@ export class AuthController {
       refresh_token: string;
     };
   }> {
-    console.log("req",req)
+    console.log('req', req);
     const { user } = await this.authService.signIn(req.user);
-    
+
     response.cookie('refresh_token', user.refresh_token, {
       httpOnly: true, // Chỉ server mới có thể truy cập cookie này, bảo vệ khỏi XSS
       maxAge: 24 * 60 * 60 * 1000, // Thời hạn 1 ngày (24 giờ)
-      secure: true, // Chỉ gửi cookie qua HTTPS (bật trong môi trường production)
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
+
     return { user };
   }
 

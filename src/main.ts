@@ -18,7 +18,7 @@ async function bootstrap() {
       'http://localhost:64215',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Cho phép gửi cookies
+    credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with'],
     exposedHeaders: ['X-My-Header'],
   });

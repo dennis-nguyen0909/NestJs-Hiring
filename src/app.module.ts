@@ -52,6 +52,7 @@ import { logConnection } from './db/conection';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
