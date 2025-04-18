@@ -170,4 +170,7 @@ export class CreateUserDto {
   dateFormat: string;
   @IsOptional()
   viewed_jobs: Types.ObjectId[];
+
+  @IsOptional()
+  maximum_cv: number;
 }

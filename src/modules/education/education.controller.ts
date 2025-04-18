@@ -71,7 +71,7 @@ export class EducationController {
   @ResponseMessage('Success')
   @UseGuards(JwtAuthGuard)
   async deleteByUserId(@Param('id') id: string, @Request() req): Promise<[]> {
-    return await this.educationService.deleteByUserId(id, req.user._id,req);
+    return await this.educationService.deleteByUserId(id, req.user._id, req);
   }
 
   @Get(':id')

@@ -28,6 +28,8 @@ export class EducationService {
     const session = await this.educationModel.startSession();
     session.startTransaction();
     try {
+      console.log('start_date', createEducationDto.start_date);
+      console.log('end_date', createEducationDto.end_date);
       // Kiểm tra xem người dùng đã có trường học này chưa
       const existingEducation = await this.educationModel.findOne({
         user_id: createEducationDto.user_id,

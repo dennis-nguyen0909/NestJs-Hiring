@@ -223,6 +223,9 @@ export class User extends Document {
 
   @Prop()
   role_name: string;
+
+  @Prop({ default: 10 })
+  maximum_cv: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

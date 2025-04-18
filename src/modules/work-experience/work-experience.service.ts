@@ -1,5 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { BadGatewayException, BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateWorkExperienceDto } from './dto/create-work-experience.dto';
 import { UpdateWorkExperienceDto } from './dto/update-work-experience.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,7 +18,7 @@ import { Request } from 'express';
 import { LogService } from 'src/log/log.service';
 
 @Injectable()
-export class WorkExperienceService implements IWorkExperienceService{
+export class WorkExperienceService implements IWorkExperienceService {
   constructor(
     @InjectModel(WorkExperience.name)
     private workExperienceModel: Model<WorkExperience>,
@@ -21,10 +26,14 @@ export class WorkExperienceService implements IWorkExperienceService{
     private userModel: Model<User>,
     private logService: LogService,
   ) {}
-  async create(createWorkExperienceDto: CreateWorkExperienceDto, req: Request):Promise<WorkExperience> {
+  async create(
+    createWorkExperienceDto: CreateWorkExperienceDto,
+    req: Request,
+  ): Promise<WorkExperience> {
     const session = await this.workExperienceModel.startSession();
     session.startTransaction();
     try {
+      console.log('create', createWorkExperienceDto);
       const workExperience = await this.workExperienceModel.create(
         createWorkExperienceDto,
       );
@@ -32,7 +41,7 @@ export class WorkExperienceService implements IWorkExperienceService{
       const user = await this.userModel.findOneAndUpdate(
         { _id: workExperience.user_id },
         { $push: { work_experience_ids: workExperience._id } }, // Thêm ObjectId của Education vào mảng education_ids của User
-        { new: true ,session}, // Trả về tài liệu người dùng đã được cập nhật
+        { new: true, session }, // Trả về tài liệu người dùng đã được cập nhật
       );
 
       // Kiểm tra xem người dùng có tồn tại không
@@ -53,14 +62,14 @@ export class WorkExperienceService implements IWorkExperienceService{
         activityDetail: 'user_create_work_experience',
         description: 'User create work experience',
         req: req,
-        changeColumns:{
+        changeColumns: {
           company: { value: workExperience?.company },
           position: { value: workExperience?.position },
           start_date: { value: workExperience?.start_date },
           end_date: { value: workExperience?.end_date },
           description: { value: workExperience?.description },
           currently_working: { value: workExperience?.currently_working },
-        }
+        },
       });
       await session.commitTransaction();
       return workExperience;
@@ -70,7 +79,11 @@ export class WorkExperienceService implements IWorkExperienceService{
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number):Promise<{items:WorkExperience[],meta:Meta}>  {
+  async findAll(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: WorkExperience[]; meta: Meta }> {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
@@ -96,7 +109,7 @@ export class WorkExperienceService implements IWorkExperienceService{
     };
   }
 
-  async getWorkExperienceByUserId(userId: string):Promise<WorkExperience[]>  {
+  async getWorkExperienceByUserId(userId: string): Promise<WorkExperience[]> {
     const res = await this.workExperienceModel.find({ user_id: userId });
     if (!res) {
       throw new BadGatewayException('WorkExperience not found');
@@ -104,7 +117,7 @@ export class WorkExperienceService implements IWorkExperienceService{
     return res;
   }
 
-  async findOne(id: string):Promise<WorkExperience>  {
+  async findOne(id: string): Promise<WorkExperience> {
     const res = await this.workExperienceModel.findById(id);
     if (!res) {
       throw new BadGatewayException('WorkExperience not found');
@@ -112,7 +125,11 @@ export class WorkExperienceService implements IWorkExperienceService{
     return res;
   }
 
-  async update(id: string, updateWorkExperienceDto: UpdateWorkExperienceDto, req: Request):Promise<WorkExperience>  {
+  async update(
+    id: string,
+    updateWorkExperienceDto: UpdateWorkExperienceDto,
+    req: Request,
+  ): Promise<WorkExperience> {
     const session = await this.workExperienceModel.startSession();
     session.startTransaction();
     try {
@@ -128,30 +145,34 @@ export class WorkExperienceService implements IWorkExperienceService{
         .exec();
       if (!update) {
         throw new BadGatewayException('Update error!');
-        }
-        const changes = {};
-        for (const key in updateWorkExperienceDto) {
-          if (key !== '_id' && key !== 'id' && key !== 'user_id' ) {  // Bỏ qua _id hoặc id
-            if (work[key] !== updateWorkExperienceDto[key]) {
-              changes[key] = { old: work[key], new: updateWorkExperienceDto[key] };
-            }
+      }
+      const changes = {};
+      for (const key in updateWorkExperienceDto) {
+        if (key !== '_id' && key !== 'id' && key !== 'user_id') {
+          // Bỏ qua _id hoặc id
+          if (work[key] !== updateWorkExperienceDto[key]) {
+            changes[key] = {
+              old: work[key],
+              new: updateWorkExperienceDto[key],
+            };
           }
         }
-      
-        await this.logService.createLog({
-          userId: new Types.ObjectId(work?.user_id + ''),
-          userRole: 'CANDIDATE',
-          action: 'UPDATE',
-          entityId: work?._id.toString(),
-          entityCollection: 'work_experience',
-          entityName: work?.company,
-          activityDetail: 'user_update_work_experience',
-          description: 'User update work experience',
-          req: req,
-          changes:changes
-        });
-        
-        return update;
+      }
+
+      await this.logService.createLog({
+        userId: new Types.ObjectId(work?.user_id + ''),
+        userRole: 'CANDIDATE',
+        action: 'UPDATE',
+        entityId: work?._id.toString(),
+        entityCollection: 'work_experience',
+        entityName: work?.company,
+        activityDetail: 'user_update_work_experience',
+        description: 'User update work experience',
+        req: req,
+        changes: changes,
+      });
+
+      return update;
     } catch (error) {
       await session.abortTransaction();
       throw new BadGatewayException(error.message);
@@ -160,7 +181,7 @@ export class WorkExperienceService implements IWorkExperienceService{
     }
   }
 
-  async remove(ids: Array<string>, req: Request):Promise<[]>  {
+  async remove(ids: Array<string>, req: Request): Promise<[]> {
     if (!Array.isArray(ids)) {
       throw new BadRequestException('Ids not is array');
     }
@@ -178,7 +199,7 @@ export class WorkExperienceService implements IWorkExperienceService{
         });
         if (deleted.deletedCount > 0) {
           await this.userModel.updateOne(
-            { _id:workExperience.user_id  },
+            { _id: workExperience.user_id },
             { $pull: { work_experience_ids: new Types.ObjectId(ids[0]) } },
           );
           return [];
@@ -194,20 +215,20 @@ export class WorkExperienceService implements IWorkExperienceService{
         const workExperiences = await this.workExperienceModel.find({
           _id: { $in: ids },
         });
-    
+
         if (!workExperiences || workExperiences.length === 0) {
           throw new NotFoundException('Work experiences not found');
         }
         const deleted = await this.workExperienceModel.deleteMany({
           _id: { $in: ids },
         });
-    
+
         if (deleted.deletedCount > 0) {
           await this.userModel.updateOne(
             { _id: workExperiences[0].user_id },
-            { $pull: { work_experience_ids: { $in: ids } } }
+            { $pull: { work_experience_ids: { $in: ids } } },
           );
-    
+
           return [];
         } else {
           throw new NotFoundException('Failed to delete work experiences');

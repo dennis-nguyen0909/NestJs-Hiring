@@ -31,19 +31,27 @@ export class CvService implements ICvService {
     private logService: LogService,
   ) {}
   async create(createCvDto: CreateCvDto, req: Request): Promise<CV> {
-    const session = await this.cvRepository.startSession(); // Start session
-    session.startTransaction(); // Start transaction
+    const session = await this.cvRepository.startSession();
+    session.startTransaction();
 
     try {
-      const cvArray: CV[] = await this.cvRepository.create([createCvDto], {
-        session,
-      }); // Create CV in session
-      const cv: CV = cvArray[0]; // Extract the first CV from the array
+      const countCv = await this.cvRepository.countDocuments({
+        user_id: createCvDto.user_id,
+      });
 
       const user: User = await this.userModel
         .findOne({ _id: createCvDto.user_id })
-        .session(session); // Find user in session
+        .session(session);
 
+      if (countCv >= user.maximum_cv) {
+        throw new BadRequestException(
+          `You just can upload maximum ${user.maximum_cv} CV`,
+        );
+      }
+      const cvArray: CV[] = await this.cvRepository.create([createCvDto], {
+        session,
+      });
+      const cv: CV = cvArray[0];
       if (!user) {
         throw new BadRequestException('User not found');
       }
@@ -72,10 +80,10 @@ export class CvService implements ICvService {
         },
       });
 
-      await session.commitTransaction(); // Commit transaction
+      await session.commitTransaction();
       return cv;
     } catch (error) {
-      await session.abortTransaction(); // Rollback transaction on error
+      await session.abortTransaction();
       throw new InternalServerErrorException(
         'Error occurred, transaction rolled back: ' + error.message,
       );

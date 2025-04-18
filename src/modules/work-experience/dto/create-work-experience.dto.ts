@@ -5,8 +5,10 @@ import {
   IsBoolean,
   IsUrl,
   IsNotEmpty,
+  IsDateString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsEndDateAfterStartDate } from 'src/decorator/validate-date.decorator';
 
 export class CreateWorkExperienceDto {
   @IsNotEmpty()
@@ -19,14 +21,15 @@ export class CreateWorkExperienceDto {
   position: string; // Vị trí công việc, bắt buộc
 
   @IsOptional()
-  @IsDate()
-  @Type(() => Date) // Chuyển đổi từ chuỗi thành Date
-  start_date?: Date; // Ngày bắt đầu công việc, có thể bỏ qua nếu không cung cấp
+  @IsDateString()
+  start_date: Date;
 
   @IsOptional()
-  @IsDate()
-  @Type(() => Date) // Chuyển đổi từ chuỗi thành Date
-  end_date?: Date; // Ngày kết thúc công việc, có thể bỏ qua nếu không cung cấp
+  @IsDateString()
+  @IsEndDateAfterStartDate('start_date', {
+    message: 'end_date_must_be_bigger_than_start_date',
+  })
+  end_date: Date;
 
   @IsOptional()
   @IsBoolean()
@@ -39,5 +42,4 @@ export class CreateWorkExperienceDto {
   @IsOptional()
   @IsUrl()
   image_url?: string; // URL của hình ảnh công ty hoặc liên quan, có thể bỏ qua
-
 }
