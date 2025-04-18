@@ -53,7 +53,9 @@ export class AuthController {
     response.cookie('refresh_token', user.refresh_token, {
       httpOnly: true, // Chỉ server mới có thể truy cập cookie này, bảo vệ khỏi XSS
       maxAge: 24 * 60 * 60 * 1000, // Thời hạn 1 ngày (24 giờ)
-      sameSite: 'lax',
+      sameSite: 'none',
+      secure: true,
+      priority: 'high',
     });
 
     return { user };
