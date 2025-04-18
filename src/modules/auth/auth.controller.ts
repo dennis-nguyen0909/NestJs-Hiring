@@ -56,6 +56,8 @@ export class AuthController {
       sameSite: 'none',
       secure: true,
       priority: 'high',
+      path: '/',
+      domain: 'hire-dev.online',
     });
 
     return { user };
