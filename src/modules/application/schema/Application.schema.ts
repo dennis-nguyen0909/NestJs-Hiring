@@ -4,7 +4,7 @@ import { User } from '../../users/schemas/user.schema';
 import { Job } from '../../job/schema/Job.schema';
 import { CV } from '../../cv/schema/CV.schema';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from '@nestjs/common';
+import { CompanyApplicationStatus } from './CompanyApplicationStatus.schema';
 
 @Schema()
 export class Application extends Document {
@@ -14,25 +14,31 @@ export class Application extends Document {
   })
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   user_id: string;
+
   @ApiProperty()
   @Prop({ type: Types.ObjectId, ref: Job.name, required: true })
   job_id: string;
+
   @ApiProperty()
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   employer_id: string;
+
   @ApiProperty()
   @Prop({ required: false })
   cover_letter: string;
+
   @ApiProperty()
   @Prop({ type: Date, default: Date.now })
   applied_date: Date;
+
   @ApiProperty()
   @Prop({
-    type: String,
-    enum: ['pending', 'accepted', 'rejected'],
-    default: 'pending',
+    type: Types.ObjectId,
+    ref: CompanyApplicationStatus.name,
+    required: true,
   })
-  status: string;
+  status: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: CV.name })
   cv_id: Types.ObjectId;
 

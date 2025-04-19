@@ -1,12 +1,5 @@
-import {
-  IsString,
-  IsEnum,
-  IsDate,
-  IsOptional,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import { Types } from 'mongoose';
 
 export class CreateApplicationDto {
@@ -54,13 +47,11 @@ export class CreateApplicationDto {
   applied_date?: Date;
 
   @ApiProperty({
-    description: 'The status of the application',
-    enum: ['pending', 'accepted', 'rejected'],
-    example: 'pending',
+    description: 'The ID of the application status',
+    example: '60c72b2f9b1e8b001c8e4a13',
   })
   @IsOptional()
-  @IsEnum(['pending', 'accepted', 'rejected'])
-  status: string;
+  status?: Types.ObjectId;
 
   @IsNotEmpty()
   cv_name: string;

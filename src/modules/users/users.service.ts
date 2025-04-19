@@ -37,6 +37,7 @@ import { District } from '../districts/schema/District.schema';
 import { LogService } from 'src/log/log.service';
 import { UAParser } from 'ua-parser-js';
 import { Request } from 'express';
+import { CompanyStatusService } from '../application/company-status.service';
 const MAX_OTP_ATTEMPTS = 5;
 const OTP_ATTEMPT_WINDOW = 60;
 @Injectable()
@@ -51,6 +52,7 @@ export class UsersService implements IUserRepository {
     private cloudinaryService: CloudinaryService,
     private notificationService: NotificationService,
     private logService: LogService,
+    private companyStatusService: CompanyStatusService,
   ) {}
 
   isEmailExists = async (email: string): Promise<boolean> => {
@@ -445,6 +447,60 @@ export class UsersService implements IUserRepository {
     }
 
     const newUser = await this.userRepository.create(userData);
+
+    // If the role is EMPLOYER, create initial statuses
+    if (role === 'EMPLOYER') {
+      const initialStatuses = [
+        {
+          name: 'Pending',
+          description: 'Application is pending review',
+          order: 1,
+          color: '#95a5a6',
+          is_active: true,
+        },
+        {
+          name: 'Applied',
+          description: 'Application has been submitted',
+          order: 2,
+          color: '#3498db',
+          is_active: true,
+        },
+        {
+          name: 'Reviewing',
+          description: 'Application is being reviewed',
+          order: 3,
+          color: '#f1c40f',
+          is_active: true,
+        },
+        {
+          name: 'Interview',
+          description: 'Candidate is invited for interview',
+          order: 4,
+          color: '#2ecc71',
+          is_active: true,
+        },
+        {
+          name: 'Offered',
+          description: 'Job offer has been made',
+          order: 5,
+          color: '#9b59b6',
+          is_active: true,
+        },
+        {
+          name: 'Rejected',
+          description: 'Application has been rejected',
+          order: 6,
+          color: '#e74c3c',
+          is_active: true,
+        },
+      ];
+
+      // Create each status
+      for (const status of initialStatuses) {
+        await this.companyStatusService.create(newUser._id.toString(), status);
+      }
+    }
+
     // Send activation email
     try {
       this.mailService.sendMail({

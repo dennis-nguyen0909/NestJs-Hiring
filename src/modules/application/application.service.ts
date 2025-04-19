@@ -18,6 +18,8 @@ import { IApplicationService } from './application.interface';
 import { Meta } from '../types';
 import { LogService } from 'src/log/log.service';
 import { Request } from 'express';
+import { CompanyApplicationStatus } from './schema/CompanyApplicationStatus.schema';
+import { CompanyStatusService } from './company-status.service';
 
 @Injectable()
 export class ApplicationService implements IApplicationService {
@@ -30,6 +32,9 @@ export class ApplicationService implements IApplicationService {
     private logService: LogService,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel('Job') private jobModel: Model<Job>,
+    @InjectModel(CompanyApplicationStatus.name)
+    private companyStatusModel: Model<CompanyApplicationStatus>,
+    private companyStatusService: CompanyStatusService,
   ) {}
 
   async create(
@@ -39,30 +44,34 @@ export class ApplicationService implements IApplicationService {
     try {
       const session = await this.applicationRepository.startSession();
       session.startTransaction();
-      // Kiểm tra xem Job có tồn tại, còn hạn và đang hoạt động không
-      const job = await this.jobModel.findOne({
-        _id: createApplicationDto.job_id,
-        is_active: true,
-        expire_date: { $gt: new Date() }, // Kiểm tra expired_date > ngày hiện tại
-      });
 
-      if (!job) {
-        throw new BadRequestException('Công việc này đã hết hạn');
+      // Get the default status for the company
+      let defaultStatus;
+      try {
+        defaultStatus = await this.companyStatusService.getDefaultStatus(
+          createApplicationDto.employer_id,
+        );
+      } catch {
+        // If no status is found, create a default one
+        defaultStatus = await this.companyStatusService.create(
+          createApplicationDto.employer_id,
+          {
+            name: 'Pending',
+            description: 'Application is pending review',
+            order: 1,
+            color: '#95a5a6',
+            is_active: true,
+          },
+        );
       }
 
-      // Kiểm tra xem user đã ứng tuyển hay chưa
-      const findUser = await this.applicationRepository.findOne({
-        user_id: createApplicationDto.user_id,
-        job_id: createApplicationDto.job_id, // Đảm bảo kiểm tra theo job_id
-      });
-      if (findUser) {
-        throw new BadRequestException('Bạn đã ứng tuyển vị trí này rồi');
-      }
-
-      // Tạo mới Application
+      // Set the default status in the application
       const newApplied = await this.applicationRepository.create({
         ...createApplicationDto,
+        status: defaultStatus._id,
       });
+
+      const job = await this.jobModel.findById(createApplicationDto.job_id);
 
       if (newApplied) {
         await this.jobModel.updateOne(
@@ -179,7 +188,9 @@ export class ApplicationService implements IApplicationService {
         .findByIdAndUpdate(id, updateApplicationDto, {
           new: true,
         })
-        .populate('job_id');
+        .populate('job_id')
+        .populate('status');
+
       if (applied) {
         const candidate = await this.userModel.findOne({
           _id: applied.user_id,
@@ -190,14 +201,19 @@ export class ApplicationService implements IApplicationService {
         const job = await this.jobModel.findOne({
           _id: applied.job_id,
         });
+
+        // Get the status name from the populated status object
+        const statusName = (applied.status as any).name?.toLowerCase();
+
+        // Check if the status is equivalent to rejected or accepted
         if (
-          (applied.status === 'rejected' || applied.status === 'accepted') &&
+          (statusName === 'rejected' || statusName === 'accepted') &&
           candidate.notification_when_employer_reject_cv
         ) {
           this.notificationService.notificationWhenChangeStatusApplication(
             candidate,
             employer,
-            applied.status,
+            statusName as 'accepted' | 'rejected',
             job.title,
             applied._id + '',
           );
@@ -318,6 +334,7 @@ export class ApplicationService implements IApplicationService {
       .sort(sort as any)
       .populate('job_id')
       .populate('cv_id')
+      .populate('status')
       .populate({
         path: 'employer_id',
         select: '_id name full_name phone address role',
