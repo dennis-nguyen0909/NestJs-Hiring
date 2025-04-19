@@ -16,6 +16,42 @@ export class SaveCandidatesController {
   ): Promise<SaveCandidate> {
     return await this.saveCandidatesService.saveCandidate(data);
   }
+
+  @Post('toggle/:employerId/:candidateId')
+  @ResponseMessage('SUCCESS')
+  async toggleSaveCandidate(
+    @Param('employerId') employerId: string,
+    @Param('candidateId') candidateId: string,
+  ): Promise<{ action: 'saved' | 'removed'; data: SaveCandidate | null }> {
+    return await this.saveCandidatesService.toggleSaveCandidate(
+      employerId,
+      candidateId,
+    );
+  }
+
+  @Get('check/:employerId/:candidateId')
+  @ResponseMessage('SUCCESS')
+  async isCandidateSaved(
+    @Param('employerId') employerId: string,
+    @Param('candidateId') candidateId: string,
+  ): Promise<{ isSaved: boolean }> {
+    const isSaved = await this.saveCandidatesService.isCandidateSaved(
+      employerId,
+      candidateId,
+    );
+    return { isSaved };
+  }
+
+  @Get('employer-saved/:employerId')
+  @ResponseMessage('SUCCESS')
+  async getSavedCandidatesByEmployer(
+    @Param('employerId') employerId: string,
+  ): Promise<{ savedCandidateIds: string[] }> {
+    const savedCandidateIds =
+      await this.saveCandidatesService.getSavedCandidatesByEmployer(employerId);
+    return { savedCandidateIds };
+  }
+
   @Get('employer/:id')
   @ResponseMessage('SUCCESS')
   async findAllByEmployer(

@@ -4,6 +4,15 @@ import { SaveCandidate } from './schema/SaveCandidates.schema';
 export interface ISaveCandidatesService {
   saveCandidate(data: CreateSaveCandidateDto): Promise<SaveCandidate>;
 
+  toggleSaveCandidate(
+    employerId: string,
+    candidateId: string,
+  ): Promise<{ action: 'saved' | 'removed'; data: SaveCandidate | null }>;
+
+  isCandidateSaved(employerId: string, candidateId: string): Promise<boolean>;
+
+  getSavedCandidatesByEmployer(employerId: string): Promise<string[]>;
+
   findAll(
     query: string,
     current: number,
