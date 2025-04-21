@@ -68,7 +68,8 @@ export class ApplicationService implements IApplicationService {
       // Set the default status in the application
       const newApplied = await this.applicationRepository.create({
         ...createApplicationDto,
-        status: defaultStatus._id,
+        job_id: new Types.ObjectId(createApplicationDto.job_id),
+        status: new Types.ObjectId(defaultStatus._id),
       });
 
       const job = await this.jobModel.findById(createApplicationDto.job_id);
@@ -453,21 +454,6 @@ export class ApplicationService implements IApplicationService {
           total_pages: totalPages,
         },
       };
-      // const res = await this.applicationRepository
-      //   .find({ user_id: candidateId })
-      //   .populate({
-      //     path: 'job_id',
-      //     populate: {
-      //       path: 'city_id', // Populate city_id in job_id
-      //     },
-      //   }) // Populate job details
-      //   .populate(
-      //     'employer_id',
-      //     '-password -role -account_type -code_id -code_expired -auth_providers',
-      //   )
-      //   .sort({ applied_date: -1 }) // Sort by applied_date (descending)
-      //   .limit(limit)
-      //   .exec();
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -558,5 +544,172 @@ export class ApplicationService implements IApplicationService {
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+  async getApplicationsByCompanyAndStatus(
+    companyId: string,
+    statusId: string,
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: Application[]; meta: Meta }> {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+
+    const totalItems = await this.applicationRepository.countDocuments({
+      employer_id: new Types.ObjectId(companyId),
+      status: new Types.ObjectId(statusId),
+      ...filter,
+    });
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+
+    const result = await this.applicationRepository
+      .find({
+        employer_id: new Types.ObjectId(companyId),
+        status: new Types.ObjectId(statusId),
+        ...filter,
+      })
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any)
+      .populate('user_id', '-password -code_id -code_expired')
+      .populate('job_id')
+      .populate('status');
+
+    return {
+      items: result,
+      meta: {
+        count: result.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
+  }
+
+  async getApplicationsByJobAndCompanyGroupedByStatus(
+    jobId: string,
+    companyId: string,
+  ): Promise<{ [statusId: string]: Application[] }> {
+    // First, get all statuses for this company
+    const statuses = await this.companyStatusModel
+      .find({ company_id: new Types.ObjectId(companyId) })
+      .sort({ order: 1 });
+
+    // Initialize result object with empty arrays for each status
+    const result: { [statusId: string]: Application[] } = {};
+    statuses.forEach((status) => {
+      result[status._id.toString()] = [];
+    });
+
+    // Get all applications for this job and company
+    const applications = await this.applicationRepository
+      .find({
+        job_id: new Types.ObjectId(jobId),
+        employer_id: new Types.ObjectId(companyId),
+      })
+      .populate('user_id', '-password -code_id -code_expired')
+      .populate('job_id')
+      .populate('status');
+
+    // Group applications by status
+    applications.forEach((application) => {
+      const statusId = application.status._id.toString();
+      if (result[statusId]) {
+        result[statusId].push(application);
+      } else {
+        // If status not found in company statuses, add to a default array
+        if (!result['default']) {
+          result['default'] = [];
+        }
+        result['default'].push(application);
+      }
+    });
+
+    return result;
+  }
+
+  async getCandidatesByStageAndPositions(
+    statusId: string,
+    jobId: string,
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: any[]; meta: Meta }> {
+    const { filter, sort } = aqp(query);
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+
+    // Build the query
+    const queryFilter: any = {
+      status: new Types.ObjectId(statusId),
+      job_id: new Types.ObjectId(jobId),
+    };
+
+    // Add any additional filters from the query parameter
+    Object.assign(queryFilter, filter);
+
+    // Count total items
+    const totalItems =
+      await this.applicationRepository.countDocuments(queryFilter);
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (+current - 1) * pageSize;
+
+    // Get applications with populated data
+    const applications = await this.applicationRepository
+      .find(queryFilter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any)
+      .populate('user_id', '-password -code_id -code_expired')
+      .populate('job_id', 'title')
+      .populate('status', 'name color');
+
+    const items = applications.map((app) => {
+      const user = app.user_id as any;
+      const job = app.job_id as any;
+      const status = app.status as any;
+
+      return {
+        id: app._id.toString(),
+        name: user?.full_name || 'Unknown',
+        phone: user?.phone || '',
+        email: user?.email || '',
+        address: user?.address || '',
+        avatar: user?.avatar || '',
+        position: {
+          id: job?._id?.toString() || '',
+          name: job?.title || 'Unknown Position',
+        },
+        status: {
+          id: status?._id?.toString() || '',
+          name: status?.name || 'Unknown Stage',
+        },
+        cv_url: app.cv_link || '',
+        applied_date: app.applied_date || '',
+        total_experience_months: user?.total_experience_months || 0,
+        total_experience_years: user?.total_experience_years || 0,
+        cover_letter: app.cover_letter || '',
+      };
+    });
+
+    return {
+      items,
+      meta: {
+        count: items.length,
+        current_page: current,
+        per_page: pageSize,
+        total: totalItems,
+        total_pages: totalPages,
+      },
+    };
   }
 }
