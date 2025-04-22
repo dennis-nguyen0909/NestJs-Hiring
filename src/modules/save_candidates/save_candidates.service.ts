@@ -151,6 +151,8 @@ export class SaveCandidatesService implements ISaveCandidatesService {
           select: 'avatar full_name _id',
         });
 
+      console.log('result', result);
+
       return {
         items: result,
         meta: {

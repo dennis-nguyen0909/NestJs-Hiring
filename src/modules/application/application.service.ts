@@ -186,9 +186,16 @@ export class ApplicationService implements IApplicationService {
   ): Promise<Application> {
     try {
       const applied = await this.applicationRepository
-        .findByIdAndUpdate(id, updateApplicationDto, {
-          new: true,
-        })
+        .findByIdAndUpdate(
+          id,
+          {
+            ...updateApplicationDto,
+            status: new Types.ObjectId(updateApplicationDto.status),
+          },
+          {
+            new: true,
+          },
+        )
         .populate('job_id')
         .populate('status');
 
@@ -497,7 +504,8 @@ export class ApplicationService implements IApplicationService {
           { path: 'job_type', select: 'name key' },
         ],
       })
-      .populate('cv_id');
+      .populate('cv_id')
+      .populate('status');
     return {
       items: result,
       meta: {
@@ -535,10 +543,8 @@ export class ApplicationService implements IApplicationService {
             { path: 'job_type', select: 'name key' },
           ],
         })
-        .populate(
-          'employer_id',
-          'avatar_company banner_company full_name _id ',
-        );
+        .populate('employer_id', 'avatar_company banner_company full_name _id ')
+        .populate('status');
 
       return applications;
     } catch (error) {
@@ -650,14 +656,21 @@ export class ApplicationService implements IApplicationService {
 
     // Build the query
     const queryFilter: any = {
-      status: new Types.ObjectId(statusId),
       job_id: new Types.ObjectId(jobId),
     };
 
-    // Add any additional filters from the query parameter
+    if (statusId === 'all') {
+      queryFilter.status = { $exists: true };
+    } else if (statusId) {
+      queryFilter.status = new Types.ObjectId(statusId);
+    }
+
+    if (jobId) {
+      queryFilter.job_id = new Types.ObjectId(jobId);
+    }
+
     Object.assign(queryFilter, filter);
 
-    // Count total items
     const totalItems =
       await this.applicationRepository.countDocuments(queryFilter);
     const totalPages = Math.ceil(totalItems / pageSize);
@@ -668,7 +681,10 @@ export class ApplicationService implements IApplicationService {
       .find(queryFilter)
       .limit(pageSize)
       .skip(skip)
-      .sort(sort as any)
+      .sort({
+        ...(sort || {}),
+        applied_date: sort?.desc ? -1 : 1,
+      })
       .populate('user_id', '-password -code_id -code_expired')
       .populate('job_id', 'title')
       .populate('status', 'name color');
@@ -694,10 +710,12 @@ export class ApplicationService implements IApplicationService {
           name: status?.name || 'Unknown Stage',
         },
         cv_url: app.cv_link || '',
+        cv_name: app.cv_name || '',
         applied_date: app.applied_date || '',
         total_experience_months: user?.total_experience_months || 0,
         total_experience_years: user?.total_experience_years || 0,
         cover_letter: app.cover_letter || '',
+        user_id: user?._id?.toString() || '',
       };
     });
 
