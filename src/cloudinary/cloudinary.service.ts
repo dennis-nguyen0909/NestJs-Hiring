@@ -47,6 +47,7 @@ export class CloudinaryService {
             overwrite: false,
             use_filename: false,
             unique_filename: false,
+            resource_type: 'image',
           },
           (error, result) => {
             if (error) {

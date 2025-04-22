@@ -16,7 +16,6 @@ import {
   generatorOtp,
   hashPasswordHelper,
   passwordRegex,
-  publicIdRegexOwn,
 } from 'src/helpers/util';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
@@ -25,7 +24,6 @@ import { v4 as uuidv4 } from 'uuid';
 import * as dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { RoleService } from '../role/role.service';
-import { Role } from '../role/schema/Role.schema';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthProviderService } from '../auth-provider/auth-provider.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -35,7 +33,6 @@ import { IUserRepository } from './user.interface';
 import { Cities } from '../cities/schema/Cities.schema';
 import { District } from '../districts/schema/District.schema';
 import { LogService } from 'src/log/log.service';
-import { UAParser } from 'ua-parser-js';
 import { Request } from 'express';
 import { CompanyStatusService } from '../application/company-status.service';
 const MAX_OTP_ATTEMPTS = 5;
@@ -906,60 +903,81 @@ export class UsersService implements IUserRepository {
     }
     return await this.create(facebookUser);
   }
+
   async removeAvatarEmployer(type: string, userId: string): Promise<[]> {
     try {
       const user = await this.userRepository.findOne({ _id: userId });
+      console.log('user.banner_company', user.banner_company);
+      console.log('user.avatar_company', user.avatar_company);
+
+      let publicId: string | undefined;
+      const regex = /image\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]+)?$/;
+
       if (type === 'avatar_company') {
-        if (user) {
-          if (user.avatar_company) {
-            const url = user.avatar_company.match(cloudinaryPublicIdRegex);
-            if (url && url[1]) {
-              const publicId = url[1];
-              const cloudinaryRes =
-                await this.cloudinaryService.deleteFile(publicId);
-              if (cloudinaryRes.result === 'ok') {
-                // Cập nhật lại avatar_company trong cơ sở dữ liệu
-                const updateRes = await this.userRepository.updateOne(
-                  { _id: userId },
-                  {
-                    avatar_company: '',
-                  },
-                );
-              }
+        if (user && user.avatar_company) {
+          const urlMatch = user.avatar_company.match(regex);
+          if (urlMatch && urlMatch[1]) {
+            publicId = urlMatch[1];
+            console.log('Avatar publicId trước khi xóa:', publicId);
+            const cloudinaryRes =
+              await this.cloudinaryService.deleteFileResourceType(publicId, {
+                resource_type: 'image',
+              });
+            console.log('cloudinaryRes (avatar):', cloudinaryRes);
+            if (cloudinaryRes.result === 'ok') {
+              await this.userRepository.updateOne(
+                { _id: userId },
+                {
+                  avatar_company: '',
+                },
+              );
+            } else {
+              throw new BadRequestException(cloudinaryRes.result);
             }
+          } else {
+            console.log(
+              `Không thể trích xuất publicId từ URL avatar: ${user.avatar_company}`,
+            );
+          }
+        }
+      } else if (type === 'banner_company') {
+        if (user && user.banner_company) {
+          const urlMatch = user.banner_company.match(regex);
+          if (urlMatch && urlMatch[1]) {
+            publicId = urlMatch[1];
+            console.log('Banner publicId trước khi xóa:', publicId);
+            const cloudinaryRes =
+              await this.cloudinaryService.deleteFileResourceType(publicId, {
+                resource_type: 'image',
+              });
+            console.log('cloudinaryRes (banner):', cloudinaryRes);
+            console.log('publicId (banner):', publicId);
+            if (cloudinaryRes.result === 'ok') {
+              const updateRes = await this.userRepository.updateOne(
+                { _id: userId },
+                {
+                  banner_company: '',
+                },
+              );
+              if (updateRes.modifiedCount > 0) {
+                return [];
+              }
+            } else {
+              throw new BadRequestException(cloudinaryRes.result);
+            }
+          } else {
+            console.log(
+              `Không thể trích xuất publicId từ URL banner: ${user.banner_company}`,
+            );
           }
         }
       }
-      if (type === 'banner_company') {
-        if (user) {
-          if (user.banner_company) {
-            const url =
-              user.banner_company.match(cloudinaryPublicIdRegex) ||
-              user.banner_company.match(publicIdRegexOwn);
-            if (url && url[1]) {
-              const publicId = url[1];
-              const cloudinaryRes =
-                await this.cloudinaryService.deleteFile(publicId);
-              if (cloudinaryRes.result === 'ok') {
-                // Cập nhật lại banner_company trong cơ sở dữ liệu
-                const updateRes = await this.userRepository.updateOne(
-                  { _id: userId },
-                  {
-                    banner_company: '',
-                  },
-                );
-                if (updateRes.modifiedCount > 0) {
-                  return [];
-                }
-              }
-            }
-          }
-        }
-      }
+      return [];
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
+
   async getProfileCandidate(
     candidateId: string,
     employerId: string,
