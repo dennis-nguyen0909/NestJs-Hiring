@@ -24,6 +24,7 @@ import { JobType } from '../job-type/schema/JobType.schema';
 import { JobContractType } from '../job-contract-type/schema/job-contract-type.schema';
 import { LogService } from 'src/log/log.service';
 import { Request } from 'express';
+import { JobSource } from './job-source.enum';
 
 @Injectable()
 export class JobService implements IJobService {
@@ -43,9 +44,10 @@ export class JobService implements IJobService {
   validateSalaryRange(salaryRange: { min: number; max: number }): void {
     throw new Error('Method not implemented.');
   }
+
   async create(createJobDto: CreateJobDto, request: Request): Promise<Job> {
     const session = await this.jobRepository.startSession();
-    session.startTransaction(); // Bắt đầu transaction
+    session.startTransaction();
 
     try {
       const {
@@ -54,9 +56,83 @@ export class JobService implements IJobService {
         salary_range_max,
         salary_range_min,
         age_range,
+        source = JobSource.INTERNAL,
+        external_data,
       } = createJobDto;
-      console.log('create', createJobDto.expire_date);
-      // Kiểm tra người dùng có tồn tại và có phải là EMPLOYER
+      console.log('source', source);
+      console.log('external_data', external_data);
+      // Nếu là job từ LinkedIn
+      if (source === JobSource.LINKEDIN) {
+        // Validate dữ liệu LinkedIn
+        if (!external_data?.organization || !external_data?.url) {
+          throw new BadRequestException(
+            'LinkedIn job must have organization and job URL',
+          );
+        }
+
+        // Tạo job từ LinkedIn
+        const job = await this.jobRepository.create(
+          [
+            {
+              ...createJobDto,
+              source: JobSource.LINKEDIN,
+              // Các trường internal có thể để null
+              user_id: null,
+              user_name: null,
+              city_id: null,
+              city_name: external_data?.locations_derived?.[0] || null,
+              district_id: null,
+              district_name: null,
+              ward_id: null,
+              ward_name: null,
+              job_contract_type: null,
+              job_contract_type_name:
+                external_data?.employment_type?.[0] || null,
+              job_type: null,
+              job_type_name: null,
+              level: null,
+              level_name: external_data?.seniority || null,
+              type_money: null,
+              currency_name: null,
+              degree: null,
+              degree_name: null,
+              skills: [],
+              skill_names: [],
+              // Các trường khác từ external_data
+              company_name: external_data.organization,
+              posted_date: external_data.date_posted || new Date(),
+              expire_date: external_data.date_validthrough || null,
+              // Các trường mặc định
+              is_active: true,
+              is_expired: false,
+              count_apply: 0,
+              candidate_ids: [],
+              candidate_names: [],
+              // Lưu toàn bộ dữ liệu LinkedIn
+              external_data: {
+                ...external_data,
+                // Chuyển đổi các trường date
+                date_posted: external_data.date_posted
+                  ? new Date(external_data.date_posted)
+                  : null,
+                date_created: external_data.date_created
+                  ? new Date(external_data.date_created)
+                  : null,
+                date_validthrough: external_data.date_validthrough
+                  ? new Date(external_data.date_validthrough)
+                  : null,
+              },
+            },
+          ],
+          { session },
+        );
+
+        await session.commitTransaction();
+        session.endSession();
+        return job[0];
+      }
+
+      // Nếu là job internal, xử lý như bình thường
       const userExist = await this.userService.findByObjectId(user_id + '');
       if (!userExist) {
         throw new BadRequestException('User not found');
@@ -67,7 +143,7 @@ export class JobService implements IJobService {
         throw new UnauthorizedException('User is not an employer');
       }
 
-      // Kiểm tra ngày hết hạn (expiry_date) phải lớn hơn ngày hiện tại
+      // Validate expiry date
       const currentDate = new Date();
       const jobExpiryDate = new Date(expire_date);
       if (jobExpiryDate <= currentDate) {
@@ -75,23 +151,26 @@ export class JobService implements IJobService {
           'Expiry date must be later than the current date',
         );
       }
+
       CreateJobDto.validateSalaryRange(salary_range_min, salary_range_max);
 
       if (age_range?.min >= age_range?.max) {
         throw new BadRequestException('Age range max must be greater than min');
       }
 
+      // Convert ObjectId fields
       if (createJobDto.skills) {
-        createJobDto.skills = createJobDto.skills.map((skill) => {
-          return new Types.ObjectId(skill + '');
-        });
+        createJobDto.skills = createJobDto.skills.map(
+          (skill) => new Types.ObjectId(skill + ''),
+        );
       }
 
-      // Tạo job
+      // Tạo job internal
       const job = await this.jobRepository.create(
         [
           {
             ...createJobDto,
+            source: JobSource.INTERNAL,
             city_id: new Types.ObjectId(createJobDto.city_id),
             district_id: new Types.ObjectId(createJobDto.district_id),
             level: new Types.ObjectId(createJobDto.level),
@@ -103,10 +182,16 @@ export class JobService implements IJobService {
               createJobDto.job_contract_type,
             ),
             user_id: new Types.ObjectId(userExist._id + ''),
+            // Các trường mặc định
+            is_active: true,
+            is_expired: false,
+            count_apply: 0,
+            candidate_ids: [],
+            candidate_names: [],
           },
         ],
         { session },
-      ); // Pass session vào create
+      );
 
       if (job) {
         // Tạo log
@@ -123,12 +208,10 @@ export class JobService implements IJobService {
 
         // Thêm job vào user
         user.jobs_ids.push(new Types.ObjectId(job[0]._id + ''));
-        await user.save({ session }); // Pass session vào user.save()
+        await user.save({ session });
 
-        // Commit transaction nếu tất cả đều thành công
         await session.commitTransaction();
         session.endSession();
-
         return job[0];
       } else {
         throw new BadRequestException('Create job failed');

@@ -9,13 +9,25 @@ import { JobType } from 'src/modules/job-type/schema/JobType.schema';
 import { JobContractType } from 'src/modules/job-contract-type/schema/job-contract-type.schema';
 import { Currency } from 'src/modules/currencies/schema/currencies.schema';
 import { DegreeType } from 'src/modules/degree-type/schema/degree-type.schema';
+import { JobSource } from '../job-source.enum';
 
 @Schema({ timestamps: true })
 export class Job extends Document {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'User',
+    required: function () {
+      return this.source !== JobSource.LINKEDIN;
+    },
+    field: 'user_name',
+  })
   user_id: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({
+    required: function () {
+      return this.source !== JobSource.LINKEDIN;
+    },
+  })
   title: string;
 
   @Prop()
@@ -24,13 +36,13 @@ export class Job extends Document {
   @Prop()
   address: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Cities' })
+  @Prop({ type: Types.ObjectId, ref: 'Cities', field: 'city_name' })
   city_id: Cities;
 
-  @Prop({ type: Types.ObjectId, ref: 'District' })
+  @Prop({ type: Types.ObjectId, ref: 'District', field: 'district_name' })
   district_id: District;
 
-  @Prop({ type: Types.ObjectId, ref: 'Ward' })
+  @Prop({ type: Types.ObjectId, ref: 'Ward', field: 'ward_name' })
   ward_id: Ward;
 
   @Prop({ type: Map, of: Number })
@@ -46,10 +58,11 @@ export class Job extends Document {
   @Prop({
     type: Types.ObjectId,
     ref: JobContractType.name,
+    field: 'job_contract_type_name',
   })
   job_contract_type: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: JobType.name })
+  @Prop({ type: Types.ObjectId, ref: JobType.name, field: 'job_type_name' })
   job_type: Types.ObjectId;
 
   @Prop()
@@ -66,10 +79,18 @@ export class Job extends Document {
   })
   professional_skills: { title: string; items: string[] }[];
 
-  @Prop({ required: true })
+  @Prop({
+    required: function () {
+      return this.source !== JobSource.LINKEDIN;
+    },
+  })
   skill_name: string[];
 
-  @Prop({ required: true })
+  @Prop({
+    required: function () {
+      return this.source !== JobSource.LINKEDIN;
+    },
+  })
   company_name: string;
 
   @Prop()
@@ -87,7 +108,7 @@ export class Job extends Document {
   @Prop()
   time_work: Date;
 
-  @Prop({ type: Types.ObjectId, ref: Level.name })
+  @Prop({ type: Types.ObjectId, ref: Level.name, field: 'level_name' })
   level: Types.ObjectId;
 
   @Prop({ type: Date, default: Date.now })
@@ -96,12 +117,13 @@ export class Job extends Document {
   @Prop({ type: Date })
   expire_date: Date;
 
-  @Prop({ type: Types.ObjectId, ref: Currency.name })
+  @Prop({ type: Types.ObjectId, ref: Currency.name, field: 'currency_name' })
   type_money: Types.ObjectId;
 
   @Prop({
     type: Types.ObjectId,
     ref: DegreeType.name,
+    field: 'degree_name',
   })
   degree: Types.ObjectId;
 
@@ -114,6 +136,7 @@ export class Job extends Document {
   @Prop({
     type: [Types.ObjectId],
     ref: SkillEmployer.name,
+    field: 'skill_names',
   })
   skills: Types.ObjectId[];
 
@@ -126,10 +149,10 @@ export class Job extends Document {
   @Prop({
     type: [Types.ObjectId],
     ref: 'User',
+    field: 'candidate_names',
   })
   candidate_ids: Types.ObjectId[];
 
-  // New fields for job application methods
   @Prop({ type: String, default: '' })
   apply_linkedin: string;
 
@@ -144,6 +167,64 @@ export class Job extends Document {
 
   @Prop({ type: Number, default: 0 })
   salary_range_min: number;
+
+  @Prop({
+    type: String,
+    enum: JobSource,
+    default: JobSource.INTERNAL,
+  })
+  source: string;
+
+  @Prop({ type: Object })
+  external_data: {
+    id?: string;
+    date_posted?: Date;
+    date_created?: Date;
+    date_validthrough?: Date;
+    organization?: string;
+    organization_url?: string;
+    organization_logo?: string;
+    url?: string;
+    source_type?: string;
+    source_domain?: string;
+    employment_type?: string[];
+    locations_raw?: {
+      '@type': string;
+      address: {
+        '@type': string;
+        addressCountry: string;
+        addressLocality: string;
+        addressRegion: string;
+        streetAddress: string | null;
+        latitude: number;
+        longitude: number;
+      };
+    }[];
+    cities_derived?: string[];
+    regions_derived?: string[];
+    countries_derived?: string[];
+    locations_derived?: string[];
+    timezones_derived?: string[];
+    lats_derived?: number[];
+    lngs_derived?: number[];
+    remote_derived?: boolean;
+    linkedin_org_employees?: number;
+    linkedin_org_url?: string;
+    linkedin_org_size?: string;
+    linkedin_org_slogan?: string;
+    linkedin_org_industry?: string;
+    linkedin_org_followers?: number;
+    linkedin_org_headquarters?: string;
+    linkedin_org_type?: string;
+    linkedin_org_foundeddate?: string;
+    linkedin_org_specialties?: string[];
+    linkedin_org_locations?: string[];
+    linkedin_org_description?: string;
+    linkedin_org_recruitment_agency_derived?: boolean;
+    seniority?: string;
+    directapply?: boolean;
+    linkedin_org_slug?: string;
+  };
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
