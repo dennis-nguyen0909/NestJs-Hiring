@@ -26,16 +26,16 @@ export class CreateJobDto {
   @IsString()
   description?: string;
 
-  @IsMongoId()
-  @IsNotEmpty()
+  // @IsMongoId()
+  @IsOptional()
   city_id: Types.ObjectId;
 
-  @IsMongoId()
-  @IsNotEmpty()
+  // @IsMongoId()
+  @IsOptional()
   district_id: Types.ObjectId;
 
-  @IsMongoId()
-  @IsNotEmpty()
+  // @IsMongoId()
+  @IsOptional()
   ward_id: Types.ObjectId;
 
   @IsOptional()
@@ -46,7 +46,8 @@ export class CreateJobDto {
   @IsEnum(['monthly', 'yearly', 'weekly', 'hourly'])
   salary_type?: string;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
+  @IsOptional()
   job_contract_type?: Types.ObjectId;
 
   @IsNotEmpty()
@@ -56,15 +57,16 @@ export class CreateJobDto {
   benefit: string[];
 
   @IsOptional()
-  @IsDate()
+  // @IsDate()
   time_work?: Date;
 
   @IsNotEmpty()
-  @IsMongoId()
+  // @IsMongoId()
+  @IsOptional()
   level: Types.ObjectId;
 
   @IsOptional()
-  @IsDate()
+  // @IsDate()
   posted_date?: Date;
 
   @IsNotEmpty()
@@ -72,7 +74,8 @@ export class CreateJobDto {
   expire_date?: Date;
 
   @IsString()
-  @IsMongoId()
+  // @IsMongoId()
+  @IsOptional()
   type_money: Types.ObjectId;
 
   @IsOptional()
@@ -80,11 +83,13 @@ export class CreateJobDto {
   image?: string;
 
   @IsNotEmpty()
-  @IsMongoId()
+  // @IsMongoId()
+  @IsOptional()
   degree: Types.ObjectId;
 
-  @IsNotEmpty()
-  @IsNumber()
+  // @IsNotEmpty()
+  // @IsNumber()
+  @IsOptional()
   count_apply: number;
 
   @IsOptional()

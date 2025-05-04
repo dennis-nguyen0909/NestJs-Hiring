@@ -45,7 +45,10 @@ import { TeamsizeModule } from './modules/teamsize/teamsize.module';
 import { NotificationGateway } from './notification/notification.gateway';
 import { NotificationModule } from './notification/notification.module';
 import { LogModule } from './log/log.module';
-import { logConnection } from './db/conection';
+import { PackageModule } from './modules/package/package.module';
+import { PurchaseHistoryModule } from './modules/purchase-history/purchase-history.module';
+import { MonthlyUsageModule } from './modules/monthly-usage/monthly-usage.module';
+
 @Module({
   imports: [
     UsersModule,
@@ -103,13 +106,11 @@ import { logConnection } from './db/conection';
       inject: [ConfigService],
     }),
     JobModule,
-    CvModule,
     CvUploadModule,
     ApplicationModule,
     AuthProviderModule,
     FollowModule,
     LevelModule,
-    NotificationModule,
     RoleModule,
     SkillModule,
     WorkExperienceModule,
@@ -127,6 +128,7 @@ import { logConnection } from './db/conection';
     PrizeModule,
     CourseModule,
     ProjectModule,
+    CvModule,
     FavoriteJobModule,
     JobTypeModule,
     JobContractTypeModule,
@@ -136,7 +138,11 @@ import { logConnection } from './db/conection';
     OrganizationTypeModule,
     IndustryTypeModule,
     TeamsizeModule,
+    NotificationModule,
     LogModule,
+    PackageModule,
+    PurchaseHistoryModule,
+    MonthlyUsageModule,
   ],
   controllers: [AppController],
   providers: [

@@ -124,11 +124,104 @@ export class SkillService implements ISkillService {
 
   async getSkillsByUserId(userId: string): Promise<Skill[]> {
     try {
+      console.log('userId', userId);
       const res = await this.skillRepository.find({ user_id: userId }).exec();
       if (!res) {
         throw new NotFoundException('Not found!');
       }
       return res;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async getCandidatesBySkills(
+    query: string,
+    current: number,
+    pageSize: number,
+  ): Promise<{ items: any[]; meta: Meta }> {
+    try {
+      const { filter, sort } = aqp(query);
+      if (filter.current) delete filter.current;
+      if (filter.pageSize) delete filter.pageSize;
+      if (!current) current = 1;
+      if (!pageSize) pageSize = 10;
+
+      // Find skills based on the search query with case-insensitive search
+      const skills = await this.skillRepository.find({
+        name: { $regex: filter.keyword, $options: 'i' },
+      });
+      if (!skills.length) {
+        return {
+          items: [],
+          meta: {
+            count: 0,
+            current_page: current,
+            per_page: pageSize,
+            total: 0,
+            total_pages: 0,
+          },
+        };
+      }
+
+      // Get skill IDs
+      const skillIds = skills.map((skill) => skill._id);
+
+      // Find users who have these skills
+      const users = await this.userRepository
+        .find({
+          skills: { $in: skillIds },
+        })
+        .select('full_name email _id')
+        .populate('skills', 'name _id')
+        .skip((current - 1) * pageSize)
+        .limit(pageSize)
+        .sort(sort as any);
+
+      const totalItems = await this.userRepository.countDocuments({
+        skills: { $in: skillIds },
+      });
+
+      const totalPages = Math.ceil(totalItems / pageSize);
+
+      return {
+        items: users,
+        meta: {
+          count: users.length,
+          current_page: current,
+          per_page: pageSize,
+          total: totalItems,
+          total_pages: totalPages,
+        },
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+  async getSkillSuggestions(keyword: string): Promise<Skill[]> {
+    try {
+      if (!keyword) {
+        return [];
+      }
+      const suggestions = await this.skillRepository
+        .find({
+          name: { $regex: keyword, $options: 'i' },
+        })
+        .select('name _id')
+        .limit(10);
+
+      const uniqueSuggestions = suggestions.reduce((acc, current) => {
+        const x = acc.find(
+          (item) => item.name.toLowerCase() === current.name.toLowerCase(),
+        );
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, []);
+
+      return uniqueSuggestions;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

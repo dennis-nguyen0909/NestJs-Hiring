@@ -28,6 +28,40 @@ export class SkillController {
   async create(@Body() createSkillDto: CreateSkillDto): Promise<Skill> {
     return await this.skillService.create(createSkillDto);
   }
+  @Get('user')
+  @ResponseMessage('Success')
+  async getSkillsByUserId(@Request() req): Promise<any> {
+    console.log('req.user', req.user);
+    return await this.skillService.getSkillsByUserId(req.user._id);
+  }
+
+  @Get('suggestions')
+  @ResponseMessage('Success')
+  async getSkillSuggestions(
+    @Query('keyword') keyword: string,
+  ): Promise<Skill[]> {
+    return await this.skillService.getSkillSuggestions(keyword);
+  }
+
+  @Get(':id')
+  @ResponseMessage('Success')
+  async findOne(@Param('id') id: string): Promise<Skill> {
+    return await this.skillService.findOne(id);
+  }
+
+  @Get('candidate/search')
+  @ResponseMessage('Success')
+  async getCandidatesBySkills(
+    @Query() query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ): Promise<any> {
+    return await this.skillService.getCandidatesBySkills(
+      query,
+      +current,
+      +pageSize,
+    );
+  }
 
   @Get()
   @ResponseMessage('Success')
@@ -37,18 +71,6 @@ export class SkillController {
     @Query('pageSize') pageSize: string,
   ): Promise<{ items: Skill[]; meta: Meta }> {
     return await this.skillService.findAll(query, +current, +pageSize);
-  }
-
-  @Get('user')
-  @ResponseMessage('Success')
-  async getSkillsByUserId(@Request() req): Promise<Skill[]> {
-    return await this.skillService.getSkillsByUserId(req.user._id);
-  }
-
-  @Get(':id')
-  @ResponseMessage('Success')
-  async findOne(@Param('id') id: string): Promise<Skill> {
-    return await this.skillService.findOne(id);
   }
 
   @Patch(':id')
@@ -64,5 +86,11 @@ export class SkillController {
   @ResponseMessage('Success')
   async remove(@Body() data: DeleteSkillDto): Promise<[]> {
     return await this.skillService.remove(data);
+  }
+
+  @Get('candidate/:id')
+  @ResponseMessage('Success')
+  async getCandidateSkills(@Param('id') id: string): Promise<Skill[]> {
+    return await this.skillService.getSkillsByUserId(id);
   }
 }

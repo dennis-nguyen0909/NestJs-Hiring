@@ -17,10 +17,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { User } from './schemas/user.schema';
 import { Meta } from '../types';
-import { query, Request } from 'express';
+import { Request } from 'express';
 
 @Controller('users')
 @ApiTags('Users')
+@Public()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
